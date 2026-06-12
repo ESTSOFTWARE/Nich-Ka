@@ -10,9 +10,6 @@ import '../components/auth_text_field.dart';
 import '../components/primary_auth_button.dart';
 import '../components/spotlight_background.dart';
 
-/// Pantalla de recuperación de contraseña. Responsabilidad única: componer la
-/// UI. El ciclo de vida del [ForgotPasswordProvider] lo gestiona
-/// [ChangeNotifierProvider].
 class ForgotPasswordView extends StatelessWidget {
   const ForgotPasswordView({super.key});
 
@@ -23,12 +20,13 @@ class ForgotPasswordView extends StatelessWidget {
       builder: (context, provider) {
         return SpotlightBackground(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header: Logo + Nich-Ká
                 Row(
                   children: [
                     SvgPicture.asset('assets/icons/logo.svg', height: 32),
@@ -46,7 +44,6 @@ class ForgotPasswordView extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Encabezado
                 Text(
                   '¿Olvidaste tu contraseña?',
                   style: GoogleFonts.poppins(
@@ -68,7 +65,6 @@ class ForgotPasswordView extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                // Formulario
                 AuthTextField(
                   label: 'Correo electrónico',
                   hintText: 'tu@correo.com',
@@ -77,7 +73,6 @@ class ForgotPasswordView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Botón Enviar código (blanco)
                 PrimaryAuthButton(
                   text: 'Enviar código',
                   isLoading: provider.sendState is UiLoading,
@@ -87,7 +82,6 @@ class ForgotPasswordView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Volver al inicio de sesión
                 Center(
                   child: TextButton(
                     onPressed: () => context.go('/login-email'),

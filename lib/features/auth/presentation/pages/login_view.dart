@@ -18,7 +18,7 @@ class LoginView extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Header: Nich-Ká + Logo (SRP: Podrías extraer esto a un widget)
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -31,24 +31,19 @@ class LoginView extends StatelessWidget {
                     letterSpacing: -0.5,
                   ),
                 ),
-                SvgPicture.asset(
-                  'assets/icons/logo.svg', // logo.svg
-                  height: 40,
-                ),
+                SvgPicture.asset('assets/icons/logo.svg', height: 40),
               ],
             ),
             const Spacer(),
 
-            // Imagen central animada (Placeholder por ahora)
             Image.asset(
-              'assets/img/nich-ka-animado.png', // nich-ka-animado.png
+              'assets/img/nich-ka-animado.png',
               height: 250,
               fit: BoxFit.contain,
             ),
 
             const Spacer(),
 
-            // Textos descriptivos
             Text(
               'Comienza tu experiencia',
               textAlign: TextAlign.center,
@@ -72,27 +67,22 @@ class LoginView extends StatelessWidget {
 
             const SizedBox(height: 48),
 
-            // Botones Sociales (Usamos el widget SocialLoginButton creado antes)
             SocialLoginButton(
               text: 'Continuar con Google',
-              iconPath: 'assets/icons/google.svg', // google.svg
-              onPressed: () {
-                // TODO: Implementar lógica VM
-              },
+              iconPath: 'assets/icons/google.svg',
+              onPressed: () {},
             ),
             const SizedBox(height: 16),
             SocialLoginButton(
               text: 'Continuar con Correo',
-              iconPath: 'assets/icons/gmail.svg', // gmail.svg
+              iconPath: 'assets/icons/gmail.svg',
               onPressed: () {
-                // Navegación al flujo de correo
                 context.go('/login-email');
               },
             ),
 
             const SizedBox(height: 32),
 
-            // Footer: Términos
             const LegalFooter(),
             const SizedBox(height: 16),
           ],

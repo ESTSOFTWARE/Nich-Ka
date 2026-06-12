@@ -1,6 +1,5 @@
-import 'legal_section.dart';
+import '../../../domain/entities/legal_section.dart';
 
-/// Responsabilidad única: contenido estático de los Términos de Uso.
 const String termsOfUseIntro =
     'Estos términos rigen el uso de la plataforma Nich-Ká. Léalos detenidamente '
     'antes de utilizar nuestros servicios.';

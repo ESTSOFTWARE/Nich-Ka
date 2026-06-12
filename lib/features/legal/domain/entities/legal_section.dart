@@ -1,5 +1,3 @@
-/// Responsabilidad única: representar una sección numerada de un documento
-/// legal (número, título y cuerpo).
 class LegalSection {
   final String number;
   final String title;

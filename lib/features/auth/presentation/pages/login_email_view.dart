@@ -13,8 +13,6 @@ import '../components/primary_auth_button.dart';
 import '../components/social_login_button.dart';
 import '../components/spotlight_background.dart';
 
-/// Pantalla de inicio de sesión con correo. Responsabilidad única: componer la
-/// UI. El ciclo de vida del [LoginProvider] lo gestiona [ChangeNotifierProvider].
 class LoginEmailView extends StatelessWidget {
   const LoginEmailView({super.key});
 
@@ -25,12 +23,13 @@ class LoginEmailView extends StatelessWidget {
       builder: (context, provider) {
         return SpotlightBackground(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header: Nich-Ká + Logo
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -43,15 +42,11 @@ class LoginEmailView extends StatelessWidget {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    SvgPicture.asset(
-                      'assets/icons/logo.svg',
-                      height: 40,
-                    ),
+                    SvgPicture.asset('assets/icons/logo.svg', height: 40),
                   ],
                 ),
                 const SizedBox(height: 60),
 
-                // Textos Encabezado
                 Text(
                   '¡Bienvenido de nuevo!',
                   style: GoogleFonts.poppins(
@@ -71,7 +66,6 @@ class LoginEmailView extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Formulario
                 AuthTextField(
                   label: 'Correo electrónico',
                   hintText: 'tu@ejemplo.com',
@@ -80,7 +74,6 @@ class LoginEmailView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Contraseña con enlace de recuperación en el label
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -109,7 +102,6 @@ class LoginEmailView extends StatelessWidget {
 
                 const SizedBox(height: 48),
 
-                // Botón de Acción Principal
                 PrimaryAuthButton(
                   text: 'Iniciar Sesión',
                   iconPath: 'assets/icons/login.svg',
@@ -121,20 +113,16 @@ class LoginEmailView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Botón Continuar con Google
                 SocialLoginButton(
                   text: 'Iniciar con Google',
                   iconPath: 'assets/icons/google.svg',
-                  onPressed: () {
-                    // TODO: Implementar lógica VM
-                  },
+                  onPressed: () {},
                 ),
 
                 const SizedBox(height: 32),
                 const Divider(color: AppColors.border, height: 1),
                 const SizedBox(height: 28),
 
-                // Footer: Términos
                 const LegalFooter(),
               ],
             ),

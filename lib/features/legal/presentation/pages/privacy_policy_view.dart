@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/privacy_policy_content.dart';
+import '../../data/datasource/local/privacy_policy_content.dart';
 import 'legal_document_view.dart';
 
-/// Pantalla de la Política de Privacidad. Solo aporta el contenido a
-/// [LegalDocumentView].
 class PrivacyPolicyView extends StatelessWidget {
   const PrivacyPolicyView({super.key});
 

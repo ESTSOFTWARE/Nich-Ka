@@ -4,9 +4,6 @@ import '../../../../core/theme/app_colors.dart';
 import 'auth_field_label.dart';
 import 'password_visibility_toggle.dart';
 
-/// Responsabilidad única: campo de texto del formulario de autenticación.
-/// Es puramente presentacional (una sola clase): el estado de visibilidad de
-/// la contraseña vive en el provider y se recibe vía [isObscured]/[onToggleObscure].
 class AuthTextField extends StatelessWidget {
   final String label;
   final String hintText;
@@ -46,9 +43,7 @@ class AuthTextField extends StatelessWidget {
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: GoogleFonts.poppins(
-              color: AppColors.textMuted,
-            ),
+            hintStyle: GoogleFonts.poppins(color: AppColors.textMuted),
             filled: true,
             fillColor: AppColors.surface,
             contentPadding: const EdgeInsets.symmetric(

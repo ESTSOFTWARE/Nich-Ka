@@ -3,10 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../components/legal_section_item.dart';
-import '../models/legal_section.dart';
+import '../../domain/entities/legal_section.dart';
 
-/// Responsabilidad única: pantalla genérica de un documento legal (privacidad,
-/// términos de uso, etc.). Recibe el contenido y compone la UI.
 class LegalDocumentView extends StatelessWidget {
   final String title;
   final String intro;
@@ -48,7 +46,6 @@ class LegalDocumentView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Encabezado centrado
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -98,7 +95,6 @@ class LegalDocumentView extends StatelessWidget {
             const Divider(color: AppColors.border, height: 1),
             const SizedBox(height: 36),
 
-            // Secciones numeradas
             for (final section in sections) ...[
               LegalSectionItem(section: section),
               const SizedBox(height: 36),

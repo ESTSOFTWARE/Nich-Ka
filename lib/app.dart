@@ -12,14 +12,11 @@ class App extends StatelessWidget {
       title: 'Nich-Ká',
       debugShowCheckedModeBanner: false,
 
-      // Configuraciones requeridas para Device Preview (Corregido)
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
 
-      // Configuración de Rutas (GoRouter)
       routerConfig: appRouter,
 
-      // Configuración de Tema (Light/Dark Mode)
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

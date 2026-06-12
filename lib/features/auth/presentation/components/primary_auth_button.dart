@@ -3,11 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Botón de acción principal del formulario. Dos variantes:
-/// - [filled] = true  -> relleno blanco con texto oscuro (acción destacada).
-/// - [filled] = false -> oscuro con borde y texto blanco.
-///
-/// Admite un ícono SVG opcional a la izquierda y un spinner mientras [isLoading].
 class PrimaryAuthButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -26,12 +21,12 @@ class PrimaryAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // El color del contenido depende de la variante.
-    final Color foreground =
-        filled ? AppColors.background : AppColors.textPrimary;
+    final Color foreground = filled
+        ? AppColors.background
+        : AppColors.textPrimary;
 
     return SizedBox(
-      width: double.infinity, // Ocupa todo el ancho disponible
+      width: double.infinity,
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
@@ -40,9 +35,7 @@ class PrimaryAuthButton extends StatelessWidget {
             color: filled ? Colors.transparent : AppColors.border,
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: isLoading
             ? Row(
