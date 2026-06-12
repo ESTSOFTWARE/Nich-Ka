@@ -23,18 +23,12 @@ class SocialLoginButton extends StatelessWidget {
         backgroundColor: AppColors.surface,
         side: const BorderSide(color: AppColors.border),
         padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 18,
-            height: 18,
-          ),
+          SvgPicture.asset(iconPath, width: 18, height: 18),
           const SizedBox(width: 10),
           Text(
             text,

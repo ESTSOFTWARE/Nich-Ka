@@ -1,11 +1,11 @@
-import 'legal_section.dart';
+import '../../../domain/entities/legal_section.dart';
 
-/// Responsabilidad única: contenido estático de la Política de Privacidad.
 const String privacyPolicyIntro =
     'Nos comprometemos a proteger su privacidad y a ser transparentes sobre '
     'cómo manejamos sus datos personales en la plataforma Nich-Ká.';
 
-const String privacyPolicyLastUpdate = 'Última actualización: 9 de mayo de 2026';
+const String privacyPolicyLastUpdate =
+    'Última actualización: 9 de mayo de 2026';
 
 const List<LegalSection> privacyPolicySections = [
   LegalSection(

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/terms_of_use_content.dart';
+import '../../data/datasource/local/terms_of_use_content.dart';
 import 'legal_document_view.dart';
 
-/// Pantalla de los Términos de Uso. Solo aporta el contenido a
-/// [LegalDocumentView].
 class TermsOfUseView extends StatelessWidget {
   const TermsOfUseView({super.key});
 

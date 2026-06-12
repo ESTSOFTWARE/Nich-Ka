@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Responsabilidad única: gestionar el ciclo de vida de un [ChangeNotifier]
-/// (crearlo, exponerlo a la UI y liberarlo) para que las vistas puedan ser
-/// `StatelessWidget`.
-///
-/// La UI dentro de [builder] se reconstruye automáticamente cuando el
-/// provider llama a `notifyListeners()`.
 class ChangeNotifierProvider<T extends ChangeNotifier> extends StatefulWidget {
   final T Function() create;
   final Widget Function(BuildContext context, T provider) builder;

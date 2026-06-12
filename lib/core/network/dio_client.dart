@@ -6,7 +6,7 @@ class DioClient {
   DioClient() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://api.tudominio.com/v1', // Cambiar por la URL base real o variable de entorno
+        baseUrl: 'https://api.tudominio.com/v1',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
@@ -16,11 +16,9 @@ class DioClient {
       ),
     );
 
-    // Aquí podremos agregar interceptores en el futuro
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          // Lógica para inyectar token, por ejemplo.
           return handler.next(options);
         },
       ),
