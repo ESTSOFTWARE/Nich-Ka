@@ -55,9 +55,7 @@ class FermentationProgressList extends StatelessWidget {
           child: Row(
             children: cards.map((card) {
               return Padding(
-                padding: EdgeInsets.only(
-                  right: card == cards.last ? 0 : 10,
-                ),
+                padding: EdgeInsets.only(right: card == cards.last ? 0 : 10),
                 child: FermentationProgressCard(card: card, palette: palette),
               );
             }).toList(),

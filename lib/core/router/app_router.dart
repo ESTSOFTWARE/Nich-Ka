@@ -56,8 +56,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (BuildContext context, GoRouterState state) =>
-          const HomeView(),
+      builder: (BuildContext context, GoRouterState state) => const HomeView(),
     ),
     GoRoute(
       path: '/overview',

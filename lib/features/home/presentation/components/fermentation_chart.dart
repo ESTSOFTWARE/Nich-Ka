@@ -6,11 +6,7 @@ class FermentationChart extends StatelessWidget {
   final List<ChartPoint> points;
   final double height;
 
-  const FermentationChart({
-    super.key,
-    required this.points,
-    this.height = 80,
-  });
+  const FermentationChart({super.key, required this.points, this.height = 80});
 
   @override
   Widget build(BuildContext context) {

@@ -55,10 +55,7 @@ class MetricsGrid extends StatelessWidget {
             ),
           ],
         ),
-        MetricTile(
-          metric: fermentation.conductivity,
-          palette: palette,
-        ),
+        MetricTile(metric: fermentation.conductivity, palette: palette),
       ],
     );
   }

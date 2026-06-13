@@ -26,20 +26,15 @@ class TimeRangeSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? palette.rowSurface
-                  : Colors.transparent,
+              color: isSelected ? palette.rowSurface : Colors.transparent,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               range.label,
               style: GoogleFonts.poppins(
                 fontSize: 12,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected
-                    ? palette.textPrimary
-                    : palette.textMuted,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? palette.textPrimary : palette.textMuted,
               ),
             ),
           ),

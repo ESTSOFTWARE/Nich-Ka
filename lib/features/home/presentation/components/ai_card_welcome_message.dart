@@ -28,9 +28,7 @@ class AiCardWelcomeMessage extends StatelessWidget {
               height: 1.5,
             ),
           ),
-          const TextSpan(
-            text: ' te acompañaré en tiempo real.',
-          ),
+          const TextSpan(text: ' te acompañaré en tiempo real.'),
         ],
       ),
     );

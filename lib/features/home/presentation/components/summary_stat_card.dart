@@ -7,11 +7,7 @@ class SummaryStatCard extends StatelessWidget {
   final DashboardStat stat;
   final HomePalette palette;
 
-  const SummaryStatCard({
-    super.key,
-    required this.stat,
-    required this.palette,
-  });
+  const SummaryStatCard({super.key, required this.stat, required this.palette});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +43,7 @@ class SummaryStatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             stat.subtitle,
-            style: GoogleFonts.poppins(
-              fontSize: 11,
-              color: palette.textMuted,
-            ),
+            style: GoogleFonts.poppins(fontSize: 11, color: palette.textMuted),
           ),
         ],
       ),

@@ -20,8 +20,7 @@ class DrawerMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor =
-        isSelected ? HomePalette.accent : palette.textSecondary;
+    final iconColor = isSelected ? HomePalette.accent : palette.textSecondary;
 
     return GestureDetector(
       onTap: onTap,
@@ -42,8 +41,7 @@ class DrawerMenuItem extends StatelessWidget {
                 _label(),
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
                       ? palette.textPrimary
                       : palette.textSecondary,

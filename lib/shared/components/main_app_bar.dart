@@ -31,7 +31,9 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           sigmaY: isScrolled ? 20 : 0,
         ),
         child: AppBar(
-          backgroundColor: isScrolled ? palette.glassBackground : Colors.transparent,
+          backgroundColor: isScrolled
+              ? palette.glassBackground
+              : Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           systemOverlayStyle: palette.isDark

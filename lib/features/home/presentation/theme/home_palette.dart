@@ -52,7 +52,7 @@ class HomePalette {
     navActive: Color(0xFFFFFFFF),
     navInactive: Color(0xFF787878),
     glassBackground: Color(0xA60A0A0B), // #0A0A0B at 65% opacity
-    glowColor: Color(0x24FFFFFF),        // white at ~14% opacity
+    glowColor: Color(0x24FFFFFF), // white at ~14% opacity
     isDark: true,
   );
 
@@ -69,7 +69,7 @@ class HomePalette {
     navActive: Color(0xFF0A0A0B),
     navInactive: Color(0xFF9CA3AF),
     glassBackground: Color(0xCCF4EFE6), // cream at 80% opacity
-    glowColor: Color(0x1275D079),        // accent green at ~7% opacity
+    glowColor: Color(0x1275D079), // accent green at ~7% opacity
     isDark: false,
   );
 

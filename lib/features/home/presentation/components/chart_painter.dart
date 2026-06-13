@@ -14,9 +14,9 @@ class ChartPainter extends CustomPainter {
     final fillPath = Path();
 
     Offset toOffset(ChartPoint p) => Offset(
-          p.x * size.width,
-          size.height - (p.y * size.height * 0.9) - size.height * 0.05,
-        );
+      p.x * size.width,
+      size.height - (p.y * size.height * 0.9) - size.height * 0.05,
+    );
 
     final first = toOffset(points.first);
     linePath.moveTo(first.dx, first.dy);

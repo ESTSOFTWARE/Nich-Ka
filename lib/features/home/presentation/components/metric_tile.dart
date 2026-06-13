@@ -70,10 +70,7 @@ class MetricTile extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             metric.change,
-            style: GoogleFonts.poppins(
-              fontSize: 11,
-              color: palette.textMuted,
-            ),
+            style: GoogleFonts.poppins(fontSize: 11, color: palette.textMuted),
           ),
         ],
       ),

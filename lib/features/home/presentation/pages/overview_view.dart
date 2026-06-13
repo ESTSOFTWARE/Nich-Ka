@@ -38,8 +38,7 @@ class OverviewView extends StatelessWidget {
           appBar: MainAppBar(
             palette: palette,
             isScrolled: provider.isScrolled,
-            onMenuTap: () =>
-                provider.scaffoldKey.currentState?.openDrawer(),
+            onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
           ),
           body: Stack(
             children: [
@@ -81,10 +80,7 @@ class OverviewView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    StatsOverviewGrid(
-                      stats: provider.stats,
-                      palette: palette,
-                    ),
+                    StatsOverviewGrid(stats: provider.stats, palette: palette),
                     const SizedBox(height: 14),
                     FermentationCurveCard(
                       points: provider.chartPoints,

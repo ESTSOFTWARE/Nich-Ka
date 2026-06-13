@@ -21,9 +21,13 @@ class StatsOverviewGrid extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: SummaryStatCard(stat: stats[0], palette: palette)),
+              Expanded(
+                child: SummaryStatCard(stat: stats[0], palette: palette),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: SummaryStatCard(stat: stats[1], palette: palette)),
+              Expanded(
+                child: SummaryStatCard(stat: stats[1], palette: palette),
+              ),
             ],
           ),
         ),
@@ -32,9 +36,13 @@ class StatsOverviewGrid extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: SummaryStatCard(stat: stats[2], palette: palette)),
+              Expanded(
+                child: SummaryStatCard(stat: stats[2], palette: palette),
+              ),
               const SizedBox(width: 10),
-              Expanded(child: SummaryStatCard(stat: stats[3], palette: palette)),
+              Expanded(
+                child: SummaryStatCard(stat: stats[3], palette: palette),
+              ),
             ],
           ),
         ),

@@ -37,8 +37,7 @@ class AssistantEmptyView extends StatelessWidget {
           appBar: MainAppBar(
             palette: palette,
             isScrolled: provider.isScrolled,
-            onMenuTap: () =>
-                provider.scaffoldKey.currentState?.openDrawer(),
+            onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
           ),
           body: Stack(
             children: [

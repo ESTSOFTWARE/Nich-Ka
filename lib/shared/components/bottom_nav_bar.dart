@@ -41,8 +41,9 @@ class BottomNavBar extends StatelessWidget {
                     _label(tab),
                     style: GoogleFonts.poppins(
                       fontSize: 11,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: isSelected
                           ? palette.navActive
                           : palette.navInactive,
