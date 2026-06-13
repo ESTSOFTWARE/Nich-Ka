@@ -50,7 +50,9 @@ class FermentationFilterBar extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: isSelected ? palette.background : palette.textSecondary,
+                    color: isSelected
+                        ? palette.background
+                        : palette.textSecondary,
                   ),
                 ),
               ),

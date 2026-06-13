@@ -58,14 +58,8 @@ class FermentationDetailProvider extends ChangeNotifier {
         description: 'IA sugiere reducir 1.5°C',
         isAiSuggestion: true,
       ),
-      FermentationEvent(
-        time: '15:30',
-        description: 'Densidad bajó a 1.024',
-      ),
-      FermentationEvent(
-        time: '14:00',
-        description: 'pH cruzó 4.2',
-      ),
+      FermentationEvent(time: '15:30', description: 'Densidad bajó a 1.024'),
+      FermentationEvent(time: '14:00', description: 'pH cruzó 4.2'),
     ],
   );
 }

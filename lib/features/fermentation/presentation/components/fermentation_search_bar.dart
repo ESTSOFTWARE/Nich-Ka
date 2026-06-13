@@ -22,10 +22,7 @@ class FermentationSearchBar extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             'Buscar fermentación, variedad...',
-            style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: palette.textMuted,
-            ),
+            style: GoogleFonts.poppins(fontSize: 13, color: palette.textMuted),
           ),
         ],
       ),

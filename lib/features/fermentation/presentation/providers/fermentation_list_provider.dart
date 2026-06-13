@@ -76,15 +76,11 @@ class FermentationListProvider extends ChangeNotifier {
       case FermentationFilter.todos:
         return _all;
       case FermentationFilter.activos:
-        return _all
-            .where((i) => i.statusLabel == 'Fermentación')
-            .toList();
+        return _all.where((i) => i.statusLabel == 'Fermentación').toList();
       case FermentationFilter.secado:
         return _all.where((i) => i.statusLabel == 'Secado').toList();
       case FermentationFilter.completados:
-        return _all
-            .where((i) => i.statusLabel == 'Completado')
-            .toList();
+        return _all.where((i) => i.statusLabel == 'Completado').toList();
     }
   }
 
