@@ -10,6 +10,8 @@ import '../../features/profile/presentation/pages/profile_view.dart';
 import '../../features/home/presentation/pages/assistant_empty_view.dart';
 import '../../features/home/presentation/pages/assistant_view.dart';
 import '../../features/home/presentation/pages/home_view.dart';
+import '../../features/fermentation/presentation/pages/fermentation_detail_view.dart';
+import '../../features/fermentation/presentation/pages/fermentation_list_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -67,6 +69,16 @@ final GoRouter appRouter = GoRouter(
       path: '/asistente',
       builder: (BuildContext context, GoRouterState state) =>
           const AssistantView(),
+    ),
+    GoRoute(
+      path: '/fermentations',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FermentationListView(),
+    ),
+    GoRoute(
+      path: '/fermentation',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FermentationDetailView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
