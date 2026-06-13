@@ -116,14 +116,14 @@ List<ReportItem> getMockReports(ReportPeriodFilter filter) {
 
 ReportsSummary getMockSummary(ReportPeriodFilter filter) {
   final reports = getMockReports(filter);
-  final withEfficiency =
-  reports.where((r) => r.efficiency != null).toList();
+  final withEfficiency = reports.where((r) => r.efficiency != null).toList();
   final avg = withEfficiency.isEmpty
       ? 0.0
       : withEfficiency.fold(0.0, (sum, r) => sum + r.efficiency!) /
-      withEfficiency.length;
-  final completed =
-      reports.where((r) => r.status == ReportStatus.completado).length;
+            withEfficiency.length;
+  final completed = reports
+      .where((r) => r.status == ReportStatus.completado)
+      .length;
   return ReportsSummary(
     avgEfficiency: avg,
     total: reports.length,

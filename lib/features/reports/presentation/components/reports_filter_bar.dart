@@ -47,9 +47,7 @@ class ReportsFilterBar extends StatelessWidget {
                   filter.label,
                   style: GoogleFonts.poppins(
                     fontSize: 13,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected
                         ? palette.filterSelectedText
                         : palette.filterUnselectedText,

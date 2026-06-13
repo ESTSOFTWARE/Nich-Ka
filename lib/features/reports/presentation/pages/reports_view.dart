@@ -43,12 +43,12 @@ class ReportsView extends StatelessWidget {
                     : Colors.transparent,
                 boxShadow: provider.isScrolled
                     ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
                     : [],
               ),
               child: AppBar(
@@ -121,11 +121,7 @@ class ReportsView extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Icon(
-          Icons.chevron_left,
-          color: palette.textPrimary,
-          size: 26,
-        ),
+        child: Icon(Icons.chevron_left, color: palette.textPrimary, size: 26),
       ),
     );
   }
@@ -146,11 +142,7 @@ class ReportsView extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Icon(
-          Icons.filter_list,
-          color: palette.textPrimary,
-          size: 22,
-        ),
+        child: Icon(Icons.filter_list, color: palette.textPrimary, size: 22),
       ),
     );
   }
@@ -158,7 +150,7 @@ class ReportsView extends StatelessWidget {
   Widget _buildTitle(ReportsProvider provider, ReportsPalette palette) {
     final subtitle = switch (provider.summaryState) {
       UiSuccess<ReportsSummary>(:final data) =>
-      '${data.total} fermentaciones registradas',
+        '${data.total} fermentaciones registradas',
       _ => 'Cargando...',
     };
 
@@ -191,8 +183,10 @@ class ReportsView extends StatelessWidget {
   Widget _buildSummary(ReportsProvider provider, ReportsPalette palette) {
     return switch (provider.summaryState) {
       UiLoading<ReportsSummary>() => ReportsSummarySkeleton(palette: palette),
-      UiSuccess<ReportsSummary>(:final data) =>
-          ReportSummaryCards(summary: data, palette: palette),
+      UiSuccess<ReportsSummary>(:final data) => ReportSummaryCards(
+        summary: data,
+        palette: palette,
+      ),
       _ => const SizedBox.shrink(),
     };
   }
@@ -206,9 +200,11 @@ class ReportsView extends StatelessWidget {
         onRetry: provider.refresh,
       ),
       UiSuccess<List<ReportItem>>(:final data) when data.isEmpty =>
-          ReportsEmptyState(palette: palette),
-      UiSuccess<List<ReportItem>>(:final data) =>
-          ReportsList(reports: data, palette: palette),
+        ReportsEmptyState(palette: palette),
+      UiSuccess<List<ReportItem>>(:final data) => ReportsList(
+        reports: data,
+        palette: palette,
+      ),
       _ => const SizedBox.shrink(),
     };
   }

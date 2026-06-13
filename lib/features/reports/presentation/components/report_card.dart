@@ -110,10 +110,7 @@ class ReportCard extends StatelessWidget {
       children: [
         Text(
           report.id,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: palette.textMuted,
-          ),
+          style: GoogleFonts.poppins(fontSize: 12, color: palette.textMuted),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -166,10 +163,7 @@ class ReportCard extends StatelessWidget {
           ),
           Text(
             '—',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: palette.textMuted,
-            ),
+            style: GoogleFonts.poppins(fontSize: 12, color: palette.textMuted),
           ),
         ],
         if (report.isNew) ...[
