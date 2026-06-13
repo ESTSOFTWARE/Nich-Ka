@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_item.dart';
 import '../theme/home_palette.dart';
+import 'progress_ring_painter.dart';
 
 class FermentationListItem extends StatelessWidget {
   final FermentationItem item;
@@ -28,12 +29,15 @@ class FermentationListItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
-                color: palette.rowSurface,
-                borderRadius: BorderRadius.circular(10),
+              child: CustomPaint(
+                painter: ProgressRingPainter(
+                  progress: item.ringProgress,
+                  color: item.ringColor,
+                  trackColor: palette.border,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -41,17 +45,30 @@ class FermentationListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.name,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: palette.textPrimary,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '${item.name} · ${item.process}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: palette.textPrimary,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' · ${item.id}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: palette.textMuted,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    item.subtitle,
+                    item.farm,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: palette.textSecondary,
@@ -60,13 +77,27 @@ class FermentationListItem extends StatelessWidget {
                 ],
               ),
             ),
-            Text(
-              item.status,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: HomePalette.metricOrange,
-              ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  item.statusLabel,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: item.statusColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  item.timeInfo,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: palette.textMuted,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
