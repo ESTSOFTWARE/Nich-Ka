@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../features/home/presentation/theme/home_palette.dart';
+import '../../domain/entities/notification_item.dart';
+import '../../domain/entities/notification_type.dart';
+
+class NotificationListItem extends StatelessWidget {
+  final NotificationItem item;
+  final HomePalette palette;
+
+  const NotificationListItem({
+    super.key,
+    required this.item,
+    required this.palette,
+  });
+
+  (IconData, Color) get _typeStyle => switch (item.type) {
+    NotificationType.recommendation => (Icons.auto_awesome, HomePalette.accent),
+    NotificationType.alert => (
+      Icons.warning_amber_rounded,
+      HomePalette.metricOrange,
+    ),
+    NotificationType.completed => (
+      Icons.check_rounded,
+      const Color(0xFF7B5E3A),
+    ),
+    NotificationType.analysis => (Icons.auto_awesome, HomePalette.accent),
+    NotificationType.sensor => (
+      Icons.warning_amber_rounded,
+      HomePalette.metricRed,
+    ),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, color) = _typeStyle;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            item.title,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: palette.textPrimary,
+                            ),
+                          ),
+                          if (!item.isRead) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: const BoxDecoration(
+                                color: HomePalette.accent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Text(
+                      item.time,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: palette.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  item.description,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: palette.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

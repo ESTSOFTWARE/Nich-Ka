@@ -40,6 +40,7 @@ class HomeView extends StatelessWidget {
             palette: palette,
             isScrolled: provider.isScrolled,
             onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
+            onNotificationTap: () => context.push('/notifications'),
           ),
           body: Stack(
             children: [
