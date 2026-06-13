@@ -10,6 +10,7 @@ import '../../features/profile/presentation/pages/profile_view.dart';
 import '../../features/home/presentation/pages/assistant_empty_view.dart';
 import '../../features/home/presentation/pages/assistant_view.dart';
 import '../../features/home/presentation/pages/home_view.dart';
+import '../../features/chat/presentation/pages/chat_view.dart';
 import '../../features/fermentation/presentation/pages/fermentation_detail_view.dart';
 import '../../features/fermentation/presentation/pages/fermentation_list_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
@@ -79,6 +80,10 @@ final GoRouter appRouter = GoRouter(
       path: '/fermentation',
       builder: (BuildContext context, GoRouterState state) =>
           const FermentationDetailView(),
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (BuildContext context, GoRouterState state) => const ChatView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
