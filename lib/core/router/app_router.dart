@@ -11,6 +11,7 @@ import '../../features/home/presentation/pages/assistant_empty_view.dart';
 import '../../features/home/presentation/pages/assistant_view.dart';
 import '../../features/home/presentation/pages/home_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
+import '../../features/reports/presentation/pages/reports_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -18,7 +19,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) =>
-          const AssistantEmptyView(),
+      const AssistantEmptyView(),
     ),
     GoRoute(
       path: '/login',
@@ -27,32 +28,32 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/login-email',
       builder: (BuildContext context, GoRouterState state) =>
-          const LoginEmailView(),
+      const LoginEmailView(),
     ),
     GoRoute(
       path: '/forgot-password',
       builder: (BuildContext context, GoRouterState state) =>
-          const ForgotPasswordView(),
+      const ForgotPasswordView(),
     ),
     GoRoute(
       path: '/privacy',
       builder: (BuildContext context, GoRouterState state) =>
-          const PrivacyPolicyView(),
+      const PrivacyPolicyView(),
     ),
     GoRoute(
       path: '/terms',
       builder: (BuildContext context, GoRouterState state) =>
-          const TermsOfUseView(),
+      const TermsOfUseView(),
     ),
     GoRoute(
       path: '/profile',
       builder: (BuildContext context, GoRouterState state) =>
-          const ProfileView(),
+      const ProfileView(),
     ),
     GoRoute(
       path: '/change-password',
       builder: (BuildContext context, GoRouterState state) =>
-          const ChangePasswordView(),
+      const ChangePasswordView(),
     ),
     GoRoute(
       path: '/home',
@@ -61,12 +62,17 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/overview',
       builder: (BuildContext context, GoRouterState state) =>
-          const OverviewView(),
+      const OverviewView(),
     ),
     GoRoute(
       path: '/asistente',
       builder: (BuildContext context, GoRouterState state) =>
-          const AssistantView(),
+      const AssistantView(),
+    ),
+    GoRoute(
+      path: '/reportes',
+      builder: (BuildContext context, GoRouterState state) =>
+      const ReportsView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
