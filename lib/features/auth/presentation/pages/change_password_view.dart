@@ -8,7 +8,7 @@ import '../states/ui_state.dart';
 import '../components/auth_text_field.dart';
 import '../components/primary_auth_button.dart';
 import '../components/spotlight_background.dart';
-import '../../../../shared/widgets/circle_icon_button.dart';
+import '../../../../shared/components/circle_icon_button.dart';
 
 class ChangePasswordView extends StatelessWidget {
   const ChangePasswordView({super.key});

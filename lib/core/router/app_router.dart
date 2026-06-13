@@ -7,17 +7,18 @@ import '../../features/auth/presentation/pages/change_password_view.dart';
 import '../../features/legal/presentation/pages/privacy_policy_view.dart';
 import '../../features/legal/presentation/pages/terms_of_use_view.dart';
 import '../../features/profile/presentation/pages/profile_view.dart';
+import '../../features/home/presentation/pages/assistant_empty_view.dart';
+import '../../features/home/presentation/pages/assistant_view.dart';
+import '../../features/home/presentation/pages/home_view.dart';
+import '../../features/home/presentation/pages/overview_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return const Scaffold(
-          body: Center(child: Text('Nich-Ká App Inicializada')),
-        );
-      },
+      builder: (BuildContext context, GoRouterState state) =>
+          const AssistantEmptyView(),
     ),
     GoRoute(
       path: '/login',
@@ -52,6 +53,20 @@ final GoRouter appRouter = GoRouter(
       path: '/change-password',
       builder: (BuildContext context, GoRouterState state) =>
           const ChangePasswordView(),
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (BuildContext context, GoRouterState state) => const HomeView(),
+    ),
+    GoRoute(
+      path: '/overview',
+      builder: (BuildContext context, GoRouterState state) =>
+          const OverviewView(),
+    ),
+    GoRoute(
+      path: '/asistente',
+      builder: (BuildContext context, GoRouterState state) =>
+          const AssistantView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
