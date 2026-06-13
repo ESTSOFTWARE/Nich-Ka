@@ -34,7 +34,7 @@ class ProfileHeaderCard extends StatelessWidget {
               CircleAvatar(
                 radius: 42,
                 backgroundColor: palette.rowSurface,
-                child: Icon(Icons.person, size: 44, color: palette.textMuted),
+                backgroundImage: const AssetImage('assets/img/profile.png'),
               ),
               Positioned(
                 right: -2,

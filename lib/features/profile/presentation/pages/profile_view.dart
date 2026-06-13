@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
-import '../../../../shared/widgets/circle_icon_button.dart';
+import '../../../../shared/components/circle_icon_button.dart';
 import '../providers/profile_provider.dart';
 import '../theme/profile_palette.dart';
 import '../components/profile_header_card.dart';
@@ -21,14 +22,15 @@ class ProfileView extends StatelessWidget {
     return ChangeNotifierProvider<ProfileProvider>(
       create: () => ProfileProvider(),
       builder: (context, provider) {
-        final palette = provider.palette;
+        final isDark = AppThemeScope.of(context).isDark;
+        final palette = ProfilePalette.of(isDark);
         final user = provider.user;
 
         return Scaffold(
           backgroundColor: palette.background,
           body: Stack(
             children: [
-              TopGlow(isDark: provider.isDarkMode),
+              TopGlow(isDark: isDark),
               SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,9 +112,9 @@ class ProfileView extends StatelessWidget {
                                 title: 'Tema',
                                 palette: palette,
                                 trailing: ThemeToggle(
-                                  isDark: provider.isDarkMode,
+                                  isDark: isDark,
                                   palette: palette,
-                                  onChanged: provider.setDarkMode,
+                                  onChanged: AppThemeScope.of(context).setDark,
                                 ),
                               ),
                             ),
