@@ -106,7 +106,10 @@ class FermentationListView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        FermentationSearchBar(palette: palette),
+                        FermentationSearchBar(
+                          palette: palette,
+                          controller: provider.searchController,
+                        ),
                         const SizedBox(height: 12),
                         FermentationFilterBar(
                           selected: provider.filter,
