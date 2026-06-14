@@ -38,6 +38,7 @@ class HomePalette {
   static const Color metricOrange = Color(0xFFF0A646);
   static const Color metricCyan = Color(0xFF86CDFF);
   static const Color metricRed = Color(0xFFFF9C8B);
+  static const Color metricPurple = Color(0xFFA78BFA);
 
   static const HomePalette dark = HomePalette(
     background: Color(0xFF0A0A0B),

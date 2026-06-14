@@ -1,17 +1,25 @@
+import 'package:flutter/material.dart';
+
 class FermentationItem {
   final String id;
   final String name;
   final String process;
-  final String dayInfo;
-  final String status;
+  final String farm;
+  final String statusLabel;
+  final Color statusColor;
+  final String timeInfo;
+  final double ringProgress;
+  final Color ringColor;
 
   const FermentationItem({
     required this.id,
     required this.name,
     required this.process,
-    required this.dayInfo,
-    required this.status,
+    required this.farm,
+    required this.statusLabel,
+    required this.statusColor,
+    required this.timeInfo,
+    required this.ringProgress,
+    required this.ringColor,
   });
-
-  String get subtitle => '$id · $dayInfo';
 }

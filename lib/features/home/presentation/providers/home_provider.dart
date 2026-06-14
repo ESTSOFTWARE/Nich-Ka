@@ -93,10 +93,14 @@ class HomeProvider extends ChangeNotifier {
   final List<FermentationItem> fermentations = const [
     FermentationItem(
       id: 'F-023',
-      name: 'Geisha · Honey',
+      name: 'Geisha',
       process: 'Honey',
-      dayInfo: 'Día 3 / 12',
-      status: 'Secado',
+      farm: 'El Mirador',
+      statusLabel: 'Secado',
+      statusColor: HomePalette.metricOrange,
+      timeInfo: 'Día 3 / 12',
+      ringProgress: 0.40,
+      ringColor: HomePalette.metricOrange,
     ),
   ];
 

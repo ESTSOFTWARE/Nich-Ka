@@ -10,6 +10,10 @@ import '../../features/profile/presentation/pages/profile_view.dart';
 import '../../features/home/presentation/pages/assistant_empty_view.dart';
 import '../../features/home/presentation/pages/assistant_view.dart';
 import '../../features/home/presentation/pages/home_view.dart';
+import '../../features/chat/presentation/pages/chat_view.dart';
+import '../../features/notifications/presentation/pages/notifications_view.dart';
+import '../../features/fermentation/presentation/pages/fermentation_detail_view.dart';
+import '../../features/fermentation/presentation/pages/fermentation_list_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 
@@ -68,6 +72,25 @@ final GoRouter appRouter = GoRouter(
       path: '/asistente',
       builder: (BuildContext context, GoRouterState state) =>
           const AssistantView(),
+    ),
+    GoRoute(
+      path: '/fermentations',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FermentationListView(),
+    ),
+    GoRoute(
+      path: '/fermentation',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FermentationDetailView(),
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (BuildContext context, GoRouterState state) => const ChatView(),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (BuildContext context, GoRouterState state) =>
+          const NotificationsView(),
     ),
     GoRoute(
       path: '/reportes',
