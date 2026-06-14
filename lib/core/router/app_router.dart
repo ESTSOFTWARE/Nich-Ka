@@ -9,6 +9,7 @@ import '../../features/legal/presentation/pages/terms_of_use_view.dart';
 import '../../features/profile/presentation/pages/profile_view.dart';
 import '../../features/home/presentation/pages/assistant_empty_view.dart';
 import '../../features/home/presentation/pages/assistant_view.dart';
+import '../../features/home/presentation/pages/home_student_view.dart';
 import '../../features/home/presentation/pages/home_view.dart';
 import '../../features/chat/presentation/pages/chat_view.dart';
 import '../../features/notifications/presentation/pages/notifications_view.dart';
@@ -24,6 +25,11 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      builder: (BuildContext context, GoRouterState state) =>
+          const HomeStudentView(),
+    ),
+    GoRoute(
+      path: '/assistant-empty',
       builder: (BuildContext context, GoRouterState state) =>
           const AssistantEmptyView(),
     ),

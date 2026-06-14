@@ -5,11 +5,16 @@ import '../../domain/entities/fermentation_filter.dart';
 
 class FermentationListProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
+  final TextEditingController searchController = TextEditingController();
+
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
 
+  String get query => searchController.text.trim().toLowerCase();
+
   FermentationListProvider() {
     scrollController.addListener(_onScroll);
+    searchController.addListener(notifyListeners);
   }
 
   void _onScroll() {
@@ -24,6 +29,8 @@ class FermentationListProvider extends ChangeNotifier {
   void dispose() {
     scrollController.removeListener(_onScroll);
     scrollController.dispose();
+    searchController.removeListener(notifyListeners);
+    searchController.dispose();
     super.dispose();
   }
 
@@ -95,16 +102,25 @@ class FermentationListProvider extends ChangeNotifier {
   ];
 
   List<FermentationItem> get items {
-    switch (_filter) {
-      case FermentationFilter.todos:
-        return _all;
-      case FermentationFilter.activos:
-        return _all.where((i) => i.statusLabel == 'Fermentación').toList();
-      case FermentationFilter.secado:
-        return _all.where((i) => i.statusLabel == 'Secado').toList();
-      case FermentationFilter.completados:
-        return _all.where((i) => i.statusLabel == 'Completado').toList();
-    }
+    final byFilter = switch (_filter) {
+      FermentationFilter.todos => _all,
+      FermentationFilter.activos =>
+        _all.where((i) => i.statusLabel == 'Fermentación').toList(),
+      FermentationFilter.secado =>
+        _all.where((i) => i.statusLabel == 'Secado').toList(),
+      FermentationFilter.completados =>
+        _all.where((i) => i.statusLabel == 'Completado').toList(),
+    };
+    if (query.isEmpty) return byFilter;
+    return byFilter
+        .where(
+          (i) =>
+              i.id.toLowerCase().contains(query) ||
+              i.name.toLowerCase().contains(query) ||
+              i.process.toLowerCase().contains(query) ||
+              i.farm.toLowerCase().contains(query),
+        )
+        .toList();
   }
 
   int get total => _all.length;
