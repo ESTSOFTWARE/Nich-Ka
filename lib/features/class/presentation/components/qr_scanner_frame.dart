@@ -68,3 +68,5 @@ class QrScannerFrame extends StatelessWidget {
     );
   }
 }
+
+// Zanate
