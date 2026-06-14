@@ -6,8 +6,14 @@ import 'report_card.dart';
 class ReportsList extends StatelessWidget {
   final List<ReportItem> reports;
   final ReportsPalette palette;
+  final void Function(ReportItem report)? onViewReport;
 
-  const ReportsList({super.key, required this.reports, required this.palette});
+  const ReportsList({
+    super.key,
+    required this.reports,
+    required this.palette,
+    this.onViewReport,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,13 @@ class ReportsList extends StatelessWidget {
         final isLast = report == reports.last;
         return Padding(
           padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
-          child: ReportCard(report: report, palette: palette),
+          child: ReportCard(
+            report: report,
+            palette: palette,
+            onViewReport: onViewReport != null
+                ? () => onViewReport!(report)
+                : null,
+          ),
         );
       }).toList(),
     );

@@ -15,6 +15,7 @@ import '../../features/notifications/presentation/pages/notifications_view.dart'
 import '../../features/fermentation/presentation/pages/fermentation_detail_view.dart';
 import '../../features/fermentation/presentation/pages/fermentation_list_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
+import '../../features/reports/presentation/pages/report_detail_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
 
@@ -97,6 +98,11 @@ final GoRouter appRouter = GoRouter(
       path: '/reports',
       builder: (BuildContext context, GoRouterState state) =>
           const ReportsView(),
+    ),
+    GoRoute(
+      path: '/report-detail',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ReportDetailView(),
     ),
     GoRoute(
       path: '/calculator',
