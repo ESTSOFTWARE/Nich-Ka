@@ -11,6 +11,7 @@ import '../components/fermentation_events_section.dart';
 import '../components/fermentation_info_banner.dart';
 import '../providers/fermentation_detail_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../home/presentation/components/home_glow.dart';
 
 class FermentationDetailView extends StatelessWidget {
   const FermentationDetailView({super.key});
@@ -24,14 +25,16 @@ class FermentationDetailView extends StatelessWidget {
         final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
-            backgroundColor: palette.background,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
             systemOverlayStyle: isDark
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
             automaticallyImplyLeading: false,
+            centerTitle: false,
             leadingWidth: 56,
             leading: Center(
               child: GestureDetector(
@@ -95,34 +98,44 @@ class FermentationDetailView extends StatelessWidget {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FermentationDetailStatusCard(
-                  detail: provider.detail,
-                  palette: palette,
+          body: Stack(
+            children: [
+              HomeGlow(palette: palette),
+              SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                  16,
+                  32,
                 ),
-                const SizedBox(height: 12),
-                FermentationDetailChartCard(
-                  points: provider.detail.chartPoints,
-                  palette: palette,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FermentationDetailStatusCard(
+                      detail: provider.detail,
+                      palette: palette,
+                    ),
+                    const SizedBox(height: 12),
+                    FermentationDetailChartCard(
+                      points: provider.detail.chartPoints,
+                      palette: palette,
+                    ),
+                    const SizedBox(height: 12),
+                    FermentationDetailMetricsGrid(
+                      detail: provider.detail,
+                      palette: palette,
+                    ),
+                    const SizedBox(height: 12),
+                    FermentationInfoBanner(palette: palette),
+                    const SizedBox(height: 24),
+                    FermentationEventsSection(
+                      events: provider.detail.events,
+                      palette: palette,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                FermentationDetailMetricsGrid(
-                  detail: provider.detail,
-                  palette: palette,
-                ),
-                const SizedBox(height: 12),
-                FermentationInfoBanner(palette: palette),
-                const SizedBox(height: 24),
-                FermentationEventsSection(
-                  events: provider.detail.events,
-                  palette: palette,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

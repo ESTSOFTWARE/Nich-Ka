@@ -13,6 +13,7 @@ import '../components/chat_recommendation_bubble.dart';
 import '../components/chat_suggestion_chips.dart';
 import '../components/chat_user_bubble.dart';
 import '../providers/chat_provider.dart';
+import '../../../home/presentation/components/home_glow.dart';
 
 class ChatView extends StatelessWidget {
   const ChatView({super.key});
@@ -26,19 +27,21 @@ class ChatView extends StatelessWidget {
         final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
-            backgroundColor: palette.background,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
             systemOverlayStyle: isDark
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
             automaticallyImplyLeading: false,
+            centerTitle: false,
             leadingWidth: 56,
             leading: Center(
               child: GestureDetector(
                 onTap: () =>
-                    context.canPop() ? context.pop() : context.go('/asistente'),
+                    context.canPop() ? context.pop() : context.go('/assistant'),
                 child: Container(
                   width: 36,
                   height: 36,
@@ -101,60 +104,70 @@ class ChatView extends StatelessWidget {
               ),
             ],
           ),
-          body: Column(
+          body: Stack(
             children: [
-              Expanded(
-                child: ListView.builder(
-                  controller: provider.scrollController,
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  itemCount: provider.messages.length,
-                  itemBuilder: (context, index) {
-                    final msg = provider.messages[index];
-                    final isUser = msg.type == ChatMessageType.user;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Column(
-                        crossAxisAlignment: isUser
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          _buildBubble(msg, palette),
-                          const SizedBox(height: 4),
-                          Text(
-                            msg.time,
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: palette.textMuted,
-                            ),
-                          ),
-                        ],
+              HomeGlow(palette: palette),
+              Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                        16,
+                        16,
                       ),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  10,
-                  16,
-                  MediaQuery.of(context).padding.bottom + 16,
-                ),
-                decoration: BoxDecoration(
-                  color: palette.background,
-                  border: Border(top: BorderSide(color: palette.border)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ChatSuggestionChips(
-                      chips: provider.suggestions,
-                      palette: palette,
+                      itemCount: provider.messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = provider.messages[index];
+                        final isUser = msg.type == ChatMessageType.user;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Column(
+                            crossAxisAlignment: isUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              _buildBubble(msg, palette),
+                              const SizedBox(height: 4),
+                              Text(
+                                msg.time,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: palette.textMuted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    const SizedBox(height: 8),
-                    ChatInputBar(palette: palette),
-                  ],
-                ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      10,
+                      16,
+                      MediaQuery.of(context).padding.bottom + 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: palette.background,
+                      border: Border(top: BorderSide(color: palette.border)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ChatSuggestionChips(
+                          chips: provider.suggestions,
+                          palette: palette,
+                        ),
+                        const SizedBox(height: 8),
+                        ChatInputBar(palette: palette),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

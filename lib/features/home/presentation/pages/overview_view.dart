@@ -9,6 +9,7 @@ import '../../../../shared/components/app_tab.dart';
 import '../../../../shared/components/bottom_nav_bar.dart';
 import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
+import '../../../../shared/utils/bottom_nav_navigation.dart';
 import '../components/fermentation_curve_card.dart';
 import '../components/fermentation_progress_list.dart';
 import '../components/home_glow.dart';
@@ -104,7 +105,7 @@ class OverviewView extends StatelessWidget {
           bottomNavigationBar: BottomNavBar(
             selected: AppTab.inicio,
             palette: palette,
-            onTabSelected: (_) {},
+            onTabSelected: (tab) => onBottomNavSelected(context, tab),
           ),
         );
       },

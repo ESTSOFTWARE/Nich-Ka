@@ -9,6 +9,7 @@ import '../../../../shared/components/app_tab.dart';
 import '../../../../shared/components/bottom_nav_bar.dart';
 import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
+import '../../../../shared/utils/bottom_nav_navigation.dart';
 import '../components/active_fermentation_card.dart';
 import '../components/ai_recommendation_card.dart';
 import '../components/fermentation_list_item.dart';
@@ -106,7 +107,7 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () => context.push('/fermentations'),
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: Size.zero,
@@ -140,7 +141,7 @@ class HomeView extends StatelessWidget {
           bottomNavigationBar: BottomNavBar(
             selected: AppTab.inicio,
             palette: palette,
-            onTabSelected: (_) {},
+            onTabSelected: (tab) => onBottomNavSelected(context, tab),
           ),
         );
       },
