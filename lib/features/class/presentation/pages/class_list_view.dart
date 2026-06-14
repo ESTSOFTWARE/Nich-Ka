@@ -188,12 +188,20 @@ class ClassListView extends StatelessWidget {
           palette: palette,
           onJoinClass: () => context.push('/class'),
         ),
-      UiSuccess<List<ClassItem>>(:final data) => _buildList(context, data, palette),
+      UiSuccess<List<ClassItem>>(:final data) => _buildList(
+        context,
+        data,
+        palette,
+      ),
       _ => const SizedBox.shrink(),
     };
   }
 
-  Widget _buildList(BuildContext context, List<ClassItem> items, ClassPalette palette) {
+  Widget _buildList(
+    BuildContext context,
+    List<ClassItem> items,
+    ClassPalette palette,
+  ) {
     return Column(
       children: items.map((item) {
         final isLast = item == items.last;
