@@ -89,7 +89,7 @@ class ReportsView extends StatelessWidget {
                       const SizedBox(height: 16),
                       _buildSummary(provider, palette),
                       const SizedBox(height: 16),
-                      _buildList(provider, palette),
+                      _buildList(context, provider, palette),
                     ],
                   ),
                 ),
@@ -185,7 +185,11 @@ class ReportsView extends StatelessWidget {
     };
   }
 
-  Widget _buildList(ReportsProvider provider, ReportsPalette palette) {
+  Widget _buildList(
+    BuildContext context,
+    ReportsProvider provider,
+    ReportsPalette palette,
+  ) {
     return switch (provider.reportsState) {
       UiLoading<List<ReportItem>>() => ReportsListSkeleton(palette: palette),
       UiError<List<ReportItem>>(:final message) => ReportsErrorState(
@@ -198,6 +202,7 @@ class ReportsView extends StatelessWidget {
       UiSuccess<List<ReportItem>>(:final data) => ReportsList(
         reports: data,
         palette: palette,
+        onViewReport: (_) => context.go('/report-detail'),
       ),
       _ => const SizedBox.shrink(),
     };

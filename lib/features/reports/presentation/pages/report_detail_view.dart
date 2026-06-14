@@ -1,0 +1,329 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/presentation/app_theme_scope.dart';
+import '../../../../core/presentation/change_notifier_provider.dart';
+import '../../../../shared/theme/app_palette.dart';
+import '../../../home/presentation/components/home_glow.dart';
+import '../../domain/entities/report_detail.dart';
+import '../components/efficiency_card.dart';
+import '../components/nlp_analysis_card.dart';
+import '../components/report_detail_skeleton.dart';
+import '../components/report_metadata.dart';
+import '../components/sensors_metrics_card.dart';
+import '../providers/report_detail_provider.dart';
+import '../states/ui_state.dart';
+import '../theme/reports_palette.dart';
+
+class ReportDetailView extends StatelessWidget {
+  const ReportDetailView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ReportDetailProvider>(
+      create: () => ReportDetailProvider(),
+      builder: (context, provider) {
+        final isDark = AppThemeScope.of(context).isDark;
+        final palette = ReportsPalette.of(isDark);
+        final homePalette = AppPalette.of(isDark);
+
+        final successData = switch (provider.state) {
+          UiSuccess<ReportDetail>(:final data) => data,
+          _ => null,
+        };
+
+        return Scaffold(
+          backgroundColor: palette.background,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            systemOverlayStyle: isDark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
+            automaticallyImplyLeading: false,
+            centerTitle: false,
+            toolbarHeight: successData != null ? 64 : kToolbarHeight,
+            leadingWidth: 56,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: GestureDetector(
+                onTap: () =>
+                    context.canPop() ? context.pop() : context.go('/reports'),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: palette.border),
+                  ),
+                  child: Icon(
+                    Icons.chevron_left,
+                    color: palette.textPrimary,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+            title: successData != null
+                ? _buildHeaderTitle(successData, palette)
+                : Text(
+                    'Detalle de Reporte',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: palette.textPrimary,
+                    ),
+                  ),
+            actions: [
+              if (successData != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: GestureDetector(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Descargando PDF del reporte #${successData.reportNumber}...',
+                            style: GoogleFonts.poppins(fontSize: 13),
+                          ),
+                          backgroundColor: palette.surface,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ReportsPalette.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: ReportsPalette.accent.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.file_download_outlined,
+                            size: 16,
+                            color: ReportsPalette.accent,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'PDF',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: ReportsPalette.accent,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    margin: const EdgeInsets.only(right: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: palette.border),
+                    ),
+                    child: Icon(
+                      Icons.more_horiz,
+                      color: palette.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          body: Stack(
+            children: [
+              HomeGlow(palette: homePalette),
+              switch (provider.state) {
+                UiLoading<ReportDetail>() => SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                    16,
+                    32,
+                  ),
+                  child: ReportDetailSkeleton(palette: palette),
+                ),
+                UiError<ReportDetail>(:final message) => _buildError(
+                  context,
+                  message,
+                  provider.retry,
+                  palette,
+                  homePalette,
+                ),
+                UiSuccess<ReportDetail>(:final data) => _buildContent(
+                  context,
+                  data,
+                  palette,
+                  homePalette,
+                ),
+                _ => const SizedBox.shrink(),
+              },
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeaderTitle(ReportDetail detail, ReportsPalette palette) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Reporte #${detail.reportNumber}',
+          style: GoogleFonts.poppins(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: palette.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          '${detail.fermentationCode} · ${detail.batchName} · ${detail.date}',
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: palette.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    ReportDetail detail,
+    ReportsPalette palette,
+    AppPalette homePalette,
+  ) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        MediaQuery.of(context).padding.top + kToolbarHeight + 24,
+        16,
+        32,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EfficiencyCard(
+            efficiency: detail.efficiency,
+            ethanolDetected: detail.ethanolDetected,
+            ethanolTheoretical: detail.ethanolTheoretical,
+            duration: detail.duration,
+            palette: palette,
+          ),
+          const SizedBox(height: 12),
+          NlpAnalysisCard(analysis: detail.nlpAnalysis, palette: palette),
+          const SizedBox(height: 12),
+          SensorsMetricsCard(metrics: detail.sensorMetrics, palette: palette),
+          const SizedBox(height: 12),
+          ReportMetadata(
+            generatedAt: detail.generatedAt,
+            downloads: detail.downloads,
+            views: detail.views,
+            palette: palette,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildError(
+    BuildContext context,
+    String message,
+    VoidCallback onRetry,
+    ReportsPalette palette,
+    AppPalette homePalette,
+  ) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+        16,
+        32,
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 48),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: ReportsPalette.error.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: ReportsPalette.error.withValues(alpha: 0.25),
+              ),
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.error_outline,
+                size: 28,
+                color: ReportsPalette.error,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Ocurrió un error',
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: palette.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: palette.textSecondary,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: onRetry,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: palette.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: palette.border),
+              ),
+              child: Text(
+                'Reintentar',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: palette.textPrimary,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
