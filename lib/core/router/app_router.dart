@@ -19,6 +19,7 @@ import '../../features/home/presentation/pages/overview_view.dart';
 import '../../features/reports/presentation/pages/report_detail_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
+import '../../features/class/presentation/pages/class_list_view.dart';
 import '../../features/class/presentation/pages/join_class_view.dart';
 import '../../features/simulator/presentation/pages/simulator_view.dart';
 
@@ -126,6 +127,11 @@ final GoRouter appRouter = GoRouter(
       path: '/class',
       builder: (BuildContext context, GoRouterState state) =>
           const JoinClassView(),
+    ),
+    GoRoute(
+      path: '/classes',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ClassListView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
