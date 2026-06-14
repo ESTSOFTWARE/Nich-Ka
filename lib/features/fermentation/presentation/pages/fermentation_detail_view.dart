@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -26,82 +27,96 @@ class FermentationDetailView extends StatelessWidget {
         return Scaffold(
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            systemOverlayStyle: isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            automaticallyImplyLeading: false,
-            centerTitle: false,
-            leadingWidth: 56,
-            leading: Center(
-              child: GestureDetector(
-                onTap: () => context.canPop()
-                    ? context.pop()
-                    : context.go('/fermentations'),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  margin: const EdgeInsets.only(left: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: palette.border),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: provider.isScrolled ? 20 : 0,
+                  sigmaY: provider.isScrolled ? 20 : 0,
+                ),
+                child: AppBar(
+                  backgroundColor: provider.isScrolled
+                      ? palette.glassBackground
+                      : Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  systemOverlayStyle: isDark
+                      ? SystemUiOverlayStyle.light
+                      : SystemUiOverlayStyle.dark,
+                  automaticallyImplyLeading: false,
+                  centerTitle: false,
+                  leadingWidth: 56,
+                  leading: Center(
+                    child: GestureDetector(
+                      onTap: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/fermentations'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.only(left: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: palette.border),
+                        ),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: palette.textPrimary,
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Icon(
-                    Icons.chevron_left,
-                    color: palette.textPrimary,
-                    size: 22,
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        provider.detail.title,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        provider.detail.subtitle,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
+                  actions: [
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.only(right: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: palette.border),
+                        ),
+                        child: Icon(
+                          Icons.more_horiz,
+                          color: palette.textPrimary,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  provider.detail.title,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: palette.textPrimary,
-                  ),
-                ),
-                Text(
-                  provider.detail.subtitle,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: palette.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  margin: const EdgeInsets.only(right: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: palette.border),
-                  ),
-                  child: Icon(
-                    Icons.more_horiz,
-                    color: palette.textPrimary,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
           ),
           body: Stack(
             children: [
               HomeGlow(palette: palette),
               SingleChildScrollView(
+                controller: provider.scrollController,
                 padding: EdgeInsets.fromLTRB(
                   16,
                   MediaQuery.of(context).padding.top + kToolbarHeight + 8,

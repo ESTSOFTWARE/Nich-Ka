@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,35 +36,28 @@ class ReportsView extends StatelessWidget {
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                color: provider.isScrolled
-                    ? palette.background
-                    : Colors.transparent,
-                boxShadow: provider.isScrolled
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : [],
-              ),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                scrolledUnderElevation: 0,
-                automaticallyImplyLeading: false,
-                titleSpacing: 16,
-                title: Row(
-                  children: [
-                    _buildBackButton(context, palette),
-                    const SizedBox(width: 12),
-                    Expanded(child: _buildTitle(provider, palette)),
-                    _buildFilterButton(palette),
-                  ],
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: provider.isScrolled ? 20 : 0,
+                  sigmaY: provider.isScrolled ? 20 : 0,
+                ),
+                child: AppBar(
+                  backgroundColor: provider.isScrolled
+                      ? homePalette.glassBackground
+                      : Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  automaticallyImplyLeading: false,
+                  titleSpacing: 16,
+                  title: Row(
+                    children: [
+                      _buildBackButton(context, palette),
+                      const SizedBox(width: 12),
+                      Expanded(child: _buildTitle(provider, palette)),
+                      _buildFilterButton(palette),
+                    ],
+                  ),
                 ),
               ),
             ),

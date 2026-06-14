@@ -4,6 +4,29 @@ import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/fermentation_filter.dart';
 
 class FermentationListProvider extends ChangeNotifier {
+  final ScrollController scrollController = ScrollController();
+  bool _isScrolled = false;
+  bool get isScrolled => _isScrolled;
+
+  FermentationListProvider() {
+    scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = scrollController.offset > 4;
+    if (scrolled != _isScrolled) {
+      _isScrolled = scrolled;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.dispose();
+  }
+
   FermentationFilter _filter = FermentationFilter.todos;
   FermentationFilter get filter => _filter;
 

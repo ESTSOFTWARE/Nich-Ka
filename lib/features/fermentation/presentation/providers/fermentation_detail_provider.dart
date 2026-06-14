@@ -6,6 +6,29 @@ import '../../domain/entities/fermentation_detail.dart';
 import '../../domain/entities/fermentation_event.dart';
 
 class FermentationDetailProvider extends ChangeNotifier {
+  final ScrollController scrollController = ScrollController();
+  bool _isScrolled = false;
+  bool get isScrolled => _isScrolled;
+
+  FermentationDetailProvider() {
+    scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = scrollController.offset > 4;
+    if (scrolled != _isScrolled) {
+      _isScrolled = scrolled;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.dispose();
+  }
+
   final FermentationDetail detail = const FermentationDetail(
     id: 'F-024',
     variety: 'Caturra',

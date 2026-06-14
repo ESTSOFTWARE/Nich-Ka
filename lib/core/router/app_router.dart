@@ -17,6 +17,7 @@ import '../../features/fermentation/presentation/pages/fermentation_list_view.da
 import '../../features/home/presentation/pages/overview_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
+import '../../features/simulator/presentation/pages/simulator_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -102,6 +103,11 @@ final GoRouter appRouter = GoRouter(
       path: '/calculator',
       builder: (BuildContext context, GoRouterState state) =>
           const CalculatorView(),
+    ),
+    GoRoute(
+      path: '/simulator',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SimulatorView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
