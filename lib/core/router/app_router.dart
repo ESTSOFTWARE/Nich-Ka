@@ -15,6 +15,7 @@ import '../../features/notifications/presentation/pages/notifications_view.dart'
 import '../../features/fermentation/presentation/pages/fermentation_detail_view.dart';
 import '../../features/fermentation/presentation/pages/fermentation_list_view.dart';
 import '../../features/home/presentation/pages/overview_view.dart';
+import '../../features/reports/presentation/pages/reports_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -90,6 +91,11 @@ final GoRouter appRouter = GoRouter(
       path: '/notifications',
       builder: (BuildContext context, GoRouterState state) =>
           const NotificationsView(),
+    ),
+    GoRoute(
+      path: '/reportes',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ReportsView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
