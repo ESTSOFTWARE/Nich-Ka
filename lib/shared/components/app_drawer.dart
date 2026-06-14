@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 import 'app_drawer_header.dart';
 import 'app_drawer_item.dart';
 import 'drawer_bottom_action.dart';
 import 'drawer_menu_item.dart';
 
 class AppDrawer extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
   final AppDrawerItem selected;
   final ValueChanged<AppDrawerItem> onSelected;
   final VoidCallback? onSettings;

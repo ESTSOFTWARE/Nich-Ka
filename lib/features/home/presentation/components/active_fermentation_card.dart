@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/active_fermentation.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'circular_progress_ring.dart';
 import 'fermentation_chart.dart';
 import 'metrics_grid.dart';
@@ -9,7 +9,7 @@ import 'time_label.dart';
 
 class ActiveFermentationCard extends StatelessWidget {
   final ActiveFermentation fermentation;
-  final HomePalette palette;
+  final AppPalette palette;
   final String elapsedFormatted;
   final String objectiveFormatted;
 
@@ -43,7 +43,7 @@ class ActiveFermentationCard extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -53,7 +53,7 @@ class ActiveFermentationCard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         letterSpacing: 0.8,
                       ),
                     ),

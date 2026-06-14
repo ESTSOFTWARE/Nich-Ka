@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class AiCardHeader extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const AiCardHeader({super.key, required this.palette});
 
@@ -16,7 +16,7 @@ class AiCardHeader extends StatelessWidget {
           width: 30,
           height: 30,
           decoration: BoxDecoration(
-            color: HomePalette.accent.withValues(alpha: 0.18),
+            color: AppPalette.accent.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -25,7 +25,7 @@ class AiCardHeader extends StatelessWidget {
               width: 16,
               height: 16,
               colorFilter: const ColorFilter.mode(
-                HomePalette.accent,
+                AppPalette.accent,
                 BlendMode.srcIn,
               ),
             ),
@@ -48,7 +48,7 @@ class AiCardHeader extends StatelessWidget {
               '· activo',
               style: GoogleFonts.poppins(
                 fontSize: 11,
-                color: HomePalette.accent,
+                color: AppPalette.accent,
                 height: 1.2,
               ),
             ),

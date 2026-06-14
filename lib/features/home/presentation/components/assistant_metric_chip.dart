@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class AssistantMetricChip extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const AssistantMetricChip({
     super.key,

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../features/home/presentation/components/home_glow.dart';
-import '../../../../features/home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../components/report_summary_cards.dart';
 import '../components/reports_empty_state.dart';
 import '../components/reports_error_state.dart';
@@ -27,7 +27,7 @@ class ReportsView extends StatelessWidget {
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = ReportsPalette.of(isDark);
-        final homePalette = HomePalette.of(isDark);
+        final homePalette = AppPalette.of(isDark);
 
         return Scaffold(
           key: provider.scaffoldKey,

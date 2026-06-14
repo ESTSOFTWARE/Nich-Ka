@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'assistant_metric_chip.dart';
 
 class ActiveFermentationSummary extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ActiveFermentationSummary({super.key, required this.palette});
 
@@ -26,7 +26,7 @@ class ActiveFermentationSummary extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -55,25 +55,25 @@ class ActiveFermentationSummary extends StatelessWidget {
               AssistantMetricChip(
                 label: 'TEMP',
                 value: '22.4°',
-                color: HomePalette.metricOrange,
+                color: AppPalette.metricOrange,
                 palette: palette,
               ),
               AssistantMetricChip(
                 label: 'PH',
                 value: '4.20',
-                color: HomePalette.metricCyan,
+                color: AppPalette.metricCyan,
                 palette: palette,
               ),
               AssistantMetricChip(
                 label: 'DENS',
                 value: '1.024',
-                color: HomePalette.accent,
+                color: AppPalette.accent,
                 palette: palette,
               ),
               AssistantMetricChip(
                 label: 'ALC',
                 value: '6.4%',
-                color: HomePalette.metricRed,
+                color: AppPalette.metricRed,
                 palette: palette,
               ),
             ],

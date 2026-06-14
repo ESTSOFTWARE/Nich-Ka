@@ -10,7 +10,7 @@ import '../components/fermentation_detail_status_card.dart';
 import '../components/fermentation_events_section.dart';
 import '../components/fermentation_info_banner.dart';
 import '../providers/fermentation_detail_provider.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class FermentationDetailView extends StatelessWidget {
   const FermentationDetailView({super.key});
@@ -21,7 +21,7 @@ class FermentationDetailView extends StatelessWidget {
       create: () => FermentationDetailProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
           appBar: AppBar(

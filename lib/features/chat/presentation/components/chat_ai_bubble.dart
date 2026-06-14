@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChatAiBubble extends StatelessWidget {
   final ChatMessage message;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChatAiBubble({super.key, required this.message, required this.palette});
 
@@ -52,7 +52,7 @@ class ChatAiBubble extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   height: 1.5,
                 ),
               ),

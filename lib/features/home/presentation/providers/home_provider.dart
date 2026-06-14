@@ -4,7 +4,7 @@ import '../../domain/entities/ai_recommendation.dart';
 import '../../domain/entities/chart_point.dart';
 import '../../domain/entities/fermentation_item.dart';
 import '../../domain/entities/fermentation_metric.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class HomeProvider extends ChangeNotifier {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -52,35 +52,35 @@ class HomeProvider extends ChangeNotifier {
       value: '22.4',
       unit: '°C',
       change: 'estable',
-      color: HomePalette.metricOrange,
+      color: AppPalette.metricOrange,
     ),
     ph: FermentationMetric(
       label: 'PH',
       value: '4.20',
       unit: '',
       change: '-0.05 / h',
-      color: HomePalette.metricCyan,
+      color: AppPalette.metricCyan,
     ),
     density: FermentationMetric(
       label: 'DENSIDAD',
       value: '1.024',
       unit: 'g/mL',
       change: '-0.004 / h',
-      color: HomePalette.accent,
+      color: AppPalette.accent,
     ),
     alcohol: FermentationMetric(
       label: 'ALCOHOL',
       value: '6.4',
       unit: '%v/v',
       change: '+0.3 / h',
-      color: HomePalette.metricRed,
+      color: AppPalette.metricRed,
     ),
     conductivity: FermentationMetric(
       label: 'CONDUCTIVIDAD',
       value: '2.8',
       unit: 'mS/cm',
       change: '+0.1 / h',
-      color: HomePalette.metricCyan,
+      color: AppPalette.metricCyan,
     ),
   );
 
@@ -97,10 +97,10 @@ class HomeProvider extends ChangeNotifier {
       process: 'Honey',
       farm: 'El Mirador',
       statusLabel: 'Secado',
-      statusColor: HomePalette.metricOrange,
+      statusColor: AppPalette.metricOrange,
       timeInfo: 'Día 3 / 12',
       ringProgress: 0.40,
-      ringColor: HomePalette.metricOrange,
+      ringColor: AppPalette.metricOrange,
     ),
   ];
 

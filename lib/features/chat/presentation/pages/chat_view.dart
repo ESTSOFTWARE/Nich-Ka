@@ -6,7 +6,7 @@ import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/chat_message_type.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../components/chat_ai_bubble.dart';
 import '../components/chat_input_bar.dart';
 import '../components/chat_recommendation_bubble.dart';
@@ -23,7 +23,7 @@ class ChatView extends StatelessWidget {
       create: () => ChatProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
           appBar: AppBar(
@@ -85,7 +85,7 @@ class ChatView extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: HomePalette.accent,
+                    color: AppPalette.accent,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -163,7 +163,7 @@ class ChatView extends StatelessWidget {
     );
   }
 
-  Widget _buildBubble(ChatMessage message, HomePalette palette) {
+  Widget _buildBubble(ChatMessage message, AppPalette palette) {
     return switch (message.type) {
       ChatMessageType.ai => ChatAiBubble(message: message, palette: palette),
       ChatMessageType.user => ChatUserBubble(

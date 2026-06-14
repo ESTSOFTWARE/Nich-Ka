@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 
 class DrawerBottomAction extends StatelessWidget {
   final IconData icon;
   final String label;
-  final HomePalette palette;
+  final AppPalette palette;
   final VoidCallback onTap;
 
   const DrawerBottomAction({

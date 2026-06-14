@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChatSuggestionChips extends StatelessWidget {
   final List<String> chips;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChatSuggestionChips({
     super.key,

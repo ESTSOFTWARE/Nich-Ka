@@ -3,7 +3,7 @@ import '../../domain/entities/chart_point.dart';
 import '../../domain/entities/dashboard_stat.dart';
 import '../../domain/entities/fermentation_card.dart';
 import '../components/time_range.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class OverviewProvider extends ChangeNotifier {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -51,19 +51,19 @@ class OverviewProvider extends ChangeNotifier {
       label: 'TIEMPO TOTAL',
       value: '62h',
       subtitle: 'fermentación',
-      color: HomePalette.metricOrange,
+      color: AppPalette.metricOrange,
     ),
     DashboardStat(
       label: 'CALIDAD SCA',
       value: '86.4',
       subtitle: 'promedio mes',
-      color: HomePalette.metricCyan,
+      color: AppPalette.metricCyan,
     ),
     DashboardStat(
       label: 'ALERTAS',
       value: '2',
       subtitle: 'requieren atención',
-      color: HomePalette.metricRed,
+      color: AppPalette.metricRed,
     ),
   ];
 
@@ -90,21 +90,21 @@ class OverviewProvider extends ChangeNotifier {
       name: 'Caturra',
       stage: 'Fermentación',
       progress: 0.78,
-      ringColor: HomePalette.accent,
+      ringColor: AppPalette.accent,
     ),
     FermentationCard(
       id: 'F-023',
       name: 'Geisha',
       stage: 'Secado',
       progress: 0.45,
-      ringColor: HomePalette.metricOrange,
+      ringColor: AppPalette.metricOrange,
     ),
     FermentationCard(
       id: 'F-022',
       name: 'Bourbon',
       stage: 'Reposo',
       progress: 0.90,
-      ringColor: HomePalette.metricCyan,
+      ringColor: AppPalette.metricCyan,
     ),
   ];
 

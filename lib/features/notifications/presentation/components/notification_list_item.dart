@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../features/home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/notification_item.dart';
 import '../../domain/entities/notification_type.dart';
 
 class NotificationListItem extends StatelessWidget {
   final NotificationItem item;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const NotificationListItem({
     super.key,
@@ -15,19 +15,19 @@ class NotificationListItem extends StatelessWidget {
   });
 
   (IconData, Color) get _typeStyle => switch (item.type) {
-    NotificationType.recommendation => (Icons.auto_awesome, HomePalette.accent),
+    NotificationType.recommendation => (Icons.auto_awesome, AppPalette.accent),
     NotificationType.alert => (
       Icons.warning_amber_rounded,
-      HomePalette.metricOrange,
+      AppPalette.metricOrange,
     ),
     NotificationType.completed => (
       Icons.check_rounded,
       const Color(0xFF7B5E3A),
     ),
-    NotificationType.analysis => (Icons.auto_awesome, HomePalette.accent),
+    NotificationType.analysis => (Icons.auto_awesome, AppPalette.accent),
     NotificationType.sensor => (
       Icons.warning_amber_rounded,
-      HomePalette.metricRed,
+      AppPalette.metricRed,
     ),
   };
 
@@ -73,7 +73,7 @@ class NotificationListItem extends StatelessWidget {
                               width: 7,
                               height: 7,
                               decoration: const BoxDecoration(
-                                color: HomePalette.accent,
+                                color: AppPalette.accent,
                                 shape: BoxShape.circle,
                               ),
                             ),

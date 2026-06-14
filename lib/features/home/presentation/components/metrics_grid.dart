@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/active_fermentation.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'metric_tile.dart';
 
 class MetricsGrid extends StatelessWidget {
   final ActiveFermentation fermentation;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const MetricsGrid({
     super.key,

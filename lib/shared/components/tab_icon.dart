@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 import 'app_tab.dart';
 
 class TabIcon extends StatelessWidget {
   final AppTab tab;
   final bool isSelected;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const TabIcon({
     super.key,

@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class RingPainter extends CustomPainter {
   final double progress;
-  final HomePalette palette;
+  final AppPalette palette;
 
   RingPainter({required this.progress, required this.palette});
 
@@ -23,7 +23,7 @@ class RingPainter extends CustomPainter {
     canvas.drawCircle(center, radius, trackPaint);
 
     final progressPaint = Paint()
-      ..color = HomePalette.accent
+      ..color = AppPalette.accent
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class TimeLabel extends StatelessWidget {
   final String label;
   final String value;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const TimeLabel({
     super.key,

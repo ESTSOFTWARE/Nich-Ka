@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 import 'app_tab.dart';
 import 'tab_icon.dart';
 
 class BottomNavBar extends StatelessWidget {
   final AppTab selected;
-  final HomePalette palette;
+  final AppPalette palette;
   final ValueChanged<AppTab> onTabSelected;
 
   const BottomNavBar({

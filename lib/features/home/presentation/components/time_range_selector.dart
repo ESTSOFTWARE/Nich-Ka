@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'time_range.dart';
 
 class TimeRangeSelector extends StatelessWidget {
   final TimeRange selected;
-  final HomePalette palette;
+  final AppPalette palette;
   final ValueChanged<TimeRange> onSelected;
 
   const TimeRangeSelector({

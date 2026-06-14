@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/ai_recommendation.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class AiRecommendationCard extends StatelessWidget {
   final AiRecommendation recommendation;
-  final HomePalette palette;
+  final AppPalette palette;
   final VoidCallback? onAction;
 
   const AiRecommendationCard({
@@ -34,7 +34,7 @@ class AiRecommendationCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: HomePalette.accent.withValues(alpha: 0.15),
+                  color: AppPalette.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -43,7 +43,7 @@ class AiRecommendationCard extends StatelessWidget {
                     width: 18,
                     height: 18,
                     colorFilter: const ColorFilter.mode(
-                      HomePalette.accent,
+                      AppPalette.accent,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -55,7 +55,7 @@ class AiRecommendationCard extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   letterSpacing: 0.8,
                 ),
               ),

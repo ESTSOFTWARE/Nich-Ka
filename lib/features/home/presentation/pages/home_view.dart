@@ -14,7 +14,7 @@ import '../components/ai_recommendation_card.dart';
 import '../components/fermentation_list_item.dart';
 import '../components/home_glow.dart';
 import '../providers/home_provider.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
       create: () => HomeProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           key: provider.scaffoldKey,
           backgroundColor: palette.background,

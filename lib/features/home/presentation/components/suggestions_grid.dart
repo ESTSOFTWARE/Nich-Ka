@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'suggestion_chip.dart';
 
 class SuggestionsGrid extends StatelessWidget {
   final List<String> suggestions;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const SuggestionsGrid({
     super.key,

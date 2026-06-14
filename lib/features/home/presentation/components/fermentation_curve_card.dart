@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chart_point.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'chart_legend_item.dart';
 import 'fermentation_chart.dart';
 import 'time_range.dart';
@@ -10,7 +10,7 @@ import 'time_range_selector.dart';
 class FermentationCurveCard extends StatelessWidget {
   final List<ChartPoint> points;
   final TimeRange selectedRange;
-  final HomePalette palette;
+  final AppPalette palette;
   final ValueChanged<TimeRange> onRangeSelected;
 
   const FermentationCurveCard({
@@ -71,19 +71,19 @@ class FermentationCurveCard extends StatelessWidget {
           Row(
             children: [
               ChartLegendItem(
-                dotColor: HomePalette.metricOrange,
+                dotColor: AppPalette.metricOrange,
                 label: 'Temp 22.4°C',
                 palette: palette,
               ),
               const SizedBox(width: 14),
               ChartLegendItem(
-                dotColor: HomePalette.accent,
+                dotColor: AppPalette.accent,
                 label: 'Densidad 1.024',
                 palette: palette,
               ),
               const SizedBox(width: 14),
               ChartLegendItem(
-                dotColor: HomePalette.metricCyan,
+                dotColor: AppPalette.metricCyan,
                 label: 'pH 4.20',
                 palette: palette,
               ),

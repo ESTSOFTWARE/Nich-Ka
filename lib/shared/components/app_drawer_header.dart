@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 
 class AppDrawerHeader extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const AppDrawerHeader({super.key, required this.palette});
 
@@ -19,7 +19,7 @@ class AppDrawerHeader extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: HomePalette.accent.withValues(alpha: 0.4),
+                color: AppPalette.accent.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
@@ -50,7 +50,7 @@ class AppDrawerHeader extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   letterSpacing: 0.8,
                 ),
               ),

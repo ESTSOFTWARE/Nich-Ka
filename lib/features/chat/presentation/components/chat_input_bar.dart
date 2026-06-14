@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChatInputBar extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChatInputBar({super.key, required this.palette});
 
@@ -32,7 +32,7 @@ class ChatInputBar extends StatelessWidget {
             height: 34,
             alignment: Alignment.center,
             decoration: const BoxDecoration(
-              color: HomePalette.accent,
+              color: AppPalette.accent,
               shape: BoxShape.circle,
             ),
             child: const Icon(

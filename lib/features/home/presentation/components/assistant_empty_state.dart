@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class AssistantEmptyState extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const AssistantEmptyState({super.key, required this.palette});
 
@@ -19,10 +19,10 @@ class AssistantEmptyState extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: HomePalette.accent.withValues(alpha: 0.1),
+              color: AppPalette.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: HomePalette.accent.withValues(alpha: 0.25),
+                color: AppPalette.accent.withValues(alpha: 0.25),
               ),
             ),
             child: Center(
@@ -31,7 +31,7 @@ class AssistantEmptyState extends StatelessWidget {
                 width: 32,
                 height: 32,
                 colorFilter: const ColorFilter.mode(
-                  HomePalette.accent,
+                  AppPalette.accent,
                   BlendMode.srcIn,
                 ),
               ),

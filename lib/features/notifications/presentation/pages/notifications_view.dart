@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../components/notification_list_item.dart';
 import '../providers/notifications_provider.dart';
 
@@ -17,7 +17,7 @@ class NotificationsView extends StatelessWidget {
       create: () => NotificationsProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
           appBar: AppBar(
@@ -82,7 +82,7 @@ class NotificationsView extends StatelessWidget {
                       'Marcar todo',
                       style: GoogleFonts.poppins(
                         fontSize: 13,
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

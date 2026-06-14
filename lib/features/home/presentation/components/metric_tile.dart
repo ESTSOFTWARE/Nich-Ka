@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_metric.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class MetricTile extends StatelessWidget {
   final FermentationMetric metric;
-  final HomePalette palette;
+  final AppPalette palette;
   final bool rightBorder;
   final bool bottomBorder;
 

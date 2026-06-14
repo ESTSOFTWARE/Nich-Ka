@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../home/domain/entities/chart_point.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/fermentation_chart.dart';
 
 class FermentationDetailChartCard extends StatelessWidget {
   final List<ChartPoint> points;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationDetailChartCard({
     super.key,

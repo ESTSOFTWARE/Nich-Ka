@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChatRecommendationBubble extends StatelessWidget {
   final ChatMessage message;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChatRecommendationBubble({
     super.key,

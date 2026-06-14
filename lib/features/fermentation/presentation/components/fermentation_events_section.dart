@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_event.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'fermentation_event_item.dart';
 
 class FermentationEventsSection extends StatelessWidget {
   final List<FermentationEvent> events;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationEventsSection({
     super.key,

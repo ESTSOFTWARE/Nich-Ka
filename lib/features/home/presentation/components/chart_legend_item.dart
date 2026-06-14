@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChartLegendItem extends StatelessWidget {
   final Color dotColor;
   final String label;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChartLegendItem({
     super.key,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class ChatInputField extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const ChatInputField({super.key, required this.palette});
 

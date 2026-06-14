@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../home/presentation/components/fermentation_list_item.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../components/fermentation_filter_bar.dart';
 import '../components/fermentation_search_bar.dart';
 import '../providers/fermentation_list_provider.dart';
@@ -19,7 +19,7 @@ class FermentationListView extends StatelessWidget {
       create: () => FermentationListProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
           appBar: AppBar(

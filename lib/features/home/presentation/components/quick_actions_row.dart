@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'quick_action_button.dart';
 
 class QuickActionsRow extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const QuickActionsRow({super.key, required this.palette});
 

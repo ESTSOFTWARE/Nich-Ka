@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/dashboard_stat.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'summary_stat_card.dart';
 
 class StatsOverviewGrid extends StatelessWidget {
   final List<DashboardStat> stats;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const StatsOverviewGrid({
     super.key,

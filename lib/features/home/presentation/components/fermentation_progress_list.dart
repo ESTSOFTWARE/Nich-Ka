@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_card.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'fermentation_progress_card.dart';
 
 class FermentationProgressList extends StatelessWidget {
   final List<FermentationCard> cards;
-  final HomePalette palette;
+  final AppPalette palette;
   final int total;
 
   const FermentationProgressList({

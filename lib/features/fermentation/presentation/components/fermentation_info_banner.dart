@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class FermentationInfoBanner extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationInfoBanner({super.key, required this.palette});
 

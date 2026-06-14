@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'ring_painter.dart';
 
 class CircularProgressRing extends StatelessWidget {
   final double progress;
-  final HomePalette palette;
+  final AppPalette palette;
   final double size;
 
   const CircularProgressRing({

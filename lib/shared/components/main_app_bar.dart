@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final HomePalette palette;
+  final AppPalette palette;
   final bool isScrolled;
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
@@ -68,7 +68,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   letterSpacing: 0.8,
                   height: 1.2,
                 ),
@@ -104,7 +104,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                       width: 7,
                       height: 7,
                       decoration: const BoxDecoration(
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         shape: BoxShape.circle,
                       ),
                     ),

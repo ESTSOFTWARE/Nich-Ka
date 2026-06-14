@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../home/domain/entities/fermentation_metric.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class FermentationDetailMetricCard extends StatelessWidget {
   final FermentationMetric metric;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationDetailMetricCard({
     super.key,

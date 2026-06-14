@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class HomeGlow extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const HomeGlow({super.key, required this.palette});
 

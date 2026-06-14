@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../home/domain/entities/fermentation_item.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/fermentation_filter.dart';
 
 class FermentationListProvider extends ChangeNotifier {
@@ -20,10 +20,10 @@ class FermentationListProvider extends ChangeNotifier {
       process: 'Lavado',
       farm: 'La Esperanza',
       statusLabel: 'Fermentación',
-      statusColor: HomePalette.accent,
+      statusColor: AppPalette.accent,
       timeInfo: '18h 42m',
       ringProgress: 0.78,
-      ringColor: HomePalette.accent,
+      ringColor: AppPalette.accent,
     ),
     FermentationItem(
       id: 'F-023',
@@ -31,10 +31,10 @@ class FermentationListProvider extends ChangeNotifier {
       process: 'Honey',
       farm: 'El Mirador',
       statusLabel: 'Secado',
-      statusColor: HomePalette.metricOrange,
+      statusColor: AppPalette.metricOrange,
       timeInfo: 'Día 3 / 12',
       ringProgress: 0.40,
-      ringColor: HomePalette.metricOrange,
+      ringColor: AppPalette.metricOrange,
     ),
     FermentationItem(
       id: 'F-022',
@@ -42,10 +42,10 @@ class FermentationListProvider extends ChangeNotifier {
       process: 'Natural',
       farm: 'La Esperanza',
       statusLabel: 'Reposo',
-      statusColor: HomePalette.metricCyan,
+      statusColor: AppPalette.metricCyan,
       timeInfo: '5 días',
       ringProgress: 0.25,
-      ringColor: HomePalette.metricCyan,
+      ringColor: AppPalette.metricCyan,
     ),
     FermentationItem(
       id: 'F-021',

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_detail.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/circular_progress_ring.dart';
 
 class FermentationDetailStatusCard extends StatelessWidget {
   final FermentationDetail detail;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationDetailStatusCard({
     super.key,
@@ -41,7 +41,7 @@ class FermentationDetailStatusCard extends StatelessWidget {
                       width: 7,
                       height: 7,
                       decoration: const BoxDecoration(
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -51,7 +51,7 @@ class FermentationDetailStatusCard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: HomePalette.accent,
+                        color: AppPalette.accent,
                         letterSpacing: 0.8,
                       ),
                     ),

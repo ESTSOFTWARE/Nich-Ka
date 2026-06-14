@@ -14,7 +14,7 @@ import '../components/fermentation_progress_list.dart';
 import '../components/home_glow.dart';
 import '../components/stats_overview_grid.dart';
 import '../providers/overview_provider.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class OverviewView extends StatelessWidget {
   const OverviewView({super.key});
@@ -25,7 +25,7 @@ class OverviewView extends StatelessWidget {
       create: () => OverviewProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
-        final palette = HomePalette.of(isDark);
+        final palette = AppPalette.of(isDark);
         return Scaffold(
           key: provider.scaffoldKey,
           backgroundColor: palette.background,

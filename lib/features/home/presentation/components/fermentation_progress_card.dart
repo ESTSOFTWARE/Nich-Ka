@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_card.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'progress_ring_painter.dart';
 
 class FermentationProgressCard extends StatelessWidget {
   final FermentationCard card;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationProgressCard({
     super.key,

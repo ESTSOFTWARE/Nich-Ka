@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/fermentation_filter.dart';
 
 class FermentationFilterBar extends StatelessWidget {
   final FermentationFilter selected;
-  final HomePalette palette;
+  final AppPalette palette;
   final ValueChanged<FermentationFilter> onSelected;
 
   const FermentationFilterBar({

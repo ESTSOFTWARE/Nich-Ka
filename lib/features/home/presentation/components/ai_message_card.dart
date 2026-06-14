@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 import 'ai_card_header.dart';
 import 'ai_card_message.dart';
 import 'ai_card_welcome_message.dart';
@@ -8,7 +8,7 @@ import 'suggestions_grid.dart';
 
 class AiMessageCard extends StatelessWidget {
   final List<String> suggestions;
-  final HomePalette palette;
+  final AppPalette palette;
   final bool hasActiveFermentation;
 
   const AiMessageCard({
@@ -26,7 +26,7 @@ class AiMessageCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            HomePalette.accent.withValues(alpha: 0.55),
+            AppPalette.accent.withValues(alpha: 0.55),
             palette.aiCardBorder,
           ],
         ),

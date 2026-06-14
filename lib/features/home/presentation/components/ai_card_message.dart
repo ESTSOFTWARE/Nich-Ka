@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class AiCardMessage extends StatelessWidget {
-  final HomePalette palette;
+  final AppPalette palette;
 
   const AiCardMessage({super.key, required this.palette});
 
@@ -24,7 +24,7 @@ class AiCardMessage extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: HomePalette.accent,
+              color: AppPalette.accent,
               height: 1.5,
             ),
           ),
@@ -34,7 +34,7 @@ class AiCardMessage extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: HomePalette.metricOrange,
+              color: AppPalette.metricOrange,
               height: 1.5,
             ),
           ),

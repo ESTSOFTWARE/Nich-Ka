@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/dashboard_stat.dart';
-import '../theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class SummaryStatCard extends StatelessWidget {
   final DashboardStat stat;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const SummaryStatCard({super.key, required this.stat, required this.palette});
 

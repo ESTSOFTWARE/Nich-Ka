@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_event.dart';
-import '../../../home/presentation/theme/home_palette.dart';
+import '../../../../shared/theme/app_palette.dart';
 
 class FermentationEventItem extends StatelessWidget {
   final FermentationEvent event;
-  final HomePalette palette;
+  final AppPalette palette;
 
   const FermentationEventItem({
     super.key,
@@ -35,7 +35,7 @@ class FermentationEventItem extends StatelessWidget {
             height: 6,
             decoration: BoxDecoration(
               color: event.isAiSuggestion
-                  ? HomePalette.accent
+                  ? AppPalette.accent
                   : palette.textMuted,
               shape: BoxShape.circle,
             ),

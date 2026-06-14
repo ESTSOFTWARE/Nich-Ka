@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../features/home/presentation/theme/home_palette.dart';
+import '../theme/app_palette.dart';
 import 'app_drawer_item.dart';
 
 class DrawerMenuItem extends StatelessWidget {
   final AppDrawerItem item;
   final bool isSelected;
-  final HomePalette palette;
+  final AppPalette palette;
   final VoidCallback onTap;
 
   const DrawerMenuItem({
@@ -20,7 +20,7 @@ class DrawerMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isSelected ? HomePalette.accent : palette.textSecondary;
+    final iconColor = isSelected ? AppPalette.accent : palette.textSecondary;
 
     return GestureDetector(
       onTap: onTap,
@@ -53,7 +53,7 @@ class DrawerMenuItem extends StatelessWidget {
                 width: 7,
                 height: 7,
                 decoration: const BoxDecoration(
-                  color: HomePalette.accent,
+                  color: AppPalette.accent,
                   shape: BoxShape.circle,
                 ),
               ),
