@@ -6,10 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../home/presentation/components/home_glow.dart';
 import '../components/class_code_input.dart';
+import '../components/join_class_divider.dart';
 import '../components/qr_scanner_frame.dart';
 import '../providers/join_class_provider.dart';
-import '../../../home/presentation/components/home_glow.dart';
 
 class JoinClassView extends StatelessWidget {
   const JoinClassView({super.key});
@@ -100,7 +101,10 @@ class JoinClassView extends StatelessWidget {
                             onDetected: provider.onQrDetected,
                           ),
                           const SizedBox(height: 20),
-                          _Divider(label: 'O PEGA EL ENLACE', palette: palette),
+                          JoinClassDivider(
+                            label: 'O PEGA EL ENLACE',
+                            palette: palette,
+                          ),
                           const SizedBox(height: 12),
                           TextField(
                             controller: provider.linkController,
@@ -142,7 +146,7 @@ class JoinClassView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _Divider(
+                          JoinClassDivider(
                             label: 'O INGRESA EL CÓDIGO',
                             palette: palette,
                           ),
@@ -192,35 +196,6 @@ class JoinClassView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  final String label;
-  final AppPalette palette;
-
-  const _Divider({required this.label, required this.palette});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: palette.border, thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: palette.textMuted,
-              letterSpacing: 0.6,
-            ),
-          ),
-        ),
-        Expanded(child: Divider(color: palette.border, thickness: 1)),
-      ],
     );
   }
 }
