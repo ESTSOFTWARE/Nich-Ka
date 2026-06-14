@@ -3,6 +3,29 @@ import '../../domain/entities/notification_item.dart';
 import '../../domain/entities/notification_type.dart';
 
 class NotificationsProvider extends ChangeNotifier {
+  final ScrollController scrollController = ScrollController();
+  bool _isScrolled = false;
+  bool get isScrolled => _isScrolled;
+
+  NotificationsProvider() {
+    scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = scrollController.offset > 4;
+    if (scrolled != _isScrolled) {
+      _isScrolled = scrolled;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.dispose();
+  }
+
   List<NotificationItem> _items = const [
     NotificationItem(
       id: '1',

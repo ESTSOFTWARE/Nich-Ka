@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -24,58 +25,72 @@ class FermentationListView extends StatelessWidget {
         return Scaffold(
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            systemOverlayStyle: isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            automaticallyImplyLeading: false,
-            centerTitle: false,
-            leadingWidth: 56,
-            leading: Center(
-              child: GestureDetector(
-                onTap: () =>
-                    context.canPop() ? context.pop() : context.go('/home'),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  margin: const EdgeInsets.only(left: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: palette.border),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: provider.isScrolled ? 20 : 0,
+                  sigmaY: provider.isScrolled ? 20 : 0,
+                ),
+                child: AppBar(
+                  backgroundColor: provider.isScrolled
+                      ? palette.glassBackground
+                      : Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  systemOverlayStyle: isDark
+                      ? SystemUiOverlayStyle.light
+                      : SystemUiOverlayStyle.dark,
+                  automaticallyImplyLeading: false,
+                  centerTitle: false,
+                  leadingWidth: 56,
+                  leading: Center(
+                    child: GestureDetector(
+                      onTap: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/home'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.only(left: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: palette.border),
+                        ),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: palette.textPrimary,
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Icon(
-                    Icons.chevron_left,
-                    color: palette.textPrimary,
-                    size: 22,
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Lotes',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        '${provider.total} fermentaciones registradas',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
+                  actions: const [],
                 ),
               ),
             ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Lotes',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: palette.textPrimary,
-                  ),
-                ),
-                Text(
-                  '${provider.total} fermentaciones registradas',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: palette.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            actions: const [],
           ),
           body: Stack(
             children: [
@@ -104,6 +119,7 @@ class FermentationListView extends StatelessWidget {
                   ),
                   Expanded(
                     child: ListView.separated(
+                      controller: provider.scrollController,
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                       itemCount: provider.items.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 10),

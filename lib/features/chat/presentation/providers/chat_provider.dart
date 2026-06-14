@@ -4,6 +4,20 @@ import '../../domain/entities/chat_message_type.dart';
 
 class ChatProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
+  bool _isScrolled = false;
+  bool get isScrolled => _isScrolled;
+
+  ChatProvider() {
+    scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = scrollController.offset > 4;
+    if (scrolled != _isScrolled) {
+      _isScrolled = scrolled;
+      notifyListeners();
+    }
+  }
 
   final List<ChatMessage> messages = const [
     ChatMessage(
@@ -51,6 +65,7 @@ class ChatProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    scrollController.removeListener(_onScroll);
     scrollController.dispose();
     super.dispose();
   }
