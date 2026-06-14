@@ -50,8 +50,9 @@ class SimulatorView extends StatelessWidget {
                   leadingWidth: 56,
                   leading: Center(
                     child: GestureDetector(
-                      onTap: () =>
-                          context.canPop() ? context.pop() : context.go('/home'),
+                      onTap: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/home'),
                       child: Container(
                         width: 36,
                         height: 36,
@@ -160,10 +161,7 @@ class SimulatorView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    SimulatorSectionHeader(
-                      label: 'CINÉTICA',
-                      palette: palette,
-                    ),
+                    SimulatorSectionHeader(label: 'CINÉTICA', palette: palette),
                     _card(
                       palette: palette,
                       children: [

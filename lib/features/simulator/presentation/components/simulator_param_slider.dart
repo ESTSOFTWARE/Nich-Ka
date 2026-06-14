@@ -85,10 +85,8 @@ class SimulatorParamSlider extends StatelessWidget {
             inactiveTrackColor: palette.border,
             thumbColor: AppPalette.accent,
             trackHeight: 4,
-            thumbShape:
-                const RoundSliderThumbShape(enabledThumbRadius: 10),
-            overlayShape:
-                const RoundSliderOverlayShape(overlayRadius: 20),
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
             overlayColor: AppPalette.accent.withValues(alpha: 0.15),
           ),
           child: Slider(

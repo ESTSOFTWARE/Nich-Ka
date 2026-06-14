@@ -194,7 +194,10 @@ class ChatView extends StatelessWidget {
   Widget _buildBubble(ChatMessage message, AppPalette palette) {
     return switch (message.type) {
       ChatMessageType.ai => ChatAiBubble(message: message, palette: palette),
-      ChatMessageType.user => ChatUserBubble(message: message, palette: palette),
+      ChatMessageType.user => ChatUserBubble(
+        message: message,
+        palette: palette,
+      ),
       ChatMessageType.recommendation => ChatRecommendationBubble(
         message: message,
         palette: palette,

@@ -84,15 +84,50 @@ class SimulatorProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setModel(SimulatorModelType v) { _model = v; _solve(); }
-  void setMuMax(double v) { _muMax = double.parse(v.toStringAsFixed(3)); _solve(); }
-  void setKs(double v) { _ks = double.parse(v.toStringAsFixed(1)); _solve(); }
-  void setXm(double v) { _xm = double.parse(v.toStringAsFixed(1)); _solve(); }
-  void setYxs(double v) { _yxs = double.parse(v.toStringAsFixed(2)); _solve(); }
-  void setYps(double v) { _yps = double.parse(v.toStringAsFixed(2)); _solve(); }
-  void setX0(double v) { _x0 = double.parse(v.toStringAsFixed(2)); _solve(); }
-  void setS0(double v) { _s0 = double.parse(v.toStringAsFixed(1)); _solve(); }
-  void setTf(double v) { _tf = double.parse(v.toStringAsFixed(0)); _solve(); }
+  void setModel(SimulatorModelType v) {
+    _model = v;
+    _solve();
+  }
+
+  void setMuMax(double v) {
+    _muMax = double.parse(v.toStringAsFixed(3));
+    _solve();
+  }
+
+  void setKs(double v) {
+    _ks = double.parse(v.toStringAsFixed(1));
+    _solve();
+  }
+
+  void setXm(double v) {
+    _xm = double.parse(v.toStringAsFixed(1));
+    _solve();
+  }
+
+  void setYxs(double v) {
+    _yxs = double.parse(v.toStringAsFixed(2));
+    _solve();
+  }
+
+  void setYps(double v) {
+    _yps = double.parse(v.toStringAsFixed(2));
+    _solve();
+  }
+
+  void setX0(double v) {
+    _x0 = double.parse(v.toStringAsFixed(2));
+    _solve();
+  }
+
+  void setS0(double v) {
+    _s0 = double.parse(v.toStringAsFixed(1));
+    _solve();
+  }
+
+  void setTf(double v) {
+    _tf = double.parse(v.toStringAsFixed(0));
+    _solve();
+  }
 
   @override
   void dispose() {
