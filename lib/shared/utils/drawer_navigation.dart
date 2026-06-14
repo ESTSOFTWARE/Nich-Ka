@@ -21,6 +21,7 @@ void onDrawerNav(BuildContext context, AppDrawerItem item) {
     case AppDrawerItem.sensores:
       context.push('/sensors');
     case AppDrawerItem.clases:
+      context.push('/classes');
     case AppDrawerItem.historico:
       break;
   }
