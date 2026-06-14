@@ -68,33 +68,26 @@ class ClassCard extends StatelessWidget {
           child: SizedBox(
             width: _coverSize,
             child: item.imageUrl != null
-                ? Image.asset(
-              item.imageUrl!,
-              fit: BoxFit.cover,
-            )
+                ? Image.asset(item.imageUrl!, fit: BoxFit.cover)
                 : Container(
-              color: ClassPalette.accent.withValues(alpha: 0.10),
-              child: Center(
-                child: Text(
-                  item.subject.isNotEmpty
-                      ? item.subject[0].toUpperCase()
-                      : item.name[0].toUpperCase(),
-                  style: GoogleFonts.poppins(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: ClassPalette.accent,
+                    color: ClassPalette.accent.withValues(alpha: 0.10),
+                    child: Center(
+                      child: Text(
+                        item.subject.isNotEmpty
+                            ? item.subject[0].toUpperCase()
+                            : item.name[0].toUpperCase(),
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: ClassPalette.accent,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ),
         ),
         if (item.hasUnread)
-          Positioned(
-            top: -6,
-            right: -6,
-            child: _buildUnreadBadge(),
-          ),
+          Positioned(top: -6, right: -6, child: _buildUnreadBadge()),
       ],
     );
   }

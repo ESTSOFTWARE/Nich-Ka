@@ -68,4 +68,3 @@ class QrScannerFrame extends StatelessWidget {
     );
   }
 }
-

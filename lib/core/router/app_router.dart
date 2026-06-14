@@ -144,7 +144,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/sensor-detail',
       builder: (BuildContext context, GoRouterState state) =>
-         SensorDetailView(reading: state.extra as SensorReading),
+          SensorDetailView(reading: state.extra as SensorReading),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(

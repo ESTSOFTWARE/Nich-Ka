@@ -31,7 +31,7 @@ class ClassListView extends StatelessWidget {
 
         final subtitle = switch (provider.summaryState) {
           UiSuccess<ClassSummary>(:final data) =>
-          '${data.totalGroups} grupos · ${data.unreadItems} elementos sin leer',
+            '${data.totalGroups} grupos · ${data.unreadItems} elementos sin leer',
           _ => 'Cargando...',
         };
 
@@ -106,7 +106,7 @@ class ClassListView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: _buildJoinButton(
-                            () => context.push('/class'),
+                        () => context.push('/class'),
                         palette,
                       ),
                     ),
@@ -149,9 +149,7 @@ class ClassListView extends StatelessWidget {
         decoration: BoxDecoration(
           color: ClassPalette.accent.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: ClassPalette.accent.withValues(alpha: 0.4),
-          ),
+          border: Border.all(color: ClassPalette.accent.withValues(alpha: 0.4)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -173,10 +171,10 @@ class ClassListView extends StatelessWidget {
   }
 
   Widget _buildContent(
-      BuildContext context,
-      ClassListProvider provider,
-      ClassPalette palette,
-      ) {
+    BuildContext context,
+    ClassListProvider provider,
+    ClassPalette palette,
+  ) {
     return switch (provider.classesState) {
       UiLoading<List<ClassItem>>() => ClassesSkeleton(palette: palette),
       UiError<List<ClassItem>>(:final message) => ClassesErrorState(
@@ -185,10 +183,10 @@ class ClassListView extends StatelessWidget {
         onRetry: provider.refresh,
       ),
       UiSuccess<List<ClassItem>>(:final data) when data.isEmpty =>
-          EmptyClassesState(
-            palette: palette,
-            onJoinClass: () => context.push('/class'),
-          ),
+        EmptyClassesState(
+          palette: palette,
+          onJoinClass: () => context.push('/class'),
+        ),
       UiSuccess<List<ClassItem>>(:final data) => _buildList(data, palette),
       _ => const SizedBox.shrink(),
     };
@@ -200,11 +198,7 @@ class ClassListView extends StatelessWidget {
         final isLast = item == items.last;
         return Padding(
           padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
-          child: ClassCard(
-            item: item,
-            palette: palette,
-            onTap: () => {},
-          ),
+          child: ClassCard(item: item, palette: palette, onTap: () => {}),
         );
       }).toList(),
     );

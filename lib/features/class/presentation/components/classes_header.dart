@@ -80,7 +80,11 @@ class ClassesHeader extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.add, size: 16, color: palette.isDark ? Colors.black : Colors.black),
+            Icon(
+              Icons.add,
+              size: 16,
+              color: palette.isDark ? Colors.black : Colors.black,
+            ),
             const SizedBox(width: 6),
             Text(
               'Unirme',
