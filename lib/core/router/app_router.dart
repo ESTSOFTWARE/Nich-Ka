@@ -18,6 +18,7 @@ import '../../features/fermentation/presentation/pages/fermentation_list_view.da
 import '../../features/home/presentation/pages/overview_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
+import '../../features/class/presentation/pages/join_class_view.dart';
 import '../../features/simulator/presentation/pages/simulator_view.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -114,6 +115,11 @@ final GoRouter appRouter = GoRouter(
       path: '/simulator',
       builder: (BuildContext context, GoRouterState state) =>
           const SimulatorView(),
+    ),
+    GoRoute(
+      path: '/class',
+      builder: (BuildContext context, GoRouterState state) =>
+          const JoinClassView(),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
