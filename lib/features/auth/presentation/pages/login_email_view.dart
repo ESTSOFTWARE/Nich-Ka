@@ -108,7 +108,8 @@ class LoginEmailView extends StatelessWidget {
                   filled: false,
                   isLoading: provider.loginState is UiLoading,
                   onPressed: () async {
-                    await provider.loginWithEmail();
+                    final ok = await provider.loginWithEmail();
+                    if (ok && context.mounted) context.go('/home');
                   },
                 ),
                 const SizedBox(height: 24),

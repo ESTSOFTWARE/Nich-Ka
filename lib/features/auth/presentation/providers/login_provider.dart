@@ -22,6 +22,9 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> loginWithEmail() async {
+    const validEmail = 'nichka@nich-ka.space';
+    const validPassword = 'NichKa2026';
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -33,17 +36,15 @@ class LoginProvider extends ChangeNotifier {
     }
 
     _setState(const UiLoading());
+    await Future.delayed(const Duration(milliseconds: 800));
 
-    try {
-      await Future.delayed(const Duration(seconds: 2));
+    if (email == validEmail && password == validPassword) {
       _setState(const UiSuccess(null));
       return true;
-    } catch (e) {
-      _setState(
-        const UiError('Credenciales incorrectas o problemas de conexión.'),
-      );
-      return false;
     }
+
+    _setState(const UiError('Credenciales incorrectas.'));
+    return false;
   }
 
   Future<bool> loginWithGoogle() async {
