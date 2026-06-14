@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
+import '../../domain/entities/class_detail.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../../../../shared/theme/app_palette.dart';
@@ -187,18 +188,33 @@ class ClassListView extends StatelessWidget {
           palette: palette,
           onJoinClass: () => context.push('/class'),
         ),
-      UiSuccess<List<ClassItem>>(:final data) => _buildList(data, palette),
+      UiSuccess<List<ClassItem>>(:final data) => _buildList(
+        context,
+        data,
+        palette,
+      ),
       _ => const SizedBox.shrink(),
     };
   }
 
-  Widget _buildList(List<ClassItem> items, ClassPalette palette) {
+  Widget _buildList(
+    BuildContext context,
+    List<ClassItem> items,
+    ClassPalette palette,
+  ) {
     return Column(
       children: items.map((item) {
         final isLast = item == items.last;
         return Padding(
           padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
-          child: ClassCard(item: item, palette: palette, onTap: () => {}),
+          child: ClassCard(
+            item: item,
+            palette: palette,
+            onTap: () => context.push(
+              '/class-detail',
+              extra: ClassDetail.fromItem(item),
+            ),
+          ),
         );
       }).toList(),
     );
