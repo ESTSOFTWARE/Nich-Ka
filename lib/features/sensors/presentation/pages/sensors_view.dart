@@ -164,6 +164,10 @@ class SensorsView extends StatelessWidget {
                       itemBuilder: (context, index) => SensorCard(
                         reading: provider.readings[index],
                         palette: palette,
+                        onTap: () => context.push(
+                          '/sensor-detail',
+                          extra: provider.readings[index],
+                        ),
                       ),
                     ),
                   ],
