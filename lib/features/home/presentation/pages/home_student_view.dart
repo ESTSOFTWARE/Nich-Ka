@@ -82,7 +82,10 @@ class HomeStudentView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    HomeEmptyCard(palette: palette),
+                    HomeEmptyCard(
+                      palette: palette,
+                      onJoinClass: () => context.push('/class'),
+                    ),
                     const SizedBox(height: 28),
                     Text(
                       'QUÉ PODRÁS HACER',
