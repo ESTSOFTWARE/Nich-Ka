@@ -97,8 +97,14 @@ class HomeStudentView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    ...provider.features.map(
-                      (f) => HomeFeatureItem(feature: f, palette: palette),
+                    ...provider.features.asMap().entries.map(
+                      (e) => HomeFeatureItem(
+                        feature: e.value,
+                        palette: palette,
+                        onTap: e.key == 0
+                            ? () => context.push('/sensors')
+                            : null,
+                      ),
                     ),
                   ],
                 ),
