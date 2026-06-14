@@ -7,6 +7,7 @@ import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../components/notification_list_item.dart';
 import '../providers/notifications_provider.dart';
+import '../../../home/presentation/components/home_glow.dart';
 
 class NotificationsView extends StatelessWidget {
   const NotificationsView({super.key});
@@ -20,8 +21,9 @@ class NotificationsView extends StatelessWidget {
         final palette = AppPalette.of(isDark);
         return Scaffold(
           backgroundColor: palette.background,
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
-            backgroundColor: palette.background,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             scrolledUnderElevation: 0,
             systemOverlayStyle: isDark
@@ -90,13 +92,23 @@ class NotificationsView extends StatelessWidget {
                 ),
             ],
           ),
-          body: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: provider.items.length,
-            itemBuilder: (context, index) => NotificationListItem(
-              item: provider.items[index],
-              palette: palette,
-            ),
+          body: Stack(
+            children: [
+              HomeGlow(palette: palette),
+              ListView.builder(
+                padding: EdgeInsets.fromLTRB(
+                  0,
+                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                  0,
+                  8,
+                ),
+                itemCount: provider.items.length,
+                itemBuilder: (context, index) => NotificationListItem(
+                  item: provider.items[index],
+                  palette: palette,
+                ),
+              ),
+            ],
           ),
         );
       },

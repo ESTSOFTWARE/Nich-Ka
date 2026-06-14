@@ -109,7 +109,7 @@ class ReportsView extends StatelessWidget {
 
   Widget _buildBackButton(BuildContext context, ReportsPalette palette) {
     return InkWell(
-      onTap: () => context.pop(),
+      onTap: () => context.canPop() ? context.pop() : context.go('/home'),
       borderRadius: BorderRadius.circular(24),
       child: Container(
         width: 44,

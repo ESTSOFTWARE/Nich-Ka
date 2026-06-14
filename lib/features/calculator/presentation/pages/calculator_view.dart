@@ -4,20 +4,20 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
-import '../../../home/presentation/components/fermentation_list_item.dart';
 import '../../../../shared/theme/app_palette.dart';
-import '../components/fermentation_filter_bar.dart';
-import '../components/fermentation_search_bar.dart';
-import '../providers/fermentation_list_provider.dart';
+import '../components/calculator_input_field.dart';
+import '../components/efficiency_result_card.dart';
+import '../components/formula_card.dart';
+import '../providers/calculator_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
 
-class FermentationListView extends StatelessWidget {
-  const FermentationListView({super.key});
+class CalculatorView extends StatelessWidget {
+  const CalculatorView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<FermentationListProvider>(
-      create: () => FermentationListProvider(),
+    return ChangeNotifierProvider<CalculatorProvider>(
+      create: () => CalculatorProvider(),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
@@ -59,7 +59,7 @@ class FermentationListView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Lotes',
+                  'Calculadora',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class FermentationListView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${provider.total} fermentaciones registradas',
+                  'Eficiencia (Gay-Lussac)',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: palette.textSecondary,
@@ -75,49 +75,49 @@ class FermentationListView extends StatelessWidget {
                 ),
               ],
             ),
-            actions: const [],
           ),
           body: Stack(
             children: [
               HomeGlow(palette: palette),
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                      16,
-                      0,
+              SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                  16,
+                  32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FormulaCard(palette: palette),
+                    const SizedBox(height: 20),
+                    CalculatorInputField(
+                      label: 'Azúcar inicial',
+                      controller: provider.sugarController,
+                      unit: 'g/L',
+                      palette: palette,
                     ),
-                    child: Column(
-                      children: [
-                        FermentationSearchBar(palette: palette),
-                        const SizedBox(height: 12),
-                        FermentationFilterBar(
-                          selected: provider.filter,
-                          palette: palette,
-                          onSelected: provider.setFilter,
-                        ),
-                        const SizedBox(height: 4),
-                      ],
+                    const SizedBox(height: 16),
+                    CalculatorInputField(
+                      label: 'Etanol detectado',
+                      controller: provider.ethanolController,
+                      unit: '%v/v',
+                      palette: palette,
                     ),
-                  ),
-                  Expanded(
-                    child: ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                      itemCount: provider.items.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final item = provider.items[index];
-                        return FermentationListItem(
-                          item: item,
-                          palette: palette,
-                          onTap: () => context.push('/fermentation'),
-                        );
-                      },
+                    const SizedBox(height: 16),
+                    CalculatorInputField(
+                      label: 'Factor de conversión',
+                      controller: provider.factorController,
+                      palette: palette,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    EfficiencyResultCard(
+                      efficiency: provider.efficiency,
+                      substitutedFormula: provider.substitutedFormula,
+                      palette: palette,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../shared/theme/app_palette.dart';
 import 'quick_action_button.dart';
 
@@ -48,6 +49,7 @@ class QuickActionsRow extends StatelessWidget {
           child: QuickActionButton(
             palette: palette,
             label: 'Reporte',
+            onTap: () => context.push('/reports'),
             icon: SvgPicture.asset(
               'assets/icons/report.svg',
               width: 22,

@@ -9,6 +9,7 @@ import '../../../../shared/components/app_tab.dart';
 import '../../../../shared/components/bottom_nav_bar.dart';
 import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
+import '../../../../shared/utils/bottom_nav_navigation.dart';
 import '../components/ai_message_card.dart';
 import '../components/assistant_empty_state.dart';
 import '../components/home_glow.dart';
@@ -97,7 +98,7 @@ class AssistantEmptyView extends StatelessWidget {
           bottomNavigationBar: BottomNavBar(
             selected: AppTab.asistente,
             palette: palette,
-            onTabSelected: (_) {},
+            onTabSelected: (tab) => onBottomNavSelected(context, tab),
           ),
         );
       },
