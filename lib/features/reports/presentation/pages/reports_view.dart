@@ -44,7 +44,7 @@ class ReportsView extends StatelessWidget {
                 boxShadow: provider.isScrolled
                     ? [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -117,7 +117,7 @@ class ReportsView extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: palette.textSecondary.withOpacity(0.25),
+            color: palette.textSecondary.withValues(alpha: 0.25),
             width: 1,
           ),
         ),
@@ -138,7 +138,7 @@ class ReportsView extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: palette.textSecondary.withOpacity(0.25),
+            color: palette.textSecondary.withValues(alpha: 0.25),
             width: 1,
           ),
         ),
