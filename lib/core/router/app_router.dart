@@ -19,6 +19,7 @@ import '../../features/home/presentation/pages/overview_view.dart';
 import '../../features/reports/presentation/pages/report_detail_view.dart';
 import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
+import '../../features/class/presentation/pages/class_list_view.dart';
 import '../../features/class/presentation/pages/join_class_view.dart';
 import '../../features/sensors/domain/entities/sensor_reading.dart';
 import '../../features/sensors/presentation/pages/sensor_detail_view.dart';
@@ -131,6 +132,11 @@ final GoRouter appRouter = GoRouter(
           const JoinClassView(),
     ),
     GoRoute(
+      path: '/classes',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ClassListView(),
+    ),
+    GoRoute(
       path: '/sensors',
       builder: (BuildContext context, GoRouterState state) =>
           const SensorsView(),
@@ -138,7 +144,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/sensor-detail',
       builder: (BuildContext context, GoRouterState state) =>
-          SensorDetailView(reading: state.extra as SensorReading),
+         SensorDetailView(reading: state.extra as SensorReading),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
