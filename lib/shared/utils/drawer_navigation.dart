@@ -18,9 +18,10 @@ void onDrawerNav(BuildContext context, AppDrawerItem item) {
       context.push('/reports');
     case AppDrawerItem.simulador:
       context.push('/simulator');
+    case AppDrawerItem.sensores:
+      context.push('/sensors');
     case AppDrawerItem.clases:
       context.push('/classes');
-    case AppDrawerItem.sensores:
     case AppDrawerItem.historico:
       break;
   }

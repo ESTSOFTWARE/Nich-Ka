@@ -11,6 +11,6 @@ void onBottomNavSelected(BuildContext context, AppTab tab) {
     case AppTab.asistente:
       context.push('/chat');
     case AppTab.sensores:
-      break;
+      context.push('/sensors');
   }
 }
