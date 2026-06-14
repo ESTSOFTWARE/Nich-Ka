@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../../core/network/http_client.dart';
+import '../../data/datasource/remote/auth_remote_datasource.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../domain/entities/auth_credentials.dart';
+import '../../domain/use_cases/login_use_case.dart';
+import '../../domain/use_cases/login_with_google_use_case.dart';
 import '../states/ui_state.dart';
 
 class LoginProvider extends ChangeNotifier {
+  final LoginUseCase _loginWithEmail;
+  final LoginWithGoogleUseCase _loginWithGoogle;
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -10,6 +19,20 @@ class LoginProvider extends ChangeNotifier {
 
   bool _isPasswordObscured = true;
   bool get isPasswordObscured => _isPasswordObscured;
+
+  LoginProvider({
+    LoginUseCase? loginWithEmail,
+    LoginWithGoogleUseCase? loginWithGoogle,
+  }) : _loginWithEmail =
+           loginWithEmail ??
+           LoginUseCase(
+             AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
+           ),
+       _loginWithGoogle =
+           loginWithGoogle ??
+           LoginWithGoogleUseCase(
+             AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
+           );
 
   void togglePasswordVisibility() {
     _isPasswordObscured = !_isPasswordObscured;
@@ -22,9 +45,6 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<bool> loginWithEmail() async {
-    const validEmail = 'nichka@nich-ka.space';
-    const validPassword = 'NichKa2026';
-
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -36,25 +56,23 @@ class LoginProvider extends ChangeNotifier {
     }
 
     _setState(const UiLoading());
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    if (email == validEmail && password == validPassword) {
+    try {
+      await _loginWithEmail(AuthCredentials(email: email, password: password));
       _setState(const UiSuccess(null));
       return true;
+    } catch (_) {
+      _setState(const UiError('Credenciales incorrectas.'));
+      return false;
     }
-
-    _setState(const UiError('Credenciales incorrectas.'));
-    return false;
   }
 
   Future<bool> loginWithGoogle() async {
     _setState(const UiLoading());
-
     try {
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await _loginWithGoogle();
       _setState(const UiSuccess(null));
       return true;
-    } catch (e) {
+    } catch (_) {
       _setState(const UiError('Ocurrió un error al autenticar con Google.'));
       return false;
     }

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../core/network/http_client.dart';
+import '../../data/datasource/remote/auth_remote_datasource.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../domain/use_cases/change_password_use_case.dart';
 import '../states/ui_state.dart';
 
 class ChangePasswordProvider extends ChangeNotifier {
+  final ChangePasswordUseCase _changePassword;
+
   final TextEditingController currentController = TextEditingController();
   final TextEditingController newController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
@@ -16,6 +22,13 @@ class ChangePasswordProvider extends ChangeNotifier {
 
   UiState<void> _state = const UiIdle();
   UiState<void> get state => _state;
+
+  ChangePasswordProvider({ChangePasswordUseCase? changePassword})
+    : _changePassword =
+          changePassword ??
+          ChangePasswordUseCase(
+            AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
+          );
 
   void toggleCurrentObscured() {
     _currentObscured = !_currentObscured;
@@ -59,10 +72,10 @@ class ChangePasswordProvider extends ChangeNotifier {
 
     _setState(const UiLoading());
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      await _changePassword(current: current, next: next);
       _setState(const UiSuccess(null));
       return true;
-    } catch (e) {
+    } catch (_) {
       _setState(
         const UiError('No se pudo cambiar la contraseña. Intenta de nuevo.'),
       );

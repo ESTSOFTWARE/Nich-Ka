@@ -1,6 +1,9 @@
 import 'package:http/http.dart' as http;
 
 class HttpClient {
+  HttpClient._();
+  static final HttpClient instance = HttpClient._();
+
   static const String _baseUrl = 'https://api.tudominio.com/v1';
 
   final http.Client _client = http.Client();
