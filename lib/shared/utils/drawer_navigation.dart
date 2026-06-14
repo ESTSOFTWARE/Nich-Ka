@@ -10,9 +10,15 @@ void onDrawerNav(BuildContext context, AppDrawerItem item) {
       context.push('/fermentations');
     case AppDrawerItem.asistente:
       context.push('/chat');
+    case AppDrawerItem.mensajes:
+      context.push('/chat');
+    case AppDrawerItem.calculadora:
+      context.push('/calculator');
     case AppDrawerItem.reportes:
       context.push('/reports');
     case AppDrawerItem.sensores:
+    case AppDrawerItem.simulador:
+    case AppDrawerItem.clases:
     case AppDrawerItem.historico:
       break;
   }

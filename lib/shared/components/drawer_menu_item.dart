@@ -93,6 +93,14 @@ class DrawerMenuItem extends StatelessWidget {
     switch (item) {
       case AppDrawerItem.fermentaciones:
         return Icons.format_list_bulleted;
+      case AppDrawerItem.mensajes:
+        return Icons.chat_bubble_outline;
+      case AppDrawerItem.calculadora:
+        return Icons.calculate_outlined;
+      case AppDrawerItem.simulador:
+        return Icons.science_outlined;
+      case AppDrawerItem.clases:
+        return Icons.school_outlined;
       case AppDrawerItem.reportes:
         return Icons.description_outlined;
       case AppDrawerItem.historico:
@@ -112,6 +120,14 @@ class DrawerMenuItem extends StatelessWidget {
         return 'Sensores';
       case AppDrawerItem.asistente:
         return 'Asistente IA';
+      case AppDrawerItem.mensajes:
+        return 'Mensajes';
+      case AppDrawerItem.calculadora:
+        return 'Calculadora';
+      case AppDrawerItem.simulador:
+        return 'Simulador';
+      case AppDrawerItem.clases:
+        return 'Clases';
       case AppDrawerItem.reportes:
         return 'Reportes';
       case AppDrawerItem.historico:
