@@ -75,10 +75,8 @@ class ChangePasswordProvider extends ChangeNotifier {
       await _changePassword(current: current, next: next);
       _setState(const UiSuccess(null));
       return true;
-    } catch (_) {
-      _setState(
-        const UiError('No se pudo cambiar la contraseña. Intenta de nuevo.'),
-      );
+    } catch (e) {
+      _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
       return false;
     }
   }

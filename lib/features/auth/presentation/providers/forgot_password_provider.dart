@@ -38,10 +38,8 @@ class ForgotPasswordProvider extends ChangeNotifier {
       await _sendForgotPassword(email);
       _setState(const UiSuccess(null));
       return true;
-    } catch (_) {
-      _setState(
-        const UiError('No se pudo enviar el código. Intenta de nuevo.'),
-      );
+    } catch (e) {
+      _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
       return false;
     }
   }
