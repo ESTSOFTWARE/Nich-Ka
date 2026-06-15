@@ -60,8 +60,8 @@ class LoginProvider extends ChangeNotifier {
       await _loginWithEmail(AuthCredentials(email: email, password: password));
       _setState(const UiSuccess(null));
       return true;
-    } catch (_) {
-      _setState(const UiError('Credenciales incorrectas.'));
+    } catch (e) {
+      _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
       return false;
     }
   }
@@ -72,8 +72,8 @@ class LoginProvider extends ChangeNotifier {
       await _loginWithGoogle();
       _setState(const UiSuccess(null));
       return true;
-    } catch (_) {
-      _setState(const UiError('Ocurrió un error al autenticar con Google.'));
+    } catch (e) {
+      _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
       return false;
     }
   }

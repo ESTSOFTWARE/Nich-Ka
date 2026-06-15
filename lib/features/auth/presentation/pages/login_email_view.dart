@@ -102,6 +102,19 @@ class LoginEmailView extends StatelessWidget {
 
                 const SizedBox(height: 48),
 
+                if (provider.loginState is UiError)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      (provider.loginState as UiError).message,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.redAccent,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
                 PrimaryAuthButton(
                   text: 'Iniciar Sesión',
                   iconPath: 'assets/icons/login.svg',
@@ -109,7 +122,7 @@ class LoginEmailView extends StatelessWidget {
                   isLoading: provider.loginState is UiLoading,
                   onPressed: () async {
                     final ok = await provider.loginWithEmail();
-                    if (ok && context.mounted) context.go('/home');
+                    if (ok && context.mounted) context.go('/');
                   },
                 ),
                 const SizedBox(height: 24),
