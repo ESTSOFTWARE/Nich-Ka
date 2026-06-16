@@ -115,7 +115,10 @@ class ClassCard extends StatelessWidget {
           item.subject
               .toLowerCase()
               .split(' ')
-              .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : w)
+              .map(
+                (w) =>
+                    w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : w,
+              )
               .join(' '),
           style: GoogleFonts.poppins(
             fontSize: 11,
