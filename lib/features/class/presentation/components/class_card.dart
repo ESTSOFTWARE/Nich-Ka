@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/class_item.dart';
 import '../theme/class_palette.dart';
@@ -57,40 +58,44 @@ class ClassCard extends StatelessWidget {
   }
 
   Widget _buildCover() {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(14),
-            bottomLeft: Radius.circular(14),
+    return SizedBox(
+      width: _coverSize,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                bottomLeft: Radius.circular(14),
+              ),
+              child: item.imageUrl != null
+                  ? Image.network(
+                      item.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, e, s) => _buildPlaceholder(),
+                    )
+                  : _buildPlaceholder(),
+            ),
           ),
-          child: SizedBox(
-            width: _coverSize,
-            child: item.imageUrl != null
-                ? Image.asset(item.imageUrl!, fit: BoxFit.cover)
-                : Container(
-                    color: ClassPalette.accent.withValues(alpha: 0.10),
-                    child: Center(
-                      child: Text(
-                        item.subject.isNotEmpty
-                            ? item.subject[0].toUpperCase()
-                            : item.name[0].toUpperCase(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: ClassPalette.accent,
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-        if (item.hasUnread)
-          Positioned(top: -6, right: -6, child: _buildUnreadBadge()),
-      ],
+          if (item.hasUnread)
+            Positioned(top: -6, right: -6, child: _buildUnreadBadge()),
+        ],
+      ),
     );
   }
+
+  Widget _buildPlaceholder() => Container(
+    color: ClassPalette.accent.withValues(alpha: 0.10),
+    child: Center(
+      child: SvgPicture.asset(
+        'assets/icons/logo.svg',
+        width: 32,
+        height: 32,
+        colorFilter: ColorFilter.mode(ClassPalette.accent, BlendMode.srcIn),
+      ),
+    ),
+  );
 
   Widget _buildInfo() {
     return Column(
@@ -98,21 +103,28 @@ class ClassCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          item.subject.toUpperCase(),
-          style: GoogleFonts.poppins(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.6,
-            color: ClassPalette.accent,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
           item.name,
           style: GoogleFonts.poppins(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: palette.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          item.subject
+              .toLowerCase()
+              .split(' ')
+              .map(
+                (w) =>
+                    w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : w,
+              )
+              .join(' '),
+          style: GoogleFonts.poppins(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.2,
+            color: palette.textSecondary,
           ),
         ),
         const SizedBox(height: 6),

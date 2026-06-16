@@ -17,6 +17,7 @@ class ClassDetail {
   final List<ClassMember> members;
   final int totalMembers;
   final List<ClassFermentation> fermentations;
+  final String? coverImage;
 
   const ClassDetail({
     required this.id,
@@ -32,7 +33,18 @@ class ClassDetail {
     required this.members,
     required this.totalMembers,
     required this.fermentations,
+    this.coverImage,
   });
+
+  ClassItem toItem() => ClassItem(
+    id: id,
+    name: name,
+    subject: subject,
+    professor: teacherName,
+    studentCount: studentCount,
+    lastActivity: '',
+    imageUrl: coverImage,
+  );
 
   factory ClassDetail.fromItem(ClassItem item) {
     String initials(String name) => name

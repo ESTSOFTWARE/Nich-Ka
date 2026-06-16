@@ -1,7 +1,6 @@
-import '../entities/class_item.dart';
-import '../entities/class_summary.dart';
+import '../entities/class_detail.dart';
 
 abstract class ClassRepository {
-  Future<List<ClassItem>> getClasses();
-  Future<ClassSummary> getSummary();
+  Future<List<ClassDetail>> getClasses();
+  Future<void> joinClass(String code);
 }

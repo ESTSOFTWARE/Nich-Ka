@@ -1,18 +1,17 @@
-import '../../domain/entities/class_item.dart';
-import '../../domain/entities/class_summary.dart';
+import '../../../../core/network/http_client.dart';
+import '../../domain/entities/class_detail.dart';
 import '../../domain/repositories/class_repository.dart';
-import '../datasource/local/class_local_datasource.dart';
+import '../datasource/remote/class_remote_datasource.dart';
 
 class ClassRepositoryImpl implements ClassRepository {
-  @override
-  Future<List<ClassItem>> getClasses() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    return getMockClasses();
-  }
+  final ClassRemoteDataSource _remote;
+
+  ClassRepositoryImpl({ClassRemoteDataSource? remote})
+    : _remote = remote ?? ClassRemoteDataSource(HttpClient.instance);
 
   @override
-  Future<ClassSummary> getSummary() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return getMockSummary();
-  }
+  Future<List<ClassDetail>> getClasses() => _remote.getClasses();
+
+  @override
+  Future<void> joinClass(String code) => _remote.joinClass(code);
 }
