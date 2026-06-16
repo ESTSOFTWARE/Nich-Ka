@@ -5,11 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../domain/entities/class_detail.dart';
+import '../../domain/entities/class_item.dart';
+import '../../domain/entities/class_summary.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../../../../shared/theme/app_palette.dart';
-import '../../domain/entities/class_item.dart';
-import '../../domain/entities/class_summary.dart';
 import '../components/class_card.dart';
 import '../components/classes_error_state.dart';
 import '../components/classes_skeleton.dart';
@@ -183,12 +183,12 @@ class ClassListView extends StatelessWidget {
         palette: palette,
         onRetry: provider.refresh,
       ),
-      UiSuccess<List<ClassItem>>(:final data) when data.isEmpty =>
+      UiSuccess<List<ClassDetail>>(:final data) when data.isEmpty =>
         EmptyClassesState(
           palette: palette,
           onJoinClass: () => context.push('/class'),
         ),
-      UiSuccess<List<ClassItem>>(:final data) => _buildList(
+      UiSuccess<List<ClassDetail>>(:final data) => _buildList(
         context,
         data,
         palette,
@@ -199,21 +199,18 @@ class ClassListView extends StatelessWidget {
 
   Widget _buildList(
     BuildContext context,
-    List<ClassItem> items,
+    List<ClassDetail> details,
     ClassPalette palette,
   ) {
     return Column(
-      children: items.map((item) {
-        final isLast = item == items.last;
+      children: details.map((detail) {
+        final isLast = detail == details.last;
         return Padding(
           padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
           child: ClassCard(
-            item: item,
+            item: detail.toItem(),
             palette: palette,
-            onTap: () => context.push(
-              '/class-detail',
-              extra: ClassDetail.fromItem(item),
-            ),
+            onTap: () => context.push('/class-detail', extra: detail),
           ),
         );
       }).toList(),

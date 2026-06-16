@@ -3,8 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ClassDetailHeroCard extends StatelessWidget {
   final String badgeLabel;
+  final String? coverImage;
 
-  const ClassDetailHeroCard({super.key, required this.badgeLabel});
+  const ClassDetailHeroCard({
+    super.key,
+    required this.badgeLabel,
+    this.coverImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,46 +26,55 @@ class ClassDetailHeroCard extends StatelessWidget {
         ),
       ),
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          Positioned(
-            right: -40,
-            top: -40,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  width: 40,
+          if (coverImage != null)
+            Image.network(
+              coverImage!,
+              fit: BoxFit.cover,
+              errorBuilder: (_, e, s) => const SizedBox.shrink(),
+            ),
+          if (coverImage == null) ...[
+            Positioned(
+              right: -40,
+              top: -40,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    width: 40,
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            right: 20,
-            bottom: -60,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.04),
-                  width: 30,
+            Positioned(
+              right: 20,
+              bottom: -60,
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.04),
+                    width: 30,
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            left: 16,
-            bottom: 16,
-            child: Image.asset(
-              'assets/img/nich-ka-animado.png',
-              height: 80,
-              opacity: const AlwaysStoppedAnimation(0.18),
+            Positioned(
+              left: 16,
+              bottom: 16,
+              child: Image.asset(
+                'assets/img/nich-ka-animado.png',
+                height: 80,
+                opacity: const AlwaysStoppedAnimation(0.18),
+              ),
             ),
-          ),
+          ],
           Positioned(
             top: 14,
             right: 14,

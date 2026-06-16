@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../data/repositories/class_repository_impl.dart';
-import '../../domain/entities/class_item.dart';
+import '../../domain/entities/class_detail.dart';
 import '../../domain/entities/class_summary.dart';
-import '../../domain/repositories/class_repository.dart';
+import '../../domain/use_cases/get_classes_use_case.dart';
 import '../states/ui_state.dart';
 
 class ClassListProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
-  final ClassRepository _repository = ClassRepositoryImpl();
+  final GetClassesUseCase _getClasses;
 
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
 
-  UiState<List<ClassItem>> _classesState = const UiLoading();
-  UiState<List<ClassItem>> get classesState => _classesState;
+  UiState<List<ClassDetail>> _classesState = const UiLoading();
+  UiState<List<ClassDetail>> get classesState => _classesState;
 
   UiState<ClassSummary> _summaryState = const UiLoading();
   UiState<ClassSummary> get summaryState => _summaryState;
 
-  ClassListProvider() {
+  ClassListProvider({GetClassesUseCase? getClasses})
+    : _getClasses = getClasses ?? GetClassesUseCase(ClassRepositoryImpl()) {
     scrollController.addListener(_onScroll);
     _loadData();
   }
@@ -37,15 +38,14 @@ class ClassListProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final results = await Future.wait([
-        _repository.getClasses(),
-        _repository.getSummary(),
-      ]);
-      _classesState = UiSuccess(results[0] as List<ClassItem>);
-      _summaryState = UiSuccess(results[1] as ClassSummary);
+      final classes = await _getClasses();
+      _classesState = UiSuccess(classes);
+      _summaryState = UiSuccess(
+        ClassSummary(totalGroups: classes.length, unreadItems: 0),
+      );
     } catch (e) {
       _classesState = const UiError('No se pudieron cargar las clases.');
-      _summaryState = const UiError('No se pudo cargar el resumen.');
+      _summaryState = const UiError('');
     }
     notifyListeners();
   }

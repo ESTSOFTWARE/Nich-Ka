@@ -11,6 +11,7 @@ import '../components/class_code_input.dart';
 import '../components/join_class_divider.dart';
 import '../components/qr_scanner_frame.dart';
 import '../providers/join_class_provider.dart';
+import '../states/ui_state.dart';
 
 class JoinClassView extends StatelessWidget {
   const JoinClassView({super.key});
@@ -171,7 +172,29 @@ class JoinClassView extends StatelessWidget {
                     child: SizedBox(
                       width: double.infinity,
                       child: FilledButton(
-                        onPressed: provider.onSearch,
+                        onPressed: provider.joinState is UiLoading
+                            ? null
+                            : () async {
+                                final ok = await provider.onSearch();
+                                if (!context.mounted) return;
+                                if (ok) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Te uniste a la clase.'),
+                                    ),
+                                  );
+                                  context.pop(true);
+                                } else if (provider.joinState is UiError) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        (provider.joinState as UiError).message,
+                                      ),
+                                      backgroundColor: Colors.red.shade700,
+                                    ),
+                                  );
+                                }
+                              },
                         style: FilledButton.styleFrom(
                           backgroundColor: AppPalette.accent,
                           foregroundColor: Colors.black,
@@ -180,13 +203,22 @@ class JoinClassView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: Text(
-                          'Buscar clase',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        child: provider.joinState is UiLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : Text(
+                                'Unirme a la clase',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
                   ),

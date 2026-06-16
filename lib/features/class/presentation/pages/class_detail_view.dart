@@ -120,7 +120,10 @@ class ClassDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClassDetailHeroCard(badgeLabel: provider.detail.badgeLabel),
+                    ClassDetailHeroCard(
+                      badgeLabel: provider.detail.badgeLabel,
+                      coverImage: provider.detail.coverImage,
+                    ),
                     const SizedBox(height: 20),
                     Text(
                       provider.detail.subject,
