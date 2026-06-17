@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/login_provider.dart';
@@ -122,7 +123,16 @@ class LoginEmailView extends StatelessWidget {
                   isLoading: provider.loginState is UiLoading,
                   onPressed: () async {
                     final ok = await provider.loginWithEmail();
-                    if (ok && context.mounted) context.go('/');
+                    if (ok && context.mounted) {
+                      // Si venía de un deep link a unirse a una clase, ir allí
+                      final code = pendingJoinCode;
+                      if (code != null) {
+                        pendingJoinCode = null;
+                        context.go('/join?code=$code');
+                      } else {
+                        context.go('/');
+                      }
+                    }
                   },
                 ),
                 const SizedBox(height: 24),
