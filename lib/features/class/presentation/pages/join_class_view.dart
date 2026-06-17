@@ -14,12 +14,15 @@ import '../providers/join_class_provider.dart';
 import '../states/ui_state.dart';
 
 class JoinClassView extends StatelessWidget {
-  const JoinClassView({super.key});
+  const JoinClassView({super.key, this.initialCode});
+
+  /// Código pre-cargado desde un deep link (`/join?code=...`).
+  final String? initialCode;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<JoinClassProvider>(
-      create: () => JoinClassProvider(),
+      create: () => JoinClassProvider(initialCode: initialCode),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);

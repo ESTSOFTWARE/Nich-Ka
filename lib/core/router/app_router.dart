@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../network/http_client.dart';
 import '../../features/auth/presentation/pages/login_email_view.dart';
 import '../../features/auth/presentation/pages/login_view.dart';
 import '../../features/auth/presentation/pages/forgot_password_view.dart';
@@ -28,8 +29,20 @@ import '../../features/sensors/presentation/pages/sensor_detail_view.dart';
 import '../../features/sensors/presentation/pages/sensors_view.dart';
 import '../../features/simulator/presentation/pages/simulator_view.dart';
 
+/// Código de clase pendiente capturado de un deep link (`/join?code=...`)
+/// mientras el usuario aún no inicia sesión. Tras el login se consume.
+String? pendingJoinCode;
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
+  redirect: (BuildContext context, GoRouterState state) {
+    // Deep link a /join sin sesión → guardar el código y mandar al login.
+    if (state.matchedLocation == '/join' && !HttpClient.instance.hasToken) {
+      pendingJoinCode = state.uri.queryParameters['code'];
+      return '/login';
+    }
+    return null;
+  },
   routes: [
     GoRoute(
       path: '/',
@@ -132,6 +145,12 @@ final GoRouter appRouter = GoRouter(
       path: '/class',
       builder: (BuildContext context, GoRouterState state) =>
           const JoinClassView(),
+    ),
+    // Deep link: nich-ka.space/join?code=XXXX → unirse a la clase con el código
+    GoRoute(
+      path: '/join',
+      builder: (BuildContext context, GoRouterState state) =>
+          JoinClassView(initialCode: state.uri.queryParameters['code']),
     ),
     GoRoute(
       path: '/classes',

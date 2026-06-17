@@ -21,8 +21,11 @@ class JoinClassProvider extends ChangeNotifier {
   UiState<void> _joinState = const UiIdle();
   UiState<void> get joinState => _joinState;
 
-  JoinClassProvider({JoinClassUseCase? joinClass})
+  JoinClassProvider({JoinClassUseCase? joinClass, String? initialCode})
     : _joinClass = joinClass ?? JoinClassUseCase(ClassRepositoryImpl()) {
+    if (initialCode != null && initialCode.trim().isNotEmpty) {
+      codeController.text = initialCode.trim().toUpperCase();
+    }
     codeController.addListener(notifyListeners);
     scrollController.addListener(_onScroll);
   }
