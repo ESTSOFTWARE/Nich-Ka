@@ -149,9 +149,8 @@ final GoRouter appRouter = GoRouter(
     // Deep link: nich-ka.space/join?code=XXXX → unirse a la clase con el código
     GoRoute(
       path: '/join',
-      builder: (BuildContext context, GoRouterState state) => JoinClassView(
-        initialCode: state.uri.queryParameters['code'],
-      ),
+      builder: (BuildContext context, GoRouterState state) =>
+          JoinClassView(initialCode: state.uri.queryParameters['code']),
     ),
     GoRoute(
       path: '/classes',
