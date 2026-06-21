@@ -30,8 +30,9 @@ class HttpClient {
 
   /// Base WebSocket derivada del API (https→wss, sin el sufijo `/api`).
   /// Ej: https://api.nich-ka.space/api → wss://api.nich-ka.space
-  static String get wsBaseUrl =>
-      _baseUrl.replaceFirst(RegExp(r'^http'), 'ws').replaceFirst(RegExp(r'/api/?$'), '');
+  static String get wsBaseUrl => _baseUrl
+      .replaceFirst(RegExp(r'^http'), 'ws')
+      .replaceFirst(RegExp(r'/api/?$'), '');
 
   Map<String, String> _headers() => {
     'Content-Type': 'application/json',

@@ -23,12 +23,12 @@ class SensorsProvider extends ChangeNotifier {
   StreamSubscription? _sub;
 
   static const Map<String, String> _typeToId = {
-    'temperature':  'temp',
-    'alcohol':      'alcohol',
+    'temperature': 'temp',
+    'alcohol': 'alcohol',
     'conductivity': 'conductividad',
-    'ph':           'ph',
-    'turbidity':    'turbidez',
-    'rpm':          'rpm',
+    'ph': 'ph',
+    'turbidity': 'turbidez',
+    'rpm': 'rpm',
   };
 
   late List<SensorReading> _readings;
@@ -44,17 +44,17 @@ class SensorsProvider extends ChangeNotifier {
   );
 
   SensorsProvider({SensorsRealtimeRepository? repository})
-      : this._(
-          repository ??
-              SensorsRealtimeRepositoryImpl(
-                SensorsRealtimeDataSource(HttpClient.instance),
-              ),
-        );
+    : this._(
+        repository ??
+            SensorsRealtimeRepositoryImpl(
+              SensorsRealtimeDataSource(HttpClient.instance),
+            ),
+      );
 
   SensorsProvider._(SensorsRealtimeRepository repository)
-      : _repository = repository,
-        _getMyCircuitId = GetMyCircuitIdUseCase(repository),
-        _watchSensors = WatchSensorsUseCase(repository) {
+    : _repository = repository,
+      _getMyCircuitId = GetMyCircuitIdUseCase(repository),
+      _watchSensors = WatchSensorsUseCase(repository) {
     scrollController.addListener(_onScroll);
     _readings = _buildInitialReadings();
     _init();
@@ -62,13 +62,13 @@ class SensorsProvider extends ChangeNotifier {
 
   Future<void> _init() async {
     final circuitId = await _getMyCircuitId();
-    if (circuitId == null) return; 
+    if (circuitId == null) return;
     _sub = _watchSensors(circuitId).listen(_applyReading);
   }
 
   void _applyReading(SensorRealtimeReading r) {
     final id = _typeToId[r.sensorType];
-    if (id == null) return; 
+    if (id == null) return;
 
     var changed = false;
     _readings = _readings.map((reading) {
