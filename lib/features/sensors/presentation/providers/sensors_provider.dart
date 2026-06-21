@@ -1,8 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../core/network/http_client.dart';
+import '../../data/datasource/remote/sensors_realtime_datasource.dart';
+import '../../data/repositories/sensors_realtime_repository_impl.dart';
 import '../../domain/entities/sensor_reading.dart';
+import '../../domain/entities/sensor_realtime_reading.dart';
 import '../../domain/entities/sensors_status.dart';
+import '../../domain/repositories/sensors_realtime_repository.dart';
+import '../../domain/use_cases/get_my_circuit_id_use_case.dart';
+import '../../domain/use_cases/watch_sensors_use_case.dart';
 
 class SensorsProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
@@ -10,7 +17,19 @@ class SensorsProvider extends ChangeNotifier {
   bool get isScrolled => _isScrolled;
 
   final _rng = Random();
-  Timer? _timer;
+  final SensorsRealtimeRepository _repository;
+  final GetMyCircuitIdUseCase _getMyCircuitId;
+  final WatchSensorsUseCase _watchSensors;
+  StreamSubscription? _sub;
+
+  static const Map<String, String> _typeToId = {
+    'temperature': 'temp',
+    'alcohol': 'alcohol',
+    'conductivity': 'conductividad',
+    'ph': 'ph',
+    'turbidity': 'turbidez',
+    'rpm': 'rpm',
+  };
 
   late List<SensorReading> _readings;
   List<SensorReading> get readings => _readings;
@@ -24,10 +43,45 @@ class SensorsProvider extends ChangeNotifier {
     variety: 'Caturra',
   );
 
-  SensorsProvider() {
+  SensorsProvider({SensorsRealtimeRepository? repository})
+    : this._(
+        repository ??
+            SensorsRealtimeRepositoryImpl(
+              SensorsRealtimeDataSource(HttpClient.instance),
+            ),
+      );
+
+  SensorsProvider._(SensorsRealtimeRepository repository)
+    : _repository = repository,
+      _getMyCircuitId = GetMyCircuitIdUseCase(repository),
+      _watchSensors = WatchSensorsUseCase(repository) {
     scrollController.addListener(_onScroll);
     _readings = _buildInitialReadings();
-    _timer = Timer.periodic(const Duration(milliseconds: 1100), _onTick);
+    _init();
+  }
+
+  Future<void> _init() async {
+    final circuitId = await _getMyCircuitId();
+    if (circuitId == null) return;
+    _sub = _watchSensors(circuitId).listen(_applyReading);
+  }
+
+  void _applyReading(SensorRealtimeReading r) {
+    final id = _typeToId[r.sensorType];
+    if (id == null) return;
+
+    var changed = false;
+    _readings = _readings.map((reading) {
+      if (reading.id != id) return reading;
+      changed = true;
+      return reading.copyWith(
+        rawValue: r.value,
+        history: [...reading.history.skip(1), r.value],
+        trendUp: r.value >= reading.rawValue,
+      );
+    }).toList();
+
+    if (changed) notifyListeners();
   }
 
   void _onScroll() {
@@ -36,19 +90,6 @@ class SensorsProvider extends ChangeNotifier {
       _isScrolled = scrolled;
       notifyListeners();
     }
-  }
-
-  void _onTick(Timer _) {
-    _readings = _readings.map((r) {
-      final delta = (_rng.nextDouble() - 0.48) * r.rawValue * 0.008;
-      final next = r.rawValue + delta;
-      return r.copyWith(
-        rawValue: next,
-        history: [...r.history.skip(1), next],
-        trendUp: delta >= 0,
-      );
-    }).toList();
-    notifyListeners();
   }
 
   List<SensorReading> _buildInitialReadings() {
@@ -137,7 +178,8 @@ class SensorsProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _sub?.cancel();
+    _repository.dispose();
     scrollController.removeListener(_onScroll);
     scrollController.dispose();
     super.dispose();
