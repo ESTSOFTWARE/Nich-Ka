@@ -107,6 +107,7 @@ final GoRouter appRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           const FermentationListView(),
     ),
+
     GoRoute(
       path: '/fermentation',
       builder: (BuildContext context, GoRouterState state) =>
