@@ -14,9 +14,11 @@ class ReportsRemoteDataSource {
     _assertSuccess(response, 'No se pudieron obtener las sesiones.');
     final list = jsonDecode(response.body) as List<dynamic>;
     return list
-        .map((e) => FermentationSessionResponseDto.fromJson(
-              e as Map<String, dynamic>,
-            ))
+        .map(
+          (e) => FermentationSessionResponseDto.fromJson(
+            e as Map<String, dynamic>,
+          ),
+        )
         .toList();
   }
 

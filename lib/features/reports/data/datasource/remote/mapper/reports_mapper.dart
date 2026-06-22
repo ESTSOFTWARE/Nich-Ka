@@ -26,14 +26,14 @@ class ReportsMapper {
   }
 
   static ReportsSummary calculateSummary(List<ReportItem> reports) {
-    final withEfficiency =
-        reports.where((r) => r.efficiency != null).toList();
+    final withEfficiency = reports.where((r) => r.efficiency != null).toList();
     final avg = withEfficiency.isEmpty
         ? 0.0
         : withEfficiency.fold(0.0, (sum, r) => sum + r.efficiency!) /
-            withEfficiency.length;
-    final completed =
-        reports.where((r) => r.status == ReportStatus.completado).length;
+              withEfficiency.length;
+    final completed = reports
+        .where((r) => r.status == ReportStatus.completado)
+        .length;
     return ReportsSummary(
       avgEfficiency: avg,
       total: reports.length,
@@ -117,16 +117,36 @@ class ReportsMapper {
 
   static String _monthAbbr(int month) {
     const months = [
-      'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-      'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
+      'ene',
+      'feb',
+      'mar',
+      'abr',
+      'may',
+      'jun',
+      'jul',
+      'ago',
+      'sep',
+      'oct',
+      'nov',
+      'dic',
     ];
     return months[month - 1];
   }
 
   static int? _monthNumber(String abbr) {
     const months = {
-      'ene': 1, 'feb': 2, 'mar': 3, 'abr': 4, 'may': 5, 'jun': 6,
-      'jul': 7, 'ago': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dic': 12,
+      'ene': 1,
+      'feb': 2,
+      'mar': 3,
+      'abr': 4,
+      'may': 5,
+      'jun': 6,
+      'jul': 7,
+      'ago': 8,
+      'sep': 9,
+      'oct': 10,
+      'nov': 11,
+      'dic': 12,
     };
     return months[abbr.toLowerCase()];
   }

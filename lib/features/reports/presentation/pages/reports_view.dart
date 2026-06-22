@@ -96,8 +96,7 @@ class ReportsView extends StatelessWidget {
                   ),
                 ),
               ),
-              if (provider.isDownloading)
-                _buildDownloadOverlay(palette),
+              if (provider.isDownloading) _buildDownloadOverlay(palette),
             ],
           ),
         );
@@ -105,10 +104,7 @@ class ReportsView extends StatelessWidget {
     );
   }
 
-  void _handleDownloadSnackbar(
-    BuildContext context,
-    ReportsProvider provider,
-  ) {
+  void _handleDownloadSnackbar(BuildContext context, ReportsProvider provider) {
     if (provider.downloadError != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -253,9 +249,9 @@ class ReportsView extends StatelessWidget {
     return switch (provider.summaryState) {
       UiLoading<ReportsSummary>() => ReportsSummarySkeleton(palette: palette),
       UiSuccess<ReportsSummary>(:final data) => ReportSummaryCards(
-          summary: data,
-          palette: palette,
-        ),
+        summary: data,
+        palette: palette,
+      ),
       _ => const SizedBox.shrink(),
     };
   }
@@ -268,21 +264,21 @@ class ReportsView extends StatelessWidget {
     return switch (provider.reportsState) {
       UiLoading<List<ReportItem>>() => ReportsListSkeleton(palette: palette),
       UiError<List<ReportItem>>(:final message) => ReportsErrorState(
-          message: message,
-          palette: palette,
-          onRetry: provider.refresh,
-        ),
+        message: message,
+        palette: palette,
+        onRetry: provider.refresh,
+      ),
       UiSuccess<List<ReportItem>>(:final data) when data.isEmpty =>
         ReportsEmptyState(palette: palette),
       UiSuccess<List<ReportItem>>(:final data) => ReportsList(
-          reports: data,
-          palette: palette,
-          onViewReport: (_) => context.go('/report-detail'),
-          onDownloadPdf: (report) {
-            final sessionId = _extractSessionId(report.id);
-            if (sessionId != null) provider.downloadReportPdf(sessionId);
-          },
-        ),
+        reports: data,
+        palette: palette,
+        onViewReport: (_) => context.go('/report-detail'),
+        onDownloadPdf: (report) {
+          final sessionId = _extractSessionId(report.id);
+          if (sessionId != null) provider.downloadReportPdf(sessionId);
+        },
+      ),
       _ => const SizedBox.shrink(),
     };
   }
