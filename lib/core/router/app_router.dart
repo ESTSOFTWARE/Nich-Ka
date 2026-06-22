@@ -130,7 +130,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/report-detail',
       builder: (BuildContext context, GoRouterState state) =>
-          const ReportDetailView(),
+          ReportDetailView(sessionId: state.extra as int?),
     ),
     GoRoute(
       path: '/calculator',
