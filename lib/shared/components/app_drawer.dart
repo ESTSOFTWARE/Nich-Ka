@@ -11,6 +11,8 @@ class AppDrawer extends StatelessWidget {
   final ValueChanged<AppDrawerItem> onSelected;
   final VoidCallback? onSettings;
   final VoidCallback? onLogout;
+  final String? userName;
+  final String? userRole;
 
   const AppDrawer({
     super.key,
@@ -19,6 +21,8 @@ class AppDrawer extends StatelessWidget {
     required this.onSelected,
     this.onSettings,
     this.onLogout,
+    this.userName,
+    this.userRole,
   });
 
   @override
@@ -36,7 +40,11 @@ class AppDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppDrawerHeader(palette: palette),
+            AppDrawerHeader(
+              palette: palette,
+              userName: userName ?? 'Ameth Toledo',
+              userRole: userRole ?? 'ESTUDIANTE',
+            ),
             ...AppDrawerItem.values.map(
               (item) => DrawerMenuItem(
                 item: item,
