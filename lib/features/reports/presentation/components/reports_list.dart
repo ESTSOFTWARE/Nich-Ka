@@ -7,12 +7,14 @@ class ReportsList extends StatelessWidget {
   final List<ReportItem> reports;
   final ReportsPalette palette;
   final void Function(ReportItem report)? onViewReport;
+  final void Function(ReportItem report)? onDownloadPdf;
 
   const ReportsList({
     super.key,
     required this.reports,
     required this.palette,
     this.onViewReport,
+    this.onDownloadPdf,
   });
 
   @override
@@ -27,6 +29,9 @@ class ReportsList extends StatelessWidget {
             palette: palette,
             onViewReport: onViewReport != null
                 ? () => onViewReport!(report)
+                : null,
+            onDownloadPdf: onDownloadPdf != null
+                ? () => onDownloadPdf!(report)
                 : null,
           ),
         );

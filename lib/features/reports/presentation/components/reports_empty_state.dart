@@ -35,6 +35,7 @@ class ReportsEmptyState extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Sin reportes en este período',
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,

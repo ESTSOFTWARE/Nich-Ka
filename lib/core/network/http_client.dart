@@ -9,8 +9,7 @@ class HttpClient {
   // static const String _baseUrl = 'https://api.nich-ka.space/api';
   // Local en celular físico (misma WiFi): IP LAN de la PC. Backend debe correr en --host 0.0.0.0.
   // Emulador Android sería http://10.0.2.2:8000/api ; producción, los dominios de arriba.
-  static const String _baseUrl =
-      'http://localhost:8000/api'; // descomenten para probar en local y asugurense que el backend se corra con los parametros --host 0.0.0.0 si no, no va a funcionar
+  static const String _baseUrl = 'http://localhost:8000/api'; // descomenten para probar en local y asugurense que el backend se corra con los parametros --host 0.0.0.0 si no, no va a funcionar
 
   final http.Client _client = http.Client();
   String? _accessToken;
