@@ -86,20 +86,19 @@ class FermentationReportResponseDto {
         phLastReading: (json['ph_last_reading'] as num?)?.toDouble(),
         temperatureInitial: (json['temperature_initial'] as num?)?.toDouble(),
         temperatureFinal: (json['temperature_final'] as num?)?.toDouble(),
-        temperatureLastReading:
-            (json['temperature_last_reading'] as num?)?.toDouble(),
+        temperatureLastReading: (json['temperature_last_reading'] as num?)
+            ?.toDouble(),
         alcoholInitial: (json['alcohol_initial'] as num?)?.toDouble(),
         alcoholFinal: (json['alcohol_final'] as num?)?.toDouble(),
         alcoholLastReading: (json['alcohol_last_reading'] as num?)?.toDouble(),
-        conductivityInitial:
-            (json['conductivity_initial'] as num?)?.toDouble(),
+        conductivityInitial: (json['conductivity_initial'] as num?)?.toDouble(),
         conductivityFinal: (json['conductivity_final'] as num?)?.toDouble(),
-        conductivityLastReading:
-            (json['conductivity_last_reading'] as num?)?.toDouble(),
+        conductivityLastReading: (json['conductivity_last_reading'] as num?)
+            ?.toDouble(),
         turbidityInitial: (json['turbidity_initial'] as num?)?.toDouble(),
         turbidityFinal: (json['turbidity_final'] as num?)?.toDouble(),
-        turbidityLastReading:
-            (json['turbidity_last_reading'] as num?)?.toDouble(),
+        turbidityLastReading: (json['turbidity_last_reading'] as num?)
+            ?.toDouble(),
         densityInitial: (json['density_initial'] as num?)?.toDouble(),
         densityFinal: (json['density_final'] as num?)?.toDouble(),
         densityLastReading: (json['density_last_reading'] as num?)?.toDouble(),

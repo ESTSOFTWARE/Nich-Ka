@@ -25,9 +25,7 @@ class ReportsRemoteDataSource {
 
   Future<FermentationSessionResponseDto> getSession(int sessionId) async {
     final sessions = await getSessions();
-    return sessions.firstWhere(
-      (s) => s.id == sessionId,
-    );
+    return sessions.firstWhere((s) => s.id == sessionId);
   }
 
   Future<FermentationReportResponseDto?> getReport(int sessionId) async {
@@ -44,9 +42,9 @@ class ReportsRemoteDataSource {
     _assertSuccess(response, 'No se pudo obtener el historial.');
     final list = jsonDecode(response.body) as List<dynamic>;
     return list
-        .map((e) => ReportHistoryResponseDto.fromJson(
-              e as Map<String, dynamic>,
-            ))
+        .map(
+          (e) => ReportHistoryResponseDto.fromJson(e as Map<String, dynamic>),
+        )
         .toList();
   }
 

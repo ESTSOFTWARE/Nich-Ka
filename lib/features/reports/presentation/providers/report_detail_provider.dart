@@ -95,6 +95,4 @@ class ReportDetailProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-
 }
