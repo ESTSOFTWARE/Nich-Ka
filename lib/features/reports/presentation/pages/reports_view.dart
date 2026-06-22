@@ -30,6 +30,8 @@ class ReportsView extends StatelessWidget {
         final palette = ReportsPalette.of(isDark);
         final homePalette = AppPalette.of(isDark);
 
+        _handleDownloadSnackbar(context, provider);
+
         return Scaffold(
           key: provider.scaffoldKey,
           backgroundColor: palette.background,
@@ -94,11 +96,80 @@ class ReportsView extends StatelessWidget {
                   ),
                 ),
               ),
+              if (provider.isDownloading) _buildDownloadOverlay(palette),
             ],
           ),
         );
       },
     );
+  }
+
+  void _handleDownloadSnackbar(BuildContext context, ReportsProvider provider) {
+    if (provider.downloadError != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.downloadError!),
+            backgroundColor: Colors.red,
+          ),
+        );
+        provider.clearDownloadFlags();
+      });
+    } else if (provider.downloadCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('PDF descargado correctamente.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        provider.clearDownloadFlags();
+      });
+    }
+  }
+
+  Widget _buildDownloadOverlay(ReportsPalette palette) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 24,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: palette.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: palette.border),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: ReportsPalette.accent,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Descargando PDF...',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: palette.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static int? _extractSessionId(String reportId) {
+    final id = reportId.replaceFirst('F-', '');
+    return int.tryParse(id);
   }
 
   Widget _buildBackButton(BuildContext context, ReportsPalette palette) {
@@ -203,6 +274,10 @@ class ReportsView extends StatelessWidget {
         reports: data,
         palette: palette,
         onViewReport: (_) => context.go('/report-detail'),
+        onDownloadPdf: (report) {
+          final sessionId = _extractSessionId(report.id);
+          if (sessionId != null) provider.downloadReportPdf(sessionId);
+        },
       ),
       _ => const SizedBox.shrink(),
     };
