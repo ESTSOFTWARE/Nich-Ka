@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../../../../../core/network/http_client.dart';
 import 'model/dto/response/fermentation_report_response_dto.dart';
 import 'model/dto/response/fermentation_session_response_dto.dart';
+import 'model/dto/response/report_history_response_dto.dart';
 
 class ReportsRemoteDataSource {
   final HttpClient _client;
@@ -22,6 +23,13 @@ class ReportsRemoteDataSource {
         .toList();
   }
 
+  Future<FermentationSessionResponseDto> getSession(int sessionId) async {
+    final sessions = await getSessions();
+    return sessions.firstWhere(
+      (s) => s.id == sessionId,
+    );
+  }
+
   Future<FermentationReportResponseDto?> getReport(int sessionId) async {
     final response = await _client.get('/fermentation/$sessionId/report');
     if (response.statusCode == 404) return null;
@@ -29,6 +37,17 @@ class ReportsRemoteDataSource {
     return FermentationReportResponseDto.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>,
     );
+  }
+
+  Future<List<ReportHistoryResponseDto>> getHistory() async {
+    final response = await _client.get('/fermentation/history');
+    _assertSuccess(response, 'No se pudo obtener el historial.');
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list
+        .map((e) => ReportHistoryResponseDto.fromJson(
+              e as Map<String, dynamic>,
+            ))
+        .toList();
   }
 
   Future<List<int>> downloadPdf(int sessionId) async {

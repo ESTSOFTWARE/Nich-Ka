@@ -273,7 +273,12 @@ class ReportsView extends StatelessWidget {
       UiSuccess<List<ReportItem>>(:final data) => ReportsList(
         reports: data,
         palette: palette,
-        onViewReport: (_) => context.go('/report-detail'),
+        onViewReport: (report) {
+          final sessionId = _extractSessionId(report.id);
+          if (sessionId != null) {
+            context.go('/report-detail', extra: sessionId);
+          }
+        },
         onDownloadPdf: (report) {
           final sessionId = _extractSessionId(report.id);
           if (sessionId != null) provider.downloadReportPdf(sessionId);

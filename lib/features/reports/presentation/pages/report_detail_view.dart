@@ -17,16 +17,20 @@ import '../states/ui_state.dart';
 import '../theme/reports_palette.dart';
 
 class ReportDetailView extends StatelessWidget {
-  const ReportDetailView({super.key});
+  final int? sessionId;
+
+  const ReportDetailView({super.key, this.sessionId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ReportDetailProvider>(
-      create: () => ReportDetailProvider(),
+      create: () => ReportDetailProvider(sessionId: sessionId),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = ReportsPalette.of(isDark);
         final homePalette = AppPalette.of(isDark);
+
+        _handleDownloadSnackbar(context, provider);
 
         final successData = switch (provider.state) {
           UiSuccess<ReportDetail>(:final data) => data,
@@ -83,17 +87,9 @@ class ReportDetailView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 16),
                   child: GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Descargando PDF del reporte #${successData.reportNumber}...',
-                            style: GoogleFonts.poppins(fontSize: 13),
-                          ),
-                          backgroundColor: palette.surface,
-                        ),
-                      );
-                    },
+                    onTap: provider.isDownloading
+                        ? null
+                        : () => provider.downloadReportPdf(),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -106,26 +102,35 @@ class ReportDetailView extends StatelessWidget {
                           color: ReportsPalette.accent.withValues(alpha: 0.4),
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.file_download_outlined,
-                            size: 16,
-                            color: ReportsPalette.accent,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'PDF',
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: ReportsPalette.accent,
-                              letterSpacing: 0.5,
+                      child: provider.isDownloading
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: ReportsPalette.accent,
+                              ),
+                            )
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.file_download_outlined,
+                                  size: 16,
+                                  color: ReportsPalette.accent,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'PDF',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: ReportsPalette.accent,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 )
@@ -182,6 +187,33 @@ class ReportDetailView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _handleDownloadSnackbar(
+    BuildContext context,
+    ReportDetailProvider provider,
+  ) {
+    if (provider.downloadError != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.downloadError!),
+            backgroundColor: Colors.red,
+          ),
+        );
+        provider.clearDownloadFlags();
+      });
+    } else if (provider.downloadCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('PDF descargado correctamente.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        provider.clearDownloadFlags();
+      });
+    }
   }
 
   Widget _buildHeaderTitle(ReportDetail detail, ReportsPalette palette) {
