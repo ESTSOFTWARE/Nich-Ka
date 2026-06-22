@@ -32,88 +32,89 @@ class AssistantView extends StatelessWidget {
           create: () => DrawerProvider(),
           builder: (context, drawerProvider) {
             return Scaffold(
-          key: provider.scaffoldKey,
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          drawer: AppDrawer(
-            palette: palette,
-            selected: AppDrawerItem.asistente,
-            onSelected: (item) => onDrawerNav(context, item),
-            onSettings: () => context.push('/profile'),
-            userName: drawerProvider.user?.fullName,
-            userRole: drawerProvider.user?.role.toUpperCase(),
-            onLogout: () async {
-              await drawerProvider.logout();
-              if (context.mounted) context.go('/login');
-            },
-          ),
-          appBar: MainAppBar(
-            palette: palette,
-            isScrolled: provider.isScrolled,
-            onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
-            onNotificationTap: () => context.push('/notifications'),
-          ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: palette),
-              SingleChildScrollView(
-                controller: provider.scrollController,
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                  16,
-                  24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Hola Ameth, ',
-                            style: GoogleFonts.poppins(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w400,
-                              color: palette.textPrimary,
-                              height: 1.2,
-                            ),
-                          ),
-                          TextSpan(
-                            text: provider.greeting,
-                            style: GoogleFonts.poppins(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: palette.textPrimary,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    AiMessageCard(
-                      suggestions: provider.suggestions,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 14),
-                    QuickActionsRow(palette: palette),
-                    const SizedBox(height: 14),
-                    ActiveFermentationSummary(palette: palette),
-                  ],
-                ),
+              key: provider.scaffoldKey,
+              backgroundColor: palette.background,
+              extendBodyBehindAppBar: true,
+              drawer: AppDrawer(
+                palette: palette,
+                selected: AppDrawerItem.asistente,
+                onSelected: (item) => onDrawerNav(context, item),
+                onSettings: () => context.push('/profile'),
+                userName: drawerProvider.user?.fullName,
+                userRole: drawerProvider.user?.role.toUpperCase(),
+                onLogout: () async {
+                  await drawerProvider.logout();
+                  if (context.mounted) context.go('/login');
+                },
               ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavBar(
-            selected: AppTab.asistente,
-            palette: palette,
-            onTabSelected: (tab) => onBottomNavSelected(context, tab),
-          ),
+              appBar: MainAppBar(
+                palette: palette,
+                isScrolled: provider.isScrolled,
+                onMenuTap: () =>
+                    provider.scaffoldKey.currentState?.openDrawer(),
+                onNotificationTap: () => context.push('/notifications'),
+              ),
+              body: Stack(
+                children: [
+                  HomeGlow(palette: palette),
+                  SingleChildScrollView(
+                    controller: provider.scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                      16,
+                      24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Hola Ameth, ',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w400,
+                                  color: palette.textPrimary,
+                                  height: 1.2,
+                                ),
+                              ),
+                              TextSpan(
+                                text: provider.greeting,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: palette.textPrimary,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        AiMessageCard(
+                          suggestions: provider.suggestions,
+                          palette: palette,
+                        ),
+                        const SizedBox(height: 14),
+                        QuickActionsRow(palette: palette),
+                        const SizedBox(height: 14),
+                        ActiveFermentationSummary(palette: palette),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: BottomNavBar(
+                selected: AppTab.asistente,
+                palette: palette,
+                onTabSelected: (tab) => onBottomNavSelected(context, tab),
+              ),
+            );
+          },
         );
-      },
-    );
       },
     );
   }

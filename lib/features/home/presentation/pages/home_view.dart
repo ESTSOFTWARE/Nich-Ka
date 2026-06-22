@@ -32,131 +32,132 @@ class HomeView extends StatelessWidget {
           create: () => DrawerProvider(),
           builder: (context, drawerProvider) {
             return Scaffold(
-          key: provider.scaffoldKey,
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          drawer: AppDrawer(
-            palette: palette,
-            selected: AppDrawerItem.inicio,
-            onSelected: (item) => onDrawerNav(context, item),
-            onSettings: () => context.push('/profile'),
-            userName: drawerProvider.user?.fullName,
-            userRole: drawerProvider.user?.role.toUpperCase(),
-            onLogout: () async {
-              await drawerProvider.logout();
-              if (context.mounted) context.go('/login');
-            },
-          ),
-          appBar: MainAppBar(
-            palette: palette,
-            isScrolled: provider.isScrolled,
-            onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
-            onNotificationTap: () => context.push('/notifications'),
-          ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: palette),
-              SingleChildScrollView(
-                controller: provider.scrollController,
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                  16,
-                  24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Hola Ameth, ',
-                            style: GoogleFonts.poppins(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w400,
-                              color: palette.textPrimary,
-                              height: 1.2,
-                            ),
-                          ),
-                          TextSpan(
-                            text: provider.greeting,
-                            style: GoogleFonts.poppins(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: palette.textPrimary,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
+              key: provider.scaffoldKey,
+              backgroundColor: palette.background,
+              extendBodyBehindAppBar: true,
+              drawer: AppDrawer(
+                palette: palette,
+                selected: AppDrawerItem.inicio,
+                onSelected: (item) => onDrawerNav(context, item),
+                onSettings: () => context.push('/profile'),
+                userName: drawerProvider.user?.fullName,
+                userRole: drawerProvider.user?.role.toUpperCase(),
+                onLogout: () async {
+                  await drawerProvider.logout();
+                  if (context.mounted) context.go('/login');
+                },
+              ),
+              appBar: MainAppBar(
+                palette: palette,
+                isScrolled: provider.isScrolled,
+                onMenuTap: () =>
+                    provider.scaffoldKey.currentState?.openDrawer(),
+                onNotificationTap: () => context.push('/notifications'),
+              ),
+              body: Stack(
+                children: [
+                  HomeGlow(palette: palette),
+                  SingleChildScrollView(
+                    controller: provider.scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                      16,
+                      24,
                     ),
-                    const SizedBox(height: 20),
-                    ActiveFermentationCard(
-                      fermentation: provider.activeFermentation,
-                      palette: palette,
-                      elapsedFormatted: provider.elapsedFormatted,
-                      objectiveFormatted: provider.objectiveFormatted,
-                    ),
-                    const SizedBox(height: 16),
-                    AiRecommendationCard(
-                      recommendation: provider.recommendation,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Tus fermentaciones',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: palette.textPrimary,
+                        const SizedBox(height: 8),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Hola Ameth, ',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w400,
+                                  color: palette.textPrimary,
+                                  height: 1.2,
+                                ),
+                              ),
+                              TextSpan(
+                                text: provider.greeting,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: palette.textPrimary,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        TextButton(
-                          onPressed: () => context.push('/fermentations'),
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            'Ver todo →',
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: palette.textSecondary,
+                        const SizedBox(height: 20),
+                        ActiveFermentationCard(
+                          fermentation: provider.activeFermentation,
+                          palette: palette,
+                          elapsedFormatted: provider.elapsedFormatted,
+                          objectiveFormatted: provider.objectiveFormatted,
+                        ),
+                        const SizedBox(height: 16),
+                        AiRecommendationCard(
+                          recommendation: provider.recommendation,
+                          palette: palette,
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tus fermentaciones',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: palette.textPrimary,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => context.push('/fermentations'),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                'Ver todo →',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: palette.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        ...provider.fermentations.map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: FermentationListItem(
+                              item: item,
+                              palette: palette,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    ...provider.fermentations.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: FermentationListItem(
-                          item: item,
-                          palette: palette,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavBar(
-            selected: AppTab.inicio,
-            palette: palette,
-            onTabSelected: (tab) => onBottomNavSelected(context, tab),
-          ),
+              bottomNavigationBar: BottomNavBar(
+                selected: AppTab.inicio,
+                palette: palette,
+                onTabSelected: (tab) => onBottomNavSelected(context, tab),
+              ),
+            );
+          },
         );
       },
     );
-  },
-);
   }
 }

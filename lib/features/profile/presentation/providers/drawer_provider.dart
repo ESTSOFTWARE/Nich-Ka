@@ -26,15 +26,17 @@ class DrawerProvider extends ChangeNotifier {
 
   bool get isLoggingOut => _logoutState is UiLoading;
 
-  DrawerProvider({
-    GetProfileUseCase? getProfile,
-    LogoutUseCase? logout,
-  }) : _getProfile = getProfile ?? GetProfileUseCase(
-        ProfileRepositoryImpl(ProfileRemoteDataSource(HttpClient.instance)),
-      ),
-      _logout = logout ?? LogoutUseCase(
-        AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
-      ) {
+  DrawerProvider({GetProfileUseCase? getProfile, LogoutUseCase? logout})
+    : _getProfile =
+          getProfile ??
+          GetProfileUseCase(
+            ProfileRepositoryImpl(ProfileRemoteDataSource(HttpClient.instance)),
+          ),
+      _logout =
+          logout ??
+          LogoutUseCase(
+            AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
+          ) {
     _init();
   }
 
