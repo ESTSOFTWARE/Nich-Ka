@@ -10,6 +10,7 @@ import '../../../../shared/components/bottom_nav_bar.dart';
 import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
 import '../../../../shared/utils/bottom_nav_navigation.dart';
+import '../../../../features/profile/presentation/providers/drawer_provider.dart';
 import '../components/ai_message_card.dart';
 import '../components/assistant_empty_state.dart';
 import '../components/home_glow.dart';
@@ -26,7 +27,10 @@ class AssistantEmptyView extends StatelessWidget {
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
-        return Scaffold(
+        return ChangeNotifierProvider<DrawerProvider>(
+          create: () => DrawerProvider(),
+          builder: (context, drawerProvider) {
+            return Scaffold(
           key: provider.scaffoldKey,
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
@@ -35,6 +39,12 @@ class AssistantEmptyView extends StatelessWidget {
             selected: AppDrawerItem.asistente,
             onSelected: (item) => onDrawerNav(context, item),
             onSettings: () => context.push('/profile'),
+            userName: drawerProvider.user?.fullName,
+            userRole: drawerProvider.user?.role.toUpperCase(),
+            onLogout: () async {
+              await drawerProvider.logout();
+              if (context.mounted) context.go('/login');
+            },
           ),
           appBar: MainAppBar(
             palette: palette,
@@ -101,6 +111,8 @@ class AssistantEmptyView extends StatelessWidget {
             onTabSelected: (tab) => onBottomNavSelected(context, tab),
           ),
         );
+      },
+    );
       },
     );
   }

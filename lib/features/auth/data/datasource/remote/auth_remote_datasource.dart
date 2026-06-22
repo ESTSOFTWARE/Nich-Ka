@@ -61,6 +61,13 @@ class AuthRemoteDataSource {
     _assertSuccess(response, 'No se pudo cambiar la contraseña.');
   }
 
+  Future<void> logout() async {
+    final response = await _client.post('/auth/logout', {});
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      _client.clearTokens();
+    }
+  }
+
   void _assertSuccess(http.Response response, String fallbackMessage) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final body = jsonDecode(response.body) as Map<String, dynamic>;

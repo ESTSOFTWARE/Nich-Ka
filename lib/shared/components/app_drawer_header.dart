@@ -4,8 +4,15 @@ import '../theme/app_palette.dart';
 
 class AppDrawerHeader extends StatelessWidget {
   final AppPalette palette;
+  final String userName;
+  final String userRole;
 
-  const AppDrawerHeader({super.key, required this.palette});
+  const AppDrawerHeader({
+    super.key,
+    required this.palette,
+    this.userName = 'Ameth Toledo',
+    this.userRole = 'ESTUDIANTE',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,7 @@ class AppDrawerHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Ameth Toledo',
+                userName,
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -46,7 +53,7 @@ class AppDrawerHeader extends StatelessWidget {
                 ),
               ),
               Text(
-                'ESTUDIANTE',
+                userRole,
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,

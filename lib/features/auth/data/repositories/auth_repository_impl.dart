@@ -24,4 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String current,
     required String next,
   }) => _dataSource.changePassword(current: current, next: next);
+
+  @override
+  Future<void> logout() => _dataSource.logout();
 }

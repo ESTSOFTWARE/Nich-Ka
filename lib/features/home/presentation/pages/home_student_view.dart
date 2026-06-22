@@ -11,6 +11,7 @@ import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../../../shared/utils/bottom_nav_navigation.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
+import '../../../../features/profile/presentation/providers/drawer_provider.dart';
 import '../components/home_empty_card.dart';
 import '../components/home_feature_item.dart';
 import '../components/home_glow.dart';
@@ -26,7 +27,10 @@ class HomeStudentView extends StatelessWidget {
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
-        return Scaffold(
+        return ChangeNotifierProvider<DrawerProvider>(
+          create: () => DrawerProvider(),
+          builder: (context, drawerProvider) {
+            return Scaffold(
           key: provider.scaffoldKey,
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
@@ -35,6 +39,12 @@ class HomeStudentView extends StatelessWidget {
             selected: AppDrawerItem.inicio,
             onSelected: (item) => onDrawerNav(context, item),
             onSettings: () => context.push('/profile'),
+            userName: drawerProvider.user?.fullName,
+            userRole: drawerProvider.user?.role.toUpperCase(),
+            onLogout: () async {
+              await drawerProvider.logout();
+              if (context.mounted) context.go('/login');
+            },
           ),
           appBar: MainAppBar(
             palette: palette,
@@ -117,6 +127,8 @@ class HomeStudentView extends StatelessWidget {
             onTabSelected: (tab) => onBottomNavSelected(context, tab),
           ),
         );
+      },
+    );
       },
     );
   }
