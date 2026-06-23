@@ -3,6 +3,7 @@ import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/auth_remote_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/auth_credentials.dart';
+import '../../domain/entities/auth_token.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../../domain/use_cases/login_with_google_use_case.dart';
 import '../states/ui_state.dart';
@@ -16,6 +17,8 @@ class LoginProvider extends ChangeNotifier {
 
   UiState<void> _loginState = const UiIdle();
   UiState<void> get loginState => _loginState;
+
+  AuthToken? lastToken;
 
   bool _isPasswordObscured = true;
   bool get isPasswordObscured => _isPasswordObscured;
@@ -57,7 +60,9 @@ class LoginProvider extends ChangeNotifier {
 
     _setState(const UiLoading());
     try {
-      await _loginWithEmail(AuthCredentials(email: email, password: password));
+      lastToken = await _loginWithEmail(
+        AuthCredentials(email: email, password: password),
+      );
       _setState(const UiSuccess(null));
       return true;
     } catch (e) {
@@ -69,7 +74,7 @@ class LoginProvider extends ChangeNotifier {
   Future<bool> loginWithGoogle() async {
     _setState(const UiLoading());
     try {
-      await _loginWithGoogle();
+      lastToken = await _loginWithGoogle();
       _setState(const UiSuccess(null));
       return true;
     } catch (e) {
