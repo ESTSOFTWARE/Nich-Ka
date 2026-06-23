@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart' hide ChangeNotifierProvider;
+import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -124,7 +126,11 @@ class LoginEmailView extends StatelessWidget {
                   onPressed: () async {
                     final ok = await provider.loginWithEmail();
                     if (ok && context.mounted) {
-                      // Si venía de un deep link a unirse a una clase, ir allí
+                      if (provider.lastToken != null) {
+                        context
+                            .read<AuthProvider>()
+                            .setUser(provider.lastToken!);
+                      }
                       final code = pendingJoinCode;
                       if (code != null) {
                         pendingJoinCode = null;
