@@ -105,7 +105,9 @@ class ConversationCard extends StatelessWidget {
                 border: Border.all(color: palette.surface, width: 2),
               ),
               child: Text(
-                conversation.unreadCount > 9 ? '9+' : '${conversation.unreadCount}',
+                conversation.unreadCount > 9
+                    ? '9+'
+                    : '${conversation.unreadCount}',
                 style: GoogleFonts.poppins(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
@@ -119,18 +121,18 @@ class ConversationCard extends StatelessWidget {
   }
 
   Widget _initial(String name, Color color) => Container(
-        color: color.withValues(alpha: 0.15),
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
+    color: color.withValues(alpha: 0.15),
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: GoogleFonts.poppins(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: color,
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildInfo(String name, String lastText, dynamic last) {
     return Column(
@@ -141,8 +143,11 @@ class ConversationCard extends StatelessWidget {
             if (conversation.isGroup)
               Padding(
                 padding: const EdgeInsets.only(right: 4),
-                child: Icon(Icons.group_outlined,
-                    size: 13, color: palette.textMuted),
+                child: Icon(
+                  Icons.group_outlined,
+                  size: 13,
+                  color: palette.textMuted,
+                ),
               ),
             Expanded(
               child: Text(
@@ -162,7 +167,9 @@ class ConversationCard extends StatelessWidget {
           lastText,
           style: GoogleFonts.poppins(
             fontSize: 13,
-            fontWeight: conversation.hasUnread ? FontWeight.w500 : FontWeight.normal,
+            fontWeight: conversation.hasUnread
+                ? FontWeight.w500
+                : FontWeight.normal,
             color: conversation.hasUnread
                 ? palette.textPrimary
                 : palette.textSecondary,
@@ -204,9 +211,12 @@ class ConversationCard extends StatelessWidget {
           time,
           style: GoogleFonts.poppins(
             fontSize: 11,
-            color: conversation.hasUnread ? AppPalette.accent : palette.textMuted,
-            fontWeight:
-                conversation.hasUnread ? FontWeight.w600 : FontWeight.normal,
+            color: conversation.hasUnread
+                ? AppPalette.accent
+                : palette.textMuted,
+            fontWeight: conversation.hasUnread
+                ? FontWeight.w600
+                : FontWeight.normal,
           ),
         ),
         const SizedBox(height: 6),

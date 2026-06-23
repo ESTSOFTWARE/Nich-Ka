@@ -90,7 +90,7 @@ class GroupChatProvider extends ChangeNotifier {
   bool _disposed = false;
 
   GroupChatProvider(this.conversation, {int? myUserId})
-      : myUserId = myUserId ?? HttpClient.instance.userId {
+    : myUserId = myUserId ?? HttpClient.instance.userId {
     final repo = ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance));
     _ds = ChatRemoteDataSource(HttpClient.instance);
     _getMessages = GetMessagesUseCase(repo);
@@ -223,8 +223,9 @@ class GroupChatProvider extends ChangeNotifier {
           final pinnedId = data['messageId'] as int?;
           if (convId == conversation.id) {
             for (var i = 0; i < _messages.length; i++) {
-              _messages[i] =
-                  _messages[i].copyWith(pinned: _messages[i].id == pinnedId);
+              _messages[i] = _messages[i].copyWith(
+                pinned: _messages[i].id == pinnedId,
+              );
             }
             notifyListeners();
           }
@@ -232,7 +233,8 @@ class GroupChatProvider extends ChangeNotifier {
         case 'conversation:updated':
           if (data['conversation'] != null) {
             final dto = ConversationDto.fromJson(
-                data['conversation'] as Map<String, dynamic>);
+              data['conversation'] as Map<String, dynamic>,
+            );
             if (dto.id == conversation.id) {
               conversation = ChatMapper.fromConversationDto(dto);
               notifyListeners();
@@ -357,8 +359,11 @@ class GroupChatProvider extends ChangeNotifier {
     final replyToId = _replyTarget?.id;
     clearActionTargets();
     try {
-      final sent = await _sendMessage(conversation.id,
-          content: text.trim(), replyToId: replyToId);
+      final sent = await _sendMessage(
+        conversation.id,
+        content: text.trim(),
+        replyToId: replyToId,
+      );
       _addIfNew(sent);
     } catch (_) {}
   }
@@ -368,8 +373,11 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final attachment = await _uploadFile(file);
-      final sent = await _sendMessage(conversation.id,
-          attachments: [attachment], replyToId: _replyTarget?.id);
+      final sent = await _sendMessage(
+        conversation.id,
+        attachments: [attachment],
+        replyToId: _replyTarget?.id,
+      );
       clearActionTargets();
       _addIfNew(sent);
     } catch (_) {}
@@ -426,8 +434,11 @@ class GroupChatProvider extends ChangeNotifier {
 
   Future<void> updateGroup({String? name, String? description}) async {
     try {
-      await _updateConversation(conversation.id,
-          name: name, description: description);
+      await _updateConversation(
+        conversation.id,
+        name: name,
+        description: description,
+      );
       if (name != null) {
         conversation = conversation.copyWith(name: name);
         notifyListeners();
@@ -453,11 +464,11 @@ class GroupChatProvider extends ChangeNotifier {
   bool isMyMessage(ChatMessage msg) => msg.senderId == myUserId;
 
   ReplyPreview buildReplyPreview(ChatMessage msg) => ReplyPreview(
-        id: msg.id,
-        content: msg.content,
-        senderName: msg.senderName,
-        attachment: msg.attachments.isNotEmpty ? msg.attachments.first : null,
-      );
+    id: msg.id,
+    content: msg.content,
+    senderName: msg.senderName,
+    attachment: msg.attachments.isNotEmpty ? msg.attachments.first : null,
+  );
 
   void _scrollToBottom({bool immediate = false}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {

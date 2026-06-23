@@ -81,8 +81,11 @@ class _MessagesViewState extends State<MessagesView> {
                           shape: BoxShape.circle,
                           border: Border.all(color: palette.border),
                         ),
-                        child: Icon(Icons.chevron_left,
-                            color: palette.textPrimary, size: 22),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: palette.textPrimary,
+                          size: 22,
+                        ),
                       ),
                     ),
                   ),
@@ -102,7 +105,9 @@ class _MessagesViewState extends State<MessagesView> {
                       Text(
                         subtitle,
                         style: GoogleFonts.poppins(
-                            fontSize: 13, color: palette.textSecondary),
+                          fontSize: 13,
+                          color: palette.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -159,12 +164,10 @@ class _MessagesViewState extends State<MessagesView> {
     return TextField(
       controller: _searchCtrl,
       onChanged: provider.setSearch,
-      style:
-          GoogleFonts.poppins(fontSize: 14, color: palette.textPrimary),
+      style: GoogleFonts.poppins(fontSize: 14, color: palette.textPrimary),
       decoration: InputDecoration(
         hintText: 'Buscar conversación...',
-        hintStyle:
-            GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
+        hintStyle: GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
         prefixIcon: Icon(Icons.search, color: palette.textMuted, size: 20),
         suffixIcon: _searchCtrl.text.isNotEmpty
             ? IconButton(
@@ -189,8 +192,10 @@ class _MessagesViewState extends State<MessagesView> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppPalette.accent, width: 1.5),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 11,
+        ),
         isDense: true,
       ),
     );
@@ -207,12 +212,8 @@ class _MessagesViewState extends State<MessagesView> {
       context: context,
       palette: palette,
       contacts: provider.contacts,
-      onCreate: ({required type, required memberIds, name}) =>
-          provider.createConversation(
-        type: type,
-        memberIds: memberIds,
-        name: name,
-      ),
+      onCreate: ({required type, required memberIds, name}) => provider
+          .createConversation(type: type, memberIds: memberIds, name: name),
     );
     if (conv != null && context.mounted) {
       context.push('/group-chat', extra: conv);
@@ -274,19 +275,24 @@ class _MessagesViewState extends State<MessagesView> {
               provider.error ?? 'Error al cargar mensajes.',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                  fontSize: 14, color: palette.textSecondary),
+                fontSize: 14,
+                color: palette.textSecondary,
+              ),
             ),
             const SizedBox(height: 16),
             GestureDetector(
               onTap: provider.refresh,
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 10),
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: AppPalette.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                      color: AppPalette.accent.withValues(alpha: 0.4)),
+                    color: AppPalette.accent.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: Text(
                   'Reintentar',

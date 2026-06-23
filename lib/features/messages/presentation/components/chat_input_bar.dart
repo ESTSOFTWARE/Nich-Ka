@@ -201,7 +201,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
               _ctrl.value = TextEditingValue(
                 text: newText,
                 selection: TextSelection.collapsed(
-                  offset: (sel.start < 0 ? text.length : sel.start) +
+                  offset:
+                      (sel.start < 0 ? text.length : sel.start) +
                       emoji.emoji.length,
                 ),
               );

@@ -16,7 +16,14 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<List<ChatMember>> getContacts() async {
     final dtos = await _ds.getContacts();
     return dtos
-        .map((m) => ChatMember(id: m.id, name: m.name, role: m.role, avatar: m.avatar))
+        .map(
+          (m) => ChatMember(
+            id: m.id,
+            name: m.name,
+            role: m.role,
+            avatar: m.avatar,
+          ),
+        )
         .toList();
   }
 
@@ -103,7 +110,13 @@ class ChatRepositoryImpl implements ChatRepository {
       _ds.leaveConversation(conversationId);
 
   @override
-  Future<void> updateConversation(int conversationId,
-          {String? name, String? description}) =>
-      _ds.updateConversation(conversationId, name: name, description: description);
+  Future<void> updateConversation(
+    int conversationId, {
+    String? name,
+    String? description,
+  }) => _ds.updateConversation(
+    conversationId,
+    name: name,
+    description: description,
+  );
 }

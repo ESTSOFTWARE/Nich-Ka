@@ -30,11 +30,13 @@ class ChatRemoteDataSource {
   }
 
   Future<ConversationDto> createConversation(
-      CreateConversationRequestDto request) async {
+    CreateConversationRequestDto request,
+  ) async {
     final res = await _client.post('/chat/conversations', request.toJson());
     _assertOk(res, 'No se pudo crear la conversación.');
     return ConversationDto.fromJson(
-        jsonDecode(res.body) as Map<String, dynamic>);
+      jsonDecode(res.body) as Map<String, dynamic>,
+    );
   }
 
   Future<List<ConversationDto>> getConversations() async {
@@ -51,17 +53,23 @@ class ChatRemoteDataSource {
   }
 
   Future<void> leaveConversation(int conversationId) async {
-    final res = await _client.delete('/chat/conversations/$conversationId/leave');
+    final res = await _client.delete(
+      '/chat/conversations/$conversationId/leave',
+    );
     _assertOk(res, 'No se pudo salir de la conversación.');
   }
 
-  Future<void> updateConversation(int conversationId,
-      {String? name, String? description}) async {
-    final body = <String, dynamic>{
-      'name': name,
-      'description': description,
-    }..removeWhere((_, v) => v == null);
-    final res = await _client.patch('/chat/conversations/$conversationId', body);
+  Future<void> updateConversation(
+    int conversationId, {
+    String? name,
+    String? description,
+  }) async {
+    final body = <String, dynamic>{'name': name, 'description': description}
+      ..removeWhere((_, v) => v == null);
+    final res = await _client.patch(
+      '/chat/conversations/$conversationId',
+      body,
+    );
     _assertOk(res, 'No se pudo actualizar la conversación.');
   }
 
@@ -72,10 +80,12 @@ class ChatRemoteDataSource {
     int? cursor,
     int limit = 40,
   }) async {
-    final query =
-        cursor != null ? '?cursor=$cursor&limit=$limit' : '?limit=$limit';
-    final res =
-        await _client.get('/chat/conversations/$conversationId/messages$query');
+    final query = cursor != null
+        ? '?cursor=$cursor&limit=$limit'
+        : '?limit=$limit';
+    final res = await _client.get(
+      '/chat/conversations/$conversationId/messages$query',
+    );
     _assertOk(res, 'No se pudieron cargar los mensajes.');
     final list = jsonDecode(res.body) as List<dynamic>;
     return list
@@ -99,8 +109,10 @@ class ChatRemoteDataSource {
     int messageId,
     EditMessageRequestDto request,
   ) async {
-    final res =
-        await _client.patch('/chat/messages/$messageId', request.toJson());
+    final res = await _client.patch(
+      '/chat/messages/$messageId',
+      request.toJson(),
+    );
     _assertOk(res, 'No se pudo editar el mensaje.');
     return MessageDto.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
@@ -118,8 +130,9 @@ class ChatRemoteDataSource {
   }
 
   Future<void> setPriority(int messageId, String priority) async {
-    final res = await _client
-        .patch('/chat/messages/$messageId/priority', {'priority': priority});
+    final res = await _client.patch('/chat/messages/$messageId/priority', {
+      'priority': priority,
+    });
     _assertOk(res, 'No se pudo cambiar la prioridad.');
   }
 
@@ -128,7 +141,9 @@ class ChatRemoteDataSource {
     ToggleReactionRequestDto request,
   ) async {
     final res = await _client.post(
-        '/chat/messages/$messageId/reactions', request.toJson());
+      '/chat/messages/$messageId/reactions',
+      request.toJson(),
+    );
     _assertOk(res, 'No se pudo reaccionar al mensaje.');
     return MessageDto.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
@@ -151,10 +166,12 @@ class ChatRemoteDataSource {
   }
 
   void sendTyping(WebSocketChannel channel, int conversationId, bool typing) {
-    channel.sink.add(jsonEncode({
-      'type': typing ? 'typing:start' : 'typing:stop',
-      'conversationId': conversationId,
-    }));
+    channel.sink.add(
+      jsonEncode({
+        'type': typing ? 'typing:start' : 'typing:stop',
+        'conversationId': conversationId,
+      }),
+    );
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────

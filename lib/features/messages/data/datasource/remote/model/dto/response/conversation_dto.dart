@@ -26,7 +26,8 @@ class ConversationDto {
     this.unreadCount = 0,
   });
 
-  factory ConversationDto.fromJson(Map<String, dynamic> json) => ConversationDto(
+  factory ConversationDto.fromJson(Map<String, dynamic> json) =>
+      ConversationDto(
         id: json['id'] as int,
         type: json['type'] as String,
         name: json['name'] as String?,

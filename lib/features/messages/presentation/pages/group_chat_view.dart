@@ -68,14 +68,20 @@ class GroupChatView extends StatelessWidget {
                         shape: BoxShape.circle,
                         border: Border.all(color: palette.border),
                       ),
-                      child: Icon(Icons.chevron_left,
-                          color: palette.textPrimary, size: 22),
+                      child: Icon(
+                        Icons.chevron_left,
+                        color: palette.textPrimary,
+                        size: 22,
+                      ),
                     ),
                   ),
                   title: Row(
                     children: [
-                      _buildAvatar(palette, provider.conversation,
-                          provider.myUserId),
+                      _buildAvatar(
+                        palette,
+                        provider.conversation,
+                        provider.myUserId,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
@@ -83,8 +89,9 @@ class GroupChatView extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              provider.conversation
-                                  .displayName(provider.myUserId),
+                              provider.conversation.displayName(
+                                provider.myUserId,
+                              ),
                               style: GoogleFonts.poppins(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -108,26 +115,40 @@ class GroupChatView extends StatelessWidget {
                   actions: [
                     if (provider.conversation.isGroup) ...[
                       PopupMenuButton<String>(
-                        icon: Icon(Icons.more_vert,
-                            color: palette.textPrimary, size: 20),
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: palette.textPrimary,
+                          size: 20,
+                        ),
                         color: palette.surface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(color: palette.border),
                         ),
                         onSelected: (value) => _handleMenuAction(
-                            context, provider, palette, value),
+                          context,
+                          provider,
+                          palette,
+                          value,
+                        ),
                         itemBuilder: (_) => [
                           if (provider.isCreator)
                             PopupMenuItem(
                               value: 'edit',
                               child: _menuItem(
-                                  Icons.edit_outlined, 'Editar grupo', palette),
+                                Icons.edit_outlined,
+                                'Editar grupo',
+                                palette,
+                              ),
                             ),
                           PopupMenuItem(
                             value: 'leave',
-                            child: _menuItem(Icons.logout, 'Salir del grupo',
-                                palette, color: const Color(0xFFEF4444)),
+                            child: _menuItem(
+                              Icons.logout,
+                              'Salir del grupo',
+                              palette,
+                              color: const Color(0xFFEF4444),
+                            ),
                           ),
                         ],
                       ),
@@ -140,16 +161,13 @@ class GroupChatView extends StatelessWidget {
           ),
           body: Column(
             children: [
-              Expanded(
-                child: _buildMessageList(context, provider, palette),
-              ),
+              Expanded(child: _buildMessageList(context, provider, palette)),
               // Pinned message banner
               if (provider.pinnedMessage != null)
                 _buildPinnedBanner(provider, palette),
               // Typing
               if (provider.typingUsers.isNotEmpty)
-                TypingIndicator(
-                    users: provider.typingUsers, palette: palette),
+                TypingIndicator(users: provider.typingUsers, palette: palette),
               // Reply bar
               if (provider.replyTarget != null)
                 ReplyBar(
@@ -158,8 +176,7 @@ class GroupChatView extends StatelessWidget {
                   onCancel: provider.clearActionTargets,
                 ),
               // Edit bar
-              if (provider.editTarget != null)
-                _buildEditBar(provider, palette),
+              if (provider.editTarget != null) _buildEditBar(provider, palette),
               // Input
               _buildBottomBar(context, provider, palette),
             ],
@@ -175,9 +192,7 @@ class GroupChatView extends StatelessWidget {
     AppPalette palette,
   ) {
     if (provider.loadingMessages && provider.messages.isEmpty) {
-      return Center(
-        child: CircularProgressIndicator(color: AppPalette.accent),
-      );
+      return Center(child: CircularProgressIndicator(color: AppPalette.accent));
     }
 
     if (provider.messages.isEmpty) {
@@ -191,7 +206,9 @@ class GroupChatView extends StatelessWidget {
               'Sin mensajes aún.\nSé el primero en escribir.',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                  fontSize: 14, color: palette.textSecondary),
+                fontSize: 14,
+                color: palette.textSecondary,
+              ),
             ),
           ],
         ),
@@ -213,10 +230,8 @@ class GroupChatView extends StatelessWidget {
         final prev = index > 0 ? msgs[index - 1] : null;
         final next = index < msgs.length - 1 ? msgs[index + 1] : null;
 
-        final isFirst =
-            prev == null || prev.senderId != msg.senderId;
-        final isLast =
-            next == null || next.senderId != msg.senderId;
+        final isFirst = prev == null || prev.senderId != msg.senderId;
+        final isLast = next == null || next.senderId != msg.senderId;
         final topPad = isFirst ? 10.0 : 2.0;
 
         return Padding(
@@ -229,8 +244,7 @@ class GroupChatView extends StatelessWidget {
             isLast: isLast,
             groupChat: provider.conversation.isGroup,
             myUserId: provider.myUserId,
-            onLongPress: (m) =>
-                _showActions(context, provider, palette, m),
+            onLongPress: (m) => _showActions(context, provider, palette, m),
             onQuickReact: (emoji) => provider.react(msg.id, emoji),
           ),
         );
@@ -272,8 +286,11 @@ class GroupChatView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.push_pin,
-              size: 14, color: AppPalette.accent.withValues(alpha: 0.7)),
+          Icon(
+            Icons.push_pin,
+            size: 14,
+            color: AppPalette.accent.withValues(alpha: 0.7),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -288,7 +305,8 @@ class GroupChatView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  msg.content ?? (msg.attachments.isNotEmpty ? '📎 Archivo' : ''),
+                  msg.content ??
+                      (msg.attachments.isNotEmpty ? '📎 Archivo' : ''),
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: palette.textSecondary,
@@ -302,8 +320,7 @@ class GroupChatView extends StatelessWidget {
           if (provider.isCreator)
             GestureDetector(
               onTap: () => provider.pinMessage(msg.id),
-              child: Icon(Icons.close,
-                  size: 16, color: palette.textMuted),
+              child: Icon(Icons.close, size: 16, color: palette.textMuted),
             ),
         ],
       ),
@@ -343,7 +360,9 @@ class GroupChatView extends StatelessWidget {
                 Text(
                   provider.editTarget?.content ?? '',
                   style: GoogleFonts.poppins(
-                      fontSize: 12, color: palette.textSecondary),
+                    fontSize: 12,
+                    color: palette.textSecondary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -368,7 +387,9 @@ class GroupChatView extends StatelessWidget {
   ) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        12, 8, 12,
+        12,
+        8,
+        12,
         MediaQuery.of(context).padding.bottom + 8,
       ),
       decoration: BoxDecoration(
@@ -396,26 +417,40 @@ class GroupChatView extends StatelessWidget {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: palette.surface,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Salir del chat',
-              style: GoogleFonts.poppins(
-                  color: palette.textPrimary, fontWeight: FontWeight.w600)),
-          content: Text('¿Seguro que quieres salir de esta conversación?',
-              style:
-                  GoogleFonts.poppins(color: palette.textSecondary, fontSize: 14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            'Salir del chat',
+            style: GoogleFonts.poppins(
+              color: palette.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: Text(
+            '¿Seguro que quieres salir de esta conversación?',
+            style: GoogleFonts.poppins(
+              color: palette.textSecondary,
+              fontSize: 14,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Cancelar',
-                  style: GoogleFonts.poppins(color: palette.textMuted)),
+              child: Text(
+                'Cancelar',
+                style: GoogleFonts.poppins(color: palette.textMuted),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('Salir',
-                  style: GoogleFonts.poppins(
-                      color: const Color(0xFFEF4444),
-                      fontWeight: FontWeight.w600)),
+              child: Text(
+                'Salir',
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFFEF4444),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
@@ -432,9 +467,11 @@ class GroupChatView extends StatelessWidget {
     AppPalette palette,
   ) {
     final nameCtrl = TextEditingController(
-        text: provider.conversation.name ?? '');
+      text: provider.conversation.name ?? '',
+    );
     final descCtrl = TextEditingController(
-        text: provider.conversation.description ?? '');
+      text: provider.conversation.description ?? '',
+    );
 
     showModalBottomSheet(
       context: context,
@@ -463,14 +500,18 @@ class GroupChatView extends StatelessWidget {
               TextField(
                 controller: nameCtrl,
                 style: GoogleFonts.poppins(
-                    fontSize: 14, color: palette.textPrimary),
+                  fontSize: 14,
+                  color: palette.textPrimary,
+                ),
                 decoration: _inputDeco('Nombre del grupo', palette),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: descCtrl,
                 style: GoogleFonts.poppins(
-                    fontSize: 14, color: palette.textPrimary),
+                  fontSize: 14,
+                  color: palette.textPrimary,
+                ),
                 decoration: _inputDeco('Descripción (opcional)', palette),
                 maxLines: 2,
               ),
@@ -515,8 +556,7 @@ class GroupChatView extends StatelessWidget {
   InputDecoration _inputDeco(String hint, AppPalette palette) {
     return InputDecoration(
       hintText: hint,
-      hintStyle:
-          GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
+      hintStyle: GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
       filled: true,
       fillColor: palette.rowSurface,
       border: OutlineInputBorder(
@@ -531,14 +571,12 @@ class GroupChatView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: AppPalette.accent, width: 1.5),
       ),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       isDense: true,
     );
   }
 
-  Widget _buildAvatar(
-      AppPalette palette, ChatConversation conv, int myUserId) {
+  Widget _buildAvatar(AppPalette palette, ChatConversation conv, int myUserId) {
     final avatarUrl = conv.displayAvatar(myUserId);
     return Container(
       width: 36,
@@ -547,21 +585,25 @@ class GroupChatView extends StatelessWidget {
         shape: BoxShape.circle,
         color: AppPalette.accent.withValues(alpha: 0.15),
         border: Border.all(
-            color: AppPalette.accent.withValues(alpha: 0.3), width: 1.5),
+          color: AppPalette.accent.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
       ),
       child: ClipOval(
         child: avatarUrl != null
-            ? Image.network(avatarUrl, width: 36, height: 36,
+            ? Image.network(
+                avatarUrl,
+                width: 36,
+                height: 36,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) =>
-                    _initials(palette, conv, myUserId))
+                errorBuilder: (_, _, _) => _initials(palette, conv, myUserId),
+              )
             : _initials(palette, conv, myUserId),
       ),
     );
   }
 
-  Widget _initials(
-      AppPalette palette, ChatConversation conv, int myUserId) {
+  Widget _initials(AppPalette palette, ChatConversation conv, int myUserId) {
     final name = conv.displayName(myUserId);
     return Container(
       color: AppPalette.accent.withValues(alpha: 0.15),
@@ -578,17 +620,18 @@ class GroupChatView extends StatelessWidget {
     );
   }
 
-  Widget _menuItem(IconData icon, String label, AppPalette palette,
-      {Color? color}) {
+  Widget _menuItem(
+    IconData icon,
+    String label,
+    AppPalette palette, {
+    Color? color,
+  }) {
     final c = color ?? palette.textPrimary;
     return Row(
       children: [
         Icon(icon, size: 18, color: c),
         const SizedBox(width: 10),
-        Text(
-          label,
-          style: GoogleFonts.poppins(fontSize: 14, color: c),
-        ),
+        Text(label, style: GoogleFonts.poppins(fontSize: 14, color: c)),
       ],
     );
   }

@@ -34,9 +34,11 @@ class MessagesProvider extends ChangeNotifier {
     if (_search.isEmpty) return _conversations;
     final q = _search.toLowerCase();
     return _conversations
-        .where((c) =>
-            c.name?.toLowerCase().contains(q) == true ||
-            c.members.any((m) => m.name.toLowerCase().contains(q)))
+        .where(
+          (c) =>
+              c.name?.toLowerCase().contains(q) == true ||
+              c.members.any((m) => m.name.toLowerCase().contains(q)),
+        )
         .toList();
   }
 
@@ -70,18 +72,21 @@ class MessagesProvider extends ChangeNotifier {
     GetConversationsUseCase? getConversations,
     GetContactsUseCase? getContacts,
     CreateConversationUseCase? createConversation,
-  })  : _getConversations = getConversations ??
-            GetConversationsUseCase(
-              ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
-            ),
-        _getContacts = getContacts ??
-            GetContactsUseCase(
-              ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
-            ),
-        _createConversation = createConversation ??
-            CreateConversationUseCase(
-              ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
-            ) {
+  }) : _getConversations =
+           getConversations ??
+           GetConversationsUseCase(
+             ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
+           ),
+       _getContacts =
+           getContacts ??
+           GetContactsUseCase(
+             ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
+           ),
+       _createConversation =
+           createConversation ??
+           CreateConversationUseCase(
+             ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance)),
+           ) {
     _ds = ChatRemoteDataSource(HttpClient.instance);
     scrollController.addListener(_onScroll);
     _load();
@@ -133,7 +138,8 @@ class MessagesProvider extends ChangeNotifier {
           if (data['conversation'] != null) {
             final conv = ChatMapper.fromConversationDto(
               ConversationDto.fromJson(
-                  data['conversation'] as Map<String, dynamic>),
+                data['conversation'] as Map<String, dynamic>,
+              ),
             );
             if (!_conversations.any((c) => c.id == conv.id)) {
               _conversations = [conv, ..._conversations];
@@ -148,8 +154,9 @@ class MessagesProvider extends ChangeNotifier {
               MessageDto.fromJson(data['message'] as Map<String, dynamic>),
             );
             final myId = HttpClient.instance.userId;
-            final idx = _conversations
-                .indexWhere((c) => c.id == msg.conversationId);
+            final idx = _conversations.indexWhere(
+              (c) => c.id == msg.conversationId,
+            );
             if (idx != -1) {
               final conv = _conversations[idx];
               _conversations = List.from(_conversations)
@@ -167,7 +174,8 @@ class MessagesProvider extends ChangeNotifier {
           if (data['conversation'] != null) {
             final conv = ChatMapper.fromConversationDto(
               ConversationDto.fromJson(
-                  data['conversation'] as Map<String, dynamic>),
+                data['conversation'] as Map<String, dynamic>,
+              ),
             );
             final idx = _conversations.indexWhere((c) => c.id == conv.id);
             if (idx != -1) {

@@ -33,7 +33,9 @@ class ChatConversation {
     if (isGroup) return name ?? 'Grupo';
     final other = members.firstWhere(
       (m) => m.id != myId,
-      orElse: () => members.isNotEmpty ? members.first : const ChatMember(id: 0, name: 'Chat', role: ''),
+      orElse: () => members.isNotEmpty
+          ? members.first
+          : const ChatMember(id: 0, name: 'Chat', role: ''),
     );
     return other.name;
   }
@@ -42,7 +44,9 @@ class ChatConversation {
     if (isGroup) return avatar;
     final other = members.firstWhere(
       (m) => m.id != myId,
-      orElse: () => members.isNotEmpty ? members.first : const ChatMember(id: 0, name: '', role: ''),
+      orElse: () => members.isNotEmpty
+          ? members.first
+          : const ChatMember(id: 0, name: '', role: ''),
     );
     return other.avatar;
   }

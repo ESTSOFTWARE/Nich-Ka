@@ -19,7 +19,8 @@ Future<ChatConversation?> showNewConversationSheet({
     required String type,
     required List<int> memberIds,
     String? name,
-  }) onCreate,
+  })
+  onCreate,
 }) {
   return showModalBottomSheet<ChatConversation>(
     context: context,
@@ -40,7 +41,8 @@ class _NewConversationSheet extends StatefulWidget {
     required String type,
     required List<int> memberIds,
     String? name,
-  }) onCreate;
+  })
+  onCreate;
 
   const _NewConversationSheet({
     required this.palette,
@@ -60,11 +62,13 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
   bool _loading = false;
 
   List<ChatMember> get _filtered => widget.contacts
-      .where((m) =>
-          m.name.toLowerCase().contains(_search.toLowerCase()) ||
-          (_roleLabel[m.role] ?? m.role)
-              .toLowerCase()
-              .contains(_search.toLowerCase()))
+      .where(
+        (m) =>
+            m.name.toLowerCase().contains(_search.toLowerCase()) ||
+            (_roleLabel[m.role] ?? m.role).toLowerCase().contains(
+              _search.toLowerCase(),
+            ),
+      )
       .toList();
 
   bool get _canCreate =>
@@ -96,7 +100,8 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).viewInsets.bottom +
+    final bottom =
+        MediaQuery.of(context).viewInsets.bottom +
         MediaQuery.of(context).padding.bottom;
 
     return Container(
@@ -135,8 +140,11 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.close,
-                      color: widget.palette.textMuted, size: 20),
+                  icon: Icon(
+                    Icons.close,
+                    color: widget.palette.textMuted,
+                    size: 20,
+                  ),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -156,8 +164,11 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                   ),
                   child: Row(
                     children: [
-                      _typeButton('personal', Icons.person_outline,
-                          'Chat personal'),
+                      _typeButton(
+                        'personal',
+                        Icons.person_outline,
+                        'Chat personal',
+                      ),
                       _typeButton('group', Icons.group_outlined, 'Chat grupal'),
                     ],
                   ),
@@ -168,11 +179,15 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                   TextField(
                     onChanged: (v) => setState(() => _groupName = v),
                     style: GoogleFonts.poppins(
-                        fontSize: 14, color: widget.palette.textPrimary),
+                      fontSize: 14,
+                      color: widget.palette.textPrimary,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Nombre del grupo',
                       hintStyle: GoogleFonts.poppins(
-                          fontSize: 14, color: widget.palette.textMuted),
+                        fontSize: 14,
+                        color: widget.palette.textMuted,
+                      ),
                       filled: true,
                       fillColor: widget.palette.rowSurface,
                       border: OutlineInputBorder(
@@ -185,11 +200,15 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide:
-                            BorderSide(color: AppPalette.accent, width: 1.5),
+                        borderSide: BorderSide(
+                          color: AppPalette.accent,
+                          width: 1.5,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 12),
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -199,13 +218,20 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 TextField(
                   onChanged: (v) => setState(() => _search = v),
                   style: GoogleFonts.poppins(
-                      fontSize: 14, color: widget.palette.textPrimary),
+                    fontSize: 14,
+                    color: widget.palette.textPrimary,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Buscar persona...',
                     hintStyle: GoogleFonts.poppins(
-                        fontSize: 14, color: widget.palette.textMuted),
-                    prefixIcon:
-                        Icon(Icons.search, color: widget.palette.textMuted, size: 20),
+                      fontSize: 14,
+                      color: widget.palette.textMuted,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: widget.palette.textMuted,
+                      size: 20,
+                    ),
                     filled: true,
                     fillColor: widget.palette.rowSurface,
                     border: OutlineInputBorder(
@@ -218,11 +244,15 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: AppPalette.accent, width: 1.5),
+                      borderSide: BorderSide(
+                        color: AppPalette.accent,
+                        width: 1.5,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     isDense: true,
                   ),
                 ),
@@ -237,20 +267,23 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                     child: Text(
                       'Sin resultados',
                       style: GoogleFonts.poppins(
-                          fontSize: 14, color: widget.palette.textMuted),
+                        fontSize: 14,
+                        color: widget.palette.textMuted,
+                      ),
                     ),
                   )
                 : ListView.builder(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     itemCount: _filtered.length,
                     itemBuilder: (_, i) => _contactTile(_filtered[i]),
                   ),
           ),
           // Footer button
           Padding(
-            padding:
-                EdgeInsets.fromLTRB(16, 8, 16, bottom > 0 ? bottom : 16),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, bottom > 0 ? bottom : 16),
             child: GestureDetector(
               onTap: _canCreate && !_loading ? _submit : null,
               child: AnimatedContainer(
@@ -269,7 +302,9 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                            color: Colors.black, strokeWidth: 2),
+                          color: Colors.black,
+                          strokeWidth: 2,
+                        ),
                       )
                     : Text(
                         _type == 'personal' ? 'Iniciar chat' : 'Crear grupo',
@@ -308,18 +343,19 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  size: 16,
-                  color: selected
-                      ? widget.palette.textPrimary
-                      : widget.palette.textMuted),
+              Icon(
+                icon,
+                size: 16,
+                color: selected
+                    ? widget.palette.textPrimary
+                    : widget.palette.textMuted,
+              ),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: GoogleFonts.poppins(
                   fontSize: 13,
-                  fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
                   color: selected
                       ? widget.palette.textPrimary
                       : widget.palette.textMuted,
@@ -361,9 +397,11 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
               ),
               child: member.avatar != null
                   ? ClipOval(
-                      child: Image.network(member.avatar!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _initial(member, color)),
+                      child: Image.network(
+                        member.avatar!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => _initial(member, color),
+                      ),
                     )
                   : _initial(member, color),
             ),
@@ -401,8 +439,7 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 shape: BoxShape.circle,
                 color: isSelected ? AppPalette.accent : Colors.transparent,
                 border: Border.all(
-                  color:
-                      isSelected ? AppPalette.accent : widget.palette.border,
+                  color: isSelected ? AppPalette.accent : widget.palette.border,
                   width: 1.5,
                 ),
               ),
@@ -417,19 +454,23 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
   }
 
   Widget _initial(ChatMember member, Color color) => Center(
-        child: Text(
-          member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
-        ),
-      );
+    child: Text(
+      member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+      style: GoogleFonts.poppins(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: color,
+      ),
+    ),
+  );
 
   static const _palette = [
-    Color(0xFF75D079), Color(0xFF60A5FA), Color(0xFFFBBF24),
-    Color(0xFFF472B6), Color(0xFFA78BFA), Color(0xFF34D399),
+    Color(0xFF75D079),
+    Color(0xFF60A5FA),
+    Color(0xFFFBBF24),
+    Color(0xFFF472B6),
+    Color(0xFFA78BFA),
+    Color(0xFF34D399),
   ];
 
   Color _colorForName(String name) {

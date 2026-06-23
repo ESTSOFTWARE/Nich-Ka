@@ -9,10 +9,9 @@ class CreateConversationUseCase {
     required String type,
     required List<int> memberIds,
     String? name,
-  }) =>
-      _repository.createConversation(
-        type: type,
-        memberIds: memberIds,
-        name: name,
-      );
+  }) => _repository.createConversation(
+    type: type,
+    memberIds: memberIds,
+    name: name,
+  );
 }

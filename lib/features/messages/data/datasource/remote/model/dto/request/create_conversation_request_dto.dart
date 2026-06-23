@@ -10,8 +10,8 @@ class CreateConversationRequestDto {
   });
 
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'memberIds': memberIds,
-        if (name != null) 'name': name,
-      };
+    'type': type,
+    'memberIds': memberIds,
+    if (name != null) 'name': name,
+  };
 }

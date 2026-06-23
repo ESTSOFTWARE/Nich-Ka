@@ -13,7 +13,8 @@ class ReplyPreviewDto {
     this.attachment,
   });
 
-  factory ReplyPreviewDto.fromJson(Map<String, dynamic> json) => ReplyPreviewDto(
+  factory ReplyPreviewDto.fromJson(Map<String, dynamic> json) =>
+      ReplyPreviewDto(
         id: json['id'] as int,
         senderName: json['senderName'] as String,
         content: json['content'] as String?,

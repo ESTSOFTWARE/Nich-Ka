@@ -16,7 +16,11 @@ class HttpClient {
   String? _accessToken;
   int _userId = 0;
 
-  void setTokens({required String access, required String refresh, int userId = 0}) {
+  void setTokens({
+    required String access,
+    required String refresh,
+    int userId = 0,
+  }) {
     _accessToken = access;
     _userId = userId;
   }
@@ -79,10 +83,7 @@ class HttpClient {
     String path,
     List<http.MultipartFile> files,
   ) async {
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$_baseUrl$path'),
-    );
+    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl$path'));
     if (_accessToken != null) {
       request.headers['Authorization'] = 'Bearer $_accessToken';
     }

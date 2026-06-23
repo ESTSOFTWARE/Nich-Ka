@@ -14,18 +14,18 @@ class AttachmentDto {
   });
 
   factory AttachmentDto.fromJson(Map<String, dynamic> json) => AttachmentDto(
-        id: json['id'] as int,
-        type: json['type'] as String,
-        name: json['name'] as String,
-        url: json['url'] as String,
-        size: (json['size'] as num?)?.toInt() ?? 0,
-      );
+    id: json['id'] as int,
+    type: json['type'] as String,
+    name: json['name'] as String,
+    url: json['url'] as String,
+    size: (json['size'] as num?)?.toInt() ?? 0,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'name': name,
-        'url': url,
-        'size': size,
-      };
+    'id': id,
+    'type': type,
+    'name': name,
+    'url': url,
+    'size': size,
+  };
 }

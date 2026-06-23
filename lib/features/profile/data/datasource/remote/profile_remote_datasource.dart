@@ -18,14 +18,10 @@ class ProfileRemoteDataSource {
   }
 
   Future<String> uploadProfileImage(File file) async {
-    final multipart = await http.MultipartFile.fromPath(
-      'file',
-      file.path,
-    );
-    final response = await _client.postMultipart(
-      '/users/me/profile-image',
-      [multipart],
-    );
+    final multipart = await http.MultipartFile.fromPath('file', file.path);
+    final response = await _client.postMultipart('/users/me/profile-image', [
+      multipart,
+    ]);
     _assertSuccess(response, 'No se pudo subir la imagen.');
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return json['profile_image'] as String;

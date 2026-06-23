@@ -180,8 +180,8 @@ class _MessageActionsSheet extends StatelessWidget {
     final color = priority == 'urgent'
         ? const Color(0xFFEF4444)
         : priority == 'important'
-            ? const Color(0xFFF0A646)
-            : palette.textMuted;
+        ? const Color(0xFFF0A646)
+        : palette.textMuted;
     return ListTile(
       dense: true,
       leading: SizedBox(

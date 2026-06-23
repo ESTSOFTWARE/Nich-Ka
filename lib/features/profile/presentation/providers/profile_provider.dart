@@ -36,12 +36,16 @@ class ProfileProvider extends ChangeNotifier {
   }) : _getProfile =
            getProfile ??
            GetProfileUseCase(
-             ProfileRepositoryImpl(ProfileRemoteDataSource(HttpClient.instance)),
+             ProfileRepositoryImpl(
+               ProfileRemoteDataSource(HttpClient.instance),
+             ),
            ),
        _uploadImage =
            uploadImage ??
            UploadProfileImageUseCase(
-             ProfileRepositoryImpl(ProfileRemoteDataSource(HttpClient.instance)),
+             ProfileRepositoryImpl(
+               ProfileRemoteDataSource(HttpClient.instance),
+             ),
            ) {
     _init();
   }

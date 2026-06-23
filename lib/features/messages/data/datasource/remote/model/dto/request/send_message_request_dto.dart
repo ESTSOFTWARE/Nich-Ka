@@ -10,8 +10,8 @@ class SendMessageRequestDto {
   });
 
   Map<String, dynamic> toJson() => {
-        if (content != null) 'content': content,
-        'attachments': attachments,
-        if (replyToId != null) 'replyToId': replyToId,
-      };
+    if (content != null) 'content': content,
+    'attachments': attachments,
+    if (replyToId != null) 'replyToId': replyToId,
+  };
 }

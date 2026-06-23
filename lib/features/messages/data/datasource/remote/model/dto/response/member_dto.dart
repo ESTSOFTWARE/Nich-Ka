@@ -12,9 +12,9 @@ class MemberDto {
   });
 
   factory MemberDto.fromJson(Map<String, dynamic> json) => MemberDto(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        role: json['role'] as String,
-        avatar: json['avatar'] as String?,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    role: json['role'] as String,
+    avatar: json['avatar'] as String?,
+  );
 }

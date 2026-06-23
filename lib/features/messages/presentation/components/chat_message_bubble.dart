@@ -8,7 +8,7 @@ class ChatMessageBubble extends StatelessWidget {
   final AppPalette palette;
   final bool isMe;
   final bool isFirst; // first in sender block
-  final bool isLast;  // last in sender block
+  final bool isLast; // last in sender block
   final bool groupChat;
   final int myUserId;
   final void Function(ChatMessage)? onLongPress;
@@ -28,8 +28,12 @@ class ChatMessageBubble extends StatelessWidget {
   });
 
   static const List<Color> _senderColors = [
-    Color(0xFF75D079), Color(0xFF60A5FA), Color(0xFFFBBF24),
-    Color(0xFFF472B6), Color(0xFFA78BFA), Color(0xFF34D399),
+    Color(0xFF75D079),
+    Color(0xFF60A5FA),
+    Color(0xFFFBBF24),
+    Color(0xFFF472B6),
+    Color(0xFFA78BFA),
+    Color(0xFF34D399),
   ];
 
   Color _colorForSender(String name) {
@@ -68,16 +72,15 @@ class ChatMessageBubble extends StatelessWidget {
       onLongPress: () => onLongPress?.call(message),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           // Avatar — only for others, only on last of block
           if (!isMe) ...[
             SizedBox(
               width: 32,
-              child: isLast
-                  ? _buildAvatar()
-                  : const SizedBox(width: 32),
+              child: isLast ? _buildAvatar() : const SizedBox(width: 32),
             ),
             const SizedBox(width: 6),
           ],
@@ -87,8 +90,9 @@ class ChatMessageBubble extends StatelessWidget {
               maxWidth: MediaQuery.of(context).size.width * 0.72,
             ),
             child: Column(
-              crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 // Sender name — only for others, first of block, in group chat
                 if (!isMe && isFirst && groupChat)
@@ -105,8 +109,7 @@ class ChatMessageBubble extends StatelessWidget {
                   ),
 
                 // Priority badge — only on first of block
-                if (isFirst && message.isImportant)
-                  _buildPriorityBadge(),
+                if (isFirst && message.isImportant) _buildPriorityBadge(),
 
                 // Bubble
                 _buildBubble(),
@@ -126,8 +129,20 @@ class ChatMessageBubble extends StatelessWidget {
                           ),
                         ),
                         if (message.edited) ...[
-                          Text(' · ', style: GoogleFonts.poppins(fontSize: 10, color: palette.textMuted)),
-                          Text('editado', style: GoogleFonts.poppins(fontSize: 10, color: palette.textMuted)),
+                          Text(
+                            ' · ',
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              color: palette.textMuted,
+                            ),
+                          ),
+                          Text(
+                            'editado',
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              color: palette.textMuted,
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -238,9 +253,7 @@ class ChatMessageBubble extends StatelessWidget {
   Widget _buildBubble() {
     final bgColor = isMe ? AppPalette.accent : palette.surface;
     final textColor = isMe ? Colors.black : palette.textPrimary;
-    final borderColor = isMe
-        ? Colors.transparent
-        : palette.border;
+    final borderColor = isMe ? Colors.transparent : palette.border;
 
     // Priority border
     final hasPriorityBorder = message.isImportant;
@@ -296,7 +309,9 @@ class ChatMessageBubble extends StatelessWidget {
 
   Widget _buildReplyQuote(Color textColor) {
     final reply = message.replyTo!;
-    final quoteAccent = isMe ? Colors.black.withValues(alpha: 0.45) : AppPalette.accent;
+    final quoteAccent = isMe
+        ? Colors.black.withValues(alpha: 0.45)
+        : AppPalette.accent;
     final quoteBg = isMe
         ? Colors.black.withValues(alpha: 0.1)
         : palette.rowSurface.withValues(alpha: 0.6);
@@ -324,8 +339,7 @@ class ChatMessageBubble extends StatelessWidget {
               ),
             ),
             Text(
-              reply.content ??
-                  (reply.attachment != null ? '📎 Archivo' : ''),
+              reply.content ?? (reply.attachment != null ? '📎 Archivo' : ''),
               style: GoogleFonts.poppins(
                 fontSize: 11,
                 color: isMe
@@ -376,8 +390,11 @@ class ChatMessageBubble extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.insert_drive_file_outlined,
-                    size: 16, color: isMe ? Colors.black54 : AppPalette.accent),
+                Icon(
+                  Icons.insert_drive_file_outlined,
+                  size: 16,
+                  color: isMe ? Colors.black54 : AppPalette.accent,
+                ),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Column(
@@ -423,32 +440,38 @@ class ChatMessageBubble extends StatelessWidget {
         children: message.reactions.entries
             .where((e) => e.value.isNotEmpty)
             .map((e) {
-          final emoji = e.key;
-          final users = e.value;
-          final iMine = users.contains(myUserId);
-          return GestureDetector(
-            onTap: () => onQuickReact?.call(emoji),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: iMine
-                    ? AppPalette.accent.withValues(alpha: 0.15)
-                    : palette.rowSurface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: iMine
-                      ? AppPalette.accent.withValues(alpha: 0.4)
-                      : palette.border,
+              final emoji = e.key;
+              final users = e.value;
+              final iMine = users.contains(myUserId);
+              return GestureDetector(
+                onTap: () => onQuickReact?.call(emoji),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: iMine
+                        ? AppPalette.accent.withValues(alpha: 0.15)
+                        : palette.rowSurface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: iMine
+                          ? AppPalette.accent.withValues(alpha: 0.4)
+                          : palette.border,
+                    ),
+                  ),
+                  child: Text(
+                    '$emoji ${users.length}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: palette.textPrimary,
+                    ),
+                  ),
                 ),
-              ),
-              child: Text(
-                '$emoji ${users.length}',
-                style: GoogleFonts.poppins(
-                    fontSize: 12, color: palette.textPrimary),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            })
+            .toList(),
       ),
     );
   }

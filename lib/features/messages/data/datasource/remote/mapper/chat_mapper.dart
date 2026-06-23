@@ -20,19 +20,21 @@ class ChatMapper {
     required String type,
     required List<int> memberIds,
     String? name,
-  }) =>
-      CreateConversationRequestDto(type: type, memberIds: memberIds, name: name);
+  }) => CreateConversationRequestDto(
+    type: type,
+    memberIds: memberIds,
+    name: name,
+  );
 
   static SendMessageRequestDto toSendMessageRequest({
     String? content,
     List<AttachmentDto> attachments = const [],
     int? replyToId,
-  }) =>
-      SendMessageRequestDto(
-        content: content,
-        attachments: attachments.map((a) => a.toJson()).toList(),
-        replyToId: replyToId,
-      );
+  }) => SendMessageRequestDto(
+    content: content,
+    attachments: attachments.map((a) => a.toJson()).toList(),
+    replyToId: replyToId,
+  );
 
   static EditMessageRequestDto toEditMessageRequest(String content) =>
       EditMessageRequestDto(content: content);
@@ -43,23 +45,23 @@ class ChatMapper {
   // ── From response ────────────────────────────────────────────────────────────
 
   static ChatMessage fromMessageDto(MessageDto dto) => ChatMessage(
-        id: dto.id,
-        conversationId: dto.conversationId,
-        senderId: dto.senderId,
-        senderName: dto.senderName,
-        senderRole: dto.senderRole,
-        content: dto.content,
-        createdAt: dto.createdAt,
-        read: dto.read,
-        deleted: dto.deleted,
-        edited: dto.edited,
-        editedAt: dto.editedAt,
-        pinned: dto.pinned,
-        priority: dto.priority,
-        attachments: dto.attachments.map(_fromAttachmentDto).toList(),
-        replyTo: dto.replyTo != null ? _fromReplyPreviewDto(dto.replyTo!) : null,
-        reactions: dto.reactions,
-      );
+    id: dto.id,
+    conversationId: dto.conversationId,
+    senderId: dto.senderId,
+    senderName: dto.senderName,
+    senderRole: dto.senderRole,
+    content: dto.content,
+    createdAt: dto.createdAt,
+    read: dto.read,
+    deleted: dto.deleted,
+    edited: dto.edited,
+    editedAt: dto.editedAt,
+    pinned: dto.pinned,
+    priority: dto.priority,
+    attachments: dto.attachments.map(_fromAttachmentDto).toList(),
+    replyTo: dto.replyTo != null ? _fromReplyPreviewDto(dto.replyTo!) : null,
+    reactions: dto.reactions,
+  );
 
   static ChatConversation fromConversationDto(ConversationDto dto) =>
       ChatConversation(
@@ -69,15 +71,18 @@ class ChatMapper {
         description: dto.description,
         avatar: dto.avatar,
         members: dto.members
-            .map((m) => ChatMember(
-                  id: m.id,
-                  name: m.name,
-                  role: m.role,
-                  avatar: m.avatar,
-                ))
+            .map(
+              (m) => ChatMember(
+                id: m.id,
+                name: m.name,
+                role: m.role,
+                avatar: m.avatar,
+              ),
+            )
             .toList(),
-        lastMessage:
-            dto.lastMessage != null ? fromMessageDto(dto.lastMessage!) : null,
+        lastMessage: dto.lastMessage != null
+            ? fromMessageDto(dto.lastMessage!)
+            : null,
         unreadCount: dto.unreadCount,
         createdAt: dto.createdAt,
         createdBy: dto.createdBy,
@@ -96,10 +101,11 @@ class ChatMapper {
       );
 
   static ReplyPreview _fromReplyPreviewDto(ReplyPreviewDto dto) => ReplyPreview(
-        id: dto.id,
-        content: dto.content,
-        senderName: dto.senderName,
-        attachment:
-            dto.attachment != null ? _fromAttachmentDto(dto.attachment!) : null,
-      );
+    id: dto.id,
+    content: dto.content,
+    senderName: dto.senderName,
+    attachment: dto.attachment != null
+        ? _fromAttachmentDto(dto.attachment!)
+        : null,
+  );
 }

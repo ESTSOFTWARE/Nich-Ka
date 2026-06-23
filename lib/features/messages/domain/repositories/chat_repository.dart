@@ -28,5 +28,9 @@ abstract class ChatRepository {
   Future<bool> pinMessage(int messageId);
   Future<void> setPriority(int messageId, String priority);
   Future<void> leaveConversation(int conversationId);
-  Future<void> updateConversation(int conversationId, {String? name, String? description});
+  Future<void> updateConversation(
+    int conversationId, {
+    String? name,
+    String? description,
+  });
 }
