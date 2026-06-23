@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../../core/network/http_client.dart';
 import '../../../home/domain/entities/fermentation_item.dart';
-import '../../../../shared/theme/app_palette.dart';
+import '../../data/datasource/remote/fermentation_batches_datasource.dart';
+import '../../data/repositories/fermentation_batches_repository_impl.dart';
 import '../../domain/entities/fermentation_filter.dart';
+import '../../domain/repositories/fermentation_batches_repository.dart';
+import '../../domain/use_cases/get_fermentation_batches_use_case.dart';
 
 class FermentationListProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
@@ -12,9 +16,45 @@ class FermentationListProvider extends ChangeNotifier {
 
   String get query => searchController.text.trim().toLowerCase();
 
-  FermentationListProvider() {
+  final GetFermentationBatchesUseCase _getBatches;
+
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  FermentationListProvider({FermentationBatchesRepository? repository})
+    : _getBatches = GetFermentationBatchesUseCase(
+        repository ??
+            FermentationBatchesRepositoryImpl(
+              FermentationBatchesDatasource(HttpClient.instance),
+            ),
+      ) {
     scrollController.addListener(_onScroll);
     searchController.addListener(notifyListeners);
+    _init();
+  }
+
+  Future<void> _init() async {
+    _isLoading = true;
+    _hasError = false;
+    notifyListeners();
+
+    try {
+      _all = await _getBatches();
+      _hasError = false;
+    } catch (_) {
+      _all = [];
+      _hasError = true;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void refresh() {
+    _init();
   }
 
   void _onScroll() {
@@ -43,73 +83,23 @@ class FermentationListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const _all = [
-    FermentationItem(
-      id: 'F-024',
-      name: 'Caturra',
-      process: 'Lavado',
-      farm: 'La Esperanza',
-      statusLabel: 'Fermentación',
-      statusColor: AppPalette.accent,
-      timeInfo: '18h 42m',
-      ringProgress: 0.78,
-      ringColor: AppPalette.accent,
-    ),
-    FermentationItem(
-      id: 'F-023',
-      name: 'Geisha',
-      process: 'Honey',
-      farm: 'El Mirador',
-      statusLabel: 'Secado',
-      statusColor: AppPalette.metricOrange,
-      timeInfo: 'Día 3 / 12',
-      ringProgress: 0.40,
-      ringColor: AppPalette.metricOrange,
-    ),
-    FermentationItem(
-      id: 'F-022',
-      name: 'Bourbon',
-      process: 'Natural',
-      farm: 'La Esperanza',
-      statusLabel: 'Reposo',
-      statusColor: AppPalette.metricCyan,
-      timeInfo: '5 días',
-      ringProgress: 0.25,
-      ringColor: AppPalette.metricCyan,
-    ),
-    FermentationItem(
-      id: 'F-021',
-      name: 'Typica',
-      process: 'Lavado',
-      farm: 'Buena Vista',
-      statusLabel: 'Completado',
-      statusColor: Color(0xFF787878),
-      timeInfo: 'Hace 2d',
-      ringProgress: 1.0,
-      ringColor: Color(0xFF787878),
-    ),
-    FermentationItem(
-      id: 'F-020',
-      name: 'SL-28',
-      process: 'Honey',
-      farm: 'El Mirador',
-      statusLabel: 'Completado',
-      statusColor: Color(0xFF787878),
-      timeInfo: 'Hace 5d',
-      ringProgress: 1.0,
-      ringColor: Color(0xFF787878),
-    ),
-  ];
+  List<FermentationItem> _all = [];
 
   List<FermentationItem> get items {
     final byFilter = switch (_filter) {
       FermentationFilter.todos => _all,
       FermentationFilter.activos =>
-        _all.where((i) => i.statusLabel == 'Fermentación').toList(),
+        _all.where((i) => i.statusLabel == 'En proceso').toList(),
       FermentationFilter.secado =>
-        _all.where((i) => i.statusLabel == 'Secado').toList(),
+        _all
+            .where(
+              (i) =>
+                  i.statusLabel == 'Interrumpida' ||
+                  i.statusLabel == 'Programada',
+            )
+            .toList(),
       FermentationFilter.completados =>
-        _all.where((i) => i.statusLabel == 'Completado').toList(),
+        _all.where((i) => i.statusLabel == 'Completada').toList(),
     };
     if (query.isEmpty) return byFilter;
     return byFilter
@@ -117,7 +107,6 @@ class FermentationListProvider extends ChangeNotifier {
           (i) =>
               i.id.toLowerCase().contains(query) ||
               i.name.toLowerCase().contains(query) ||
-              i.process.toLowerCase().contains(query) ||
               i.farm.toLowerCase().contains(query),
         )
         .toList();
