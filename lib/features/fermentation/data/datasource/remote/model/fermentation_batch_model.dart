@@ -85,7 +85,9 @@ class FermentationBatchModel {
     final start = actualStart ?? scheduledStart;
     final end = actualEnd ?? scheduledEnd;
     final total = end.difference(start).inSeconds;
-    if (total <= 0) return 0.0;
+    if (total <= 0) {
+      return 0.0;
+    }
     final elapsed = now.difference(start).inSeconds;
     return (elapsed / total).clamp(0.0, 1.0);
   }
@@ -101,14 +103,19 @@ class FermentationBatchModel {
           final total = scheduledEnd.difference(scheduledStart).inDays;
           return 'Día ${elapsed.inDays + 1} / ${total + 1}';
         }
-        if (elapsed.inHours > 0)
+        if (elapsed.inHours > 0) {
           return '${elapsed.inHours}h ${elapsed.inMinutes % 60}m';
+        }
         return '${elapsed.inMinutes}m';
       case 'completed':
         final end = actualEnd ?? scheduledEnd;
         final diff = now.difference(end);
-        if (diff.inDays > 0) return 'Hace ${diff.inDays}d';
-        if (diff.inHours > 0) return 'Hace ${diff.inHours}h';
+        if (diff.inDays > 0) {
+          return 'Hace ${diff.inDays}d';
+        }
+        if (diff.inHours > 0) {
+          return 'Hace ${diff.inHours}h';
+        }
         return 'Ahora';
       case 'interrupted':
         return 'Interrumpido';
