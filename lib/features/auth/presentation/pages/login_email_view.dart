@@ -127,9 +127,9 @@ class LoginEmailView extends StatelessWidget {
                     final ok = await provider.loginWithEmail();
                     if (ok && context.mounted) {
                       if (provider.lastToken != null) {
-                        context
-                            .read<AuthProvider>()
-                            .setUser(provider.lastToken!);
+                        context.read<AuthProvider>().setUser(
+                          provider.lastToken!,
+                        );
                       }
                       final code = pendingJoinCode;
                       if (code != null) {
