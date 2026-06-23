@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../../../../core/network/http_client.dart';
 import '../../../domain/entities/sensor_realtime_reading.dart';
@@ -13,7 +14,7 @@ class SensorsRealtimeDataSource {
 
   SensorsRealtimeDataSource(this._client);
 
-  WebSocket? _socket;
+  WebSocketChannel? _channel;
   StreamController<SensorRealtimeReading>? _controller;
   Timer? _retryTimer;
   bool _closed = false;
@@ -38,14 +39,17 @@ class SensorsRealtimeDataSource {
 
   Future<void> _open() async {
     if (_closed) return;
+
     final token = _client.accessToken;
-    final url = '${HttpClient.wsBaseUrl}/ws/sensors/$_circuitId';
+    final base = HttpClient.wsBaseUrl;
+    final uri = Uri.parse(
+      '$base/ws/sensors/$_circuitId${token != null ? '?token=$token' : ''}',
+    );
+
     try {
-      _socket = await WebSocket.connect(
-        url,
-        headers: token != null ? {'Cookie': 'access_token=$token'} : null,
-      );
-      _socket!.listen(
+      _channel = WebSocketChannel.connect(uri);
+      await _channel!.ready;
+      _channel!.stream.listen(
         _onData,
         onDone: _scheduleRetry,
         onError: (_) => _scheduleRetry(),
@@ -63,13 +67,11 @@ class SensorsRealtimeDataSource {
       );
       if (dto.type != 'sensor_data' || dto.sensorType.isEmpty) return;
       _controller?.add(SensorsRealtimeMapper.fromDataResponse(dto));
-    } catch (_) {
-      // mensaje malformado → ignorar
-    }
+    } catch (_) {}
   }
 
   void _scheduleRetry() {
-    _socket = null;
+    _channel = null;
     if (_closed) return;
     _retryTimer?.cancel();
     _retryTimer = Timer(const Duration(seconds: 3), _open);
@@ -78,8 +80,8 @@ class SensorsRealtimeDataSource {
   Future<void> dispose() async {
     _closed = true;
     _retryTimer?.cancel();
-    await _socket?.close();
-    _socket = null;
+    await _channel?.sink.close();
+    _channel = null;
     await _controller?.close();
     _controller = null;
   }
