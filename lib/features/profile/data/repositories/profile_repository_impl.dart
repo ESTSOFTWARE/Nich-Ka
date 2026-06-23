@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../../domain/entities/profile_user.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasource/remote/mapper/profile_mapper.dart';
@@ -13,4 +14,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final dto = await _dataSource.getCurrentUser();
     return ProfileMapper.fromUserProfileDto(dto);
   }
+
+  @override
+  Future<String> uploadProfileImage(File file) =>
+      _dataSource.uploadProfileImage(file);
 }

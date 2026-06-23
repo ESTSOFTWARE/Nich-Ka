@@ -9,11 +9,12 @@ class ReportsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.45,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
           Container(
             width: 64,
             height: 64,
@@ -52,7 +53,8 @@ class ReportsEmptyState extends StatelessWidget {
               height: 1.6,
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

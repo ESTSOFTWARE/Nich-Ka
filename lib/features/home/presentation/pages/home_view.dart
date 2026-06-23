@@ -42,6 +42,7 @@ class HomeView extends StatelessWidget {
                 onSettings: () => context.push('/profile'),
                 userName: drawerProvider.user?.fullName,
                 userRole: drawerProvider.user?.role.toUpperCase(),
+                profileImage: drawerProvider.user?.profileImage,
                 onLogout: () async {
                   await drawerProvider.logout();
                   if (context.mounted) context.go('/login');

@@ -81,13 +81,15 @@ class ReportsProvider extends ChangeNotifier {
     if (_selectedFilter == filter) return;
     _selectedFilter = filter;
     notifyListeners();
-    _loadData();
+    _loadData(silent: true);
   }
 
-  Future<void> _loadData() async {
-    _reportsState = const UiLoading();
-    _summaryState = const UiLoading();
-    notifyListeners();
+  Future<void> _loadData({bool silent = false}) async {
+    if (!silent) {
+      _reportsState = const UiLoading();
+      _summaryState = const UiLoading();
+      notifyListeners();
+    }
 
     try {
       final results = await Future.wait([
