@@ -11,7 +11,7 @@ void onDrawerNav(BuildContext context, AppDrawerItem item) {
     case AppDrawerItem.asistente:
       context.push('/chat');
     case AppDrawerItem.mensajes:
-      context.push('/chat');
+      context.push('/messages');
     case AppDrawerItem.calculadora:
       context.push('/calculator');
     case AppDrawerItem.reportes:

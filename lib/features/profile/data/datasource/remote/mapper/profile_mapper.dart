@@ -22,6 +22,7 @@ class ProfileMapper {
       role: dto.role,
       circuit: '',
       memberSince: memberSince,
+      profileImage: dto.profileImage,
     );
   }
 

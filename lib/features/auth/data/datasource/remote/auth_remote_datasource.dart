@@ -20,11 +20,13 @@ class AuthRemoteDataSource {
     final loginDto = LoginResponseDto.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>,
     );
+    final token = AuthMapper.fromLoginResponse(loginDto);
     _client.setTokens(
       access: loginDto.accessToken,
       refresh: loginDto.refreshToken,
+      userId: token.userId,
     );
-    return AuthMapper.fromLoginResponse(loginDto);
+    return token;
   }
 
   Future<AuthToken> loginWithGoogle() async {

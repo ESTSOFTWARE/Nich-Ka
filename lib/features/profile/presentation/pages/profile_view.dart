@@ -28,6 +28,18 @@ class ProfileView extends StatelessWidget {
         final palette = ProfilePalette.of(isDark);
         final state = provider.state;
 
+        if (provider.uploadError != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(provider.uploadError!),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          });
+        }
+
         return Scaffold(
           backgroundColor: palette.background,
           body: Stack(
@@ -154,7 +166,14 @@ class ProfileView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProfileHeaderCard(user: user, palette: palette),
+                ProfileHeaderCard(
+                  user: user,
+                  palette: palette,
+                  onChangePhoto: provider.isUploading
+                      ? null
+                      : provider.pickAndUploadPhoto,
+                  isUploading: provider.isUploading,
+                ),
                 const SizedBox(height: 28),
                 ProfileSection(
                   title: 'Información',

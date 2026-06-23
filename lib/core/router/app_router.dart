@@ -28,6 +28,9 @@ import '../../features/sensors/domain/entities/sensor_reading.dart';
 import '../../features/sensors/presentation/pages/sensor_detail_view.dart';
 import '../../features/sensors/presentation/pages/sensors_view.dart';
 import '../../features/simulator/presentation/pages/simulator_view.dart';
+import '../../features/messages/domain/entities/chat_conversation.dart';
+import '../../features/messages/presentation/pages/messages_view.dart';
+import '../../features/messages/presentation/pages/group_chat_view.dart';
 
 /// Código de clase pendiente capturado de un deep link (`/join?code=...`)
 /// mientras el usuario aún no inicia sesión. Tras el login se consume.
@@ -172,6 +175,16 @@ final GoRouter appRouter = GoRouter(
       path: '/class-detail',
       builder: (BuildContext context, GoRouterState state) =>
           ClassDetailView(detail: state.extra as ClassDetail),
+    ),
+    GoRoute(
+      path: '/messages',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MessagesView(),
+    ),
+    GoRoute(
+      path: '/group-chat',
+      builder: (BuildContext context, GoRouterState state) =>
+          GroupChatView(conversation: state.extra as ChatConversation),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
