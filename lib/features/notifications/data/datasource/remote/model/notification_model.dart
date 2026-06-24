@@ -1,5 +1,7 @@
 import '../../../../domain/entities/notification_item.dart';
-import '../../../../utils/notification_utils.dart';
+import '../../../../utils/format_time.dart';
+import '../../../../utils/notification_type_from_string.dart';
+import '../../../../utils/title_for_type.dart';
 
 class NotificationModel {
   final int id;
