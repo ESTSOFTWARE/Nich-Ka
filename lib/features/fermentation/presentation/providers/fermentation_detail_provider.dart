@@ -81,8 +81,9 @@ class FermentationDetailProvider extends ChangeNotifier {
       } else {
         final wasNull = _session == null;
         _session = active;
-        if (wasNull)
+        if (wasNull) {
           _sub = _watchSensors(active.circuitId).listen(_applyReading);
+        }
       }
       notifyListeners();
     } catch (_) {
