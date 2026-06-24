@@ -16,6 +16,7 @@ class FermentationEventsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (events.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

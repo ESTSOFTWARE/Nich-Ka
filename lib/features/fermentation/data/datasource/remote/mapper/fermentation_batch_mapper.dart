@@ -55,6 +55,7 @@ class FermentationBatchMapper {
         model.scheduledEnd,
       ),
       ringColor: color,
+      sessionId: model.id,
     );
   }
 }

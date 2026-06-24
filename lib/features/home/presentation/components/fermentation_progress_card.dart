@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/fermentation_card.dart';
 import '../../../../shared/theme/app_palette.dart';
@@ -16,7 +17,11 @@ class FermentationProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: card.sessionId == null
+          ? null
+          : () => context.push('/report-detail', extra: card.sessionId),
+      child: Container(
       width: 110,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -67,6 +72,7 @@ class FermentationProgressCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

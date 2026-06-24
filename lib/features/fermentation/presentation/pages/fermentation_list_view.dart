@@ -131,7 +131,10 @@ class FermentationListView extends StatelessWidget {
                         return FermentationListItem(
                           item: item,
                           palette: palette,
-                          onTap: () => context.push('/fermentation'),
+                          onTap: () => context.push(
+                            '/report-detail',
+                            extra: item.sessionId,
+                          ),
                         );
                       },
                     ),
