@@ -19,7 +19,14 @@ class ReportItem {
     required this.status,
   });
 
-  String get title => '$variety · $process';
+  String get title {
+    final v = variety.trim();
+    final p = process.trim();
+    if (v.isEmpty && p.isEmpty) return 'Fermentación $id';
+    if (p.isEmpty) return v;
+    if (v.isEmpty) return p;
+    return '$v · $p';
+  }
 
   bool get isInterrupted => status == ReportStatus.interrumpida;
   bool get isNew => status == ReportStatus.nuevo;

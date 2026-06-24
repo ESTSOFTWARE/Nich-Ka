@@ -6,6 +6,7 @@ class FermentationCard {
   final String stage;
   final double progress;
   final Color ringColor;
+  final int? sessionId; // id de la sesión, para abrir su reporte
 
   const FermentationCard({
     required this.id,
@@ -13,5 +14,6 @@ class FermentationCard {
     required this.stage,
     required this.progress,
     required this.ringColor,
+    this.sessionId,
   });
 }
