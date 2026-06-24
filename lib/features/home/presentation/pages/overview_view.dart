@@ -41,8 +41,10 @@ class OverviewView extends StatelessWidget {
         return ChangeNotifierProvider<DrawerProvider>(
           create: () => DrawerProvider(),
           builder: (context, drawerProvider) {
-            final firstName =
-                (drawerProvider.user?.fullName ?? '').trim().split(' ').first;
+            final firstName = (drawerProvider.user?.fullName ?? '')
+                .trim()
+                .split(' ')
+                .first;
             return Scaffold(
               key: provider.scaffoldKey,
               backgroundColor: palette.background,

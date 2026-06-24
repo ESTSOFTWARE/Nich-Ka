@@ -44,16 +44,18 @@ class HomeProvider extends ChangeNotifier {
   HomeProvider({
     GetActiveFermentationUseCase? getActive,
     SensorsRealtimeRepository? sensorsRepo,
-  })  : _getActive = getActive ??
-            GetActiveFermentationUseCase(
-              ActiveFermentationRepositoryImpl(
-                ActiveFermentationDatasource(HttpClient.instance),
-              ),
-            ),
-        _sensorsRepo = sensorsRepo ??
-            SensorsRealtimeRepositoryImpl(
-              SensorsRealtimeDataSource(HttpClient.instance),
-            ) {
+  }) : _getActive =
+           getActive ??
+           GetActiveFermentationUseCase(
+             ActiveFermentationRepositoryImpl(
+               ActiveFermentationDatasource(HttpClient.instance),
+             ),
+           ),
+       _sensorsRepo =
+           sensorsRepo ??
+           SensorsRealtimeRepositoryImpl(
+             SensorsRealtimeDataSource(HttpClient.instance),
+           ) {
     _watchSensors = WatchSensorsUseCase(_sensorsRepo);
     scrollController.addListener(_onScroll);
     _init();
@@ -92,7 +94,9 @@ class HomeProvider extends ChangeNotifier {
         }
       }
       notifyListeners();
-    } catch (_) {/* reintenta luego */}
+    } catch (_) {
+      /* reintenta luego */
+    }
   }
 
   void _applyReading(SensorRealtimeReading r) {
@@ -136,8 +140,10 @@ class HomeProvider extends ChangeNotifier {
     final n = _alcoholHistory.length;
     return [
       for (var i = 0; i < n; i++)
-        ChartPoint(n == 1 ? 0.0 : i / (n - 1),
-            (_alcoholHistory[i] / denom).clamp(0.0, 1.0)),
+        ChartPoint(
+          n == 1 ? 0.0 : i / (n - 1),
+          (_alcoholHistory[i] / denom).clamp(0.0, 1.0),
+        ),
     ];
   }
 
@@ -146,15 +152,27 @@ class HomeProvider extends ChangeNotifier {
   /// el circuito y el grupo (lo que sí existe).
   ActiveFermentation get activeFermentation {
     final s = _session;
-    final temperature =
-        _metric('TEMPERATURA', 'temperature', '°C', AppPalette.metricOrange);
+    final temperature = _metric(
+      'TEMPERATURA',
+      'temperature',
+      '°C',
+      AppPalette.metricOrange,
+    );
     final ph = _metric('PH', 'ph', '', AppPalette.metricCyan, decimals: 2);
-    final density =
-        _metric('DENSIDAD', 'density', 'g/mL', AppPalette.accent, decimals: 3);
-    final alcohol =
-        _metric('ALCOHOL', 'alcohol', '%v/v', AppPalette.metricRed);
-    final conductivity =
-        _metric('CONDUCTIVIDAD', 'conductivity', 'mS/cm', AppPalette.metricCyan);
+    final density = _metric(
+      'DENSIDAD',
+      'density',
+      'g/mL',
+      AppPalette.accent,
+      decimals: 3,
+    );
+    final alcohol = _metric('ALCOHOL', 'alcohol', '%v/v', AppPalette.metricRed);
+    final conductivity = _metric(
+      'CONDUCTIVIDAD',
+      'conductivity',
+      'mS/cm',
+      AppPalette.metricCyan,
+    );
 
     if (s == null) {
       return ActiveFermentation(
@@ -194,8 +212,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   final AiRecommendation recommendation = const AiRecommendation(
-    body:
-        'Mantén la temperatura estable para una fermentación uniforme.',
+    body: 'Mantén la temperatura estable para una fermentación uniforme.',
     actionLabel: 'Ver análisis',
   );
 

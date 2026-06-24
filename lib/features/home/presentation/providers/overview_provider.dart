@@ -56,16 +56,18 @@ class OverviewProvider extends ChangeNotifier {
   OverviewProvider({
     GetActiveFermentationUseCase? getActive,
     SensorsRealtimeRepository? sensorsRepo,
-  })  : _getActive = getActive ??
-            GetActiveFermentationUseCase(
-              ActiveFermentationRepositoryImpl(
-                ActiveFermentationDatasource(HttpClient.instance),
-              ),
-            ),
-        _sensorsRepo = sensorsRepo ??
-            SensorsRealtimeRepositoryImpl(
-              SensorsRealtimeDataSource(HttpClient.instance),
-            ) {
+  }) : _getActive =
+           getActive ??
+           GetActiveFermentationUseCase(
+             ActiveFermentationRepositoryImpl(
+               ActiveFermentationDatasource(HttpClient.instance),
+             ),
+           ),
+       _sensorsRepo =
+           sensorsRepo ??
+           SensorsRealtimeRepositoryImpl(
+             SensorsRealtimeDataSource(HttpClient.instance),
+           ) {
     _watchSensors = WatchSensorsUseCase(_sensorsRepo);
     scrollController.addListener(_onScroll);
     _readings = _buildInitialReadings();
@@ -108,7 +110,9 @@ class OverviewProvider extends ChangeNotifier {
         }
       }
       notifyListeners();
-    } catch (_) {/* sin conexión: reintenta en el próximo tick */}
+    } catch (_) {
+      /* sin conexión: reintenta en el próximo tick */
+    }
   }
 
   void _applyReading(SensorRealtimeReading r) {
@@ -221,7 +225,8 @@ class OverviewProvider extends ChangeNotifier {
 
   // Curva: usa el histórico en vivo del alcohol, normalizado a 0–1.
   List<ChartPoint> get chartPoints {
-    final reading = _byId('alcohol') ?? (_readings.isNotEmpty ? _readings.first : null);
+    final reading =
+        _byId('alcohol') ?? (_readings.isNotEmpty ? _readings.first : null);
     if (reading == null || reading.history.isEmpty) return const [];
     final hist = reading.history;
     final maxV = hist.reduce((a, b) => a > b ? a : b);
@@ -229,7 +234,10 @@ class OverviewProvider extends ChangeNotifier {
     final n = hist.length;
     return [
       for (var i = 0; i < n; i++)
-        ChartPoint(n == 1 ? 0.0 : i / (n - 1), (hist[i] / denom).clamp(0.0, 1.0)),
+        ChartPoint(
+          n == 1 ? 0.0 : i / (n - 1),
+          (hist[i] / denom).clamp(0.0, 1.0),
+        ),
     ];
   }
 
@@ -239,7 +247,9 @@ class OverviewProvider extends ChangeNotifier {
     return [
       FermentationCard(
         id: _session!.loteLabel,
-        name: _session!.groupId != null ? 'Grupo ${_session!.groupId}' : 'Fermentación',
+        name: _session!.groupId != null
+            ? 'Grupo ${_session!.groupId}'
+            : 'Fermentación',
         stage: statusLabel,
         progress: _session!.progress,
         ringColor: AppPalette.accent,
@@ -250,12 +260,60 @@ class OverviewProvider extends ChangeNotifier {
 
   List<SensorReading> _buildInitialReadings() {
     return [
-      _make(id: 'ph', label: 'pH', value: 0, decimals: 2, unit: '', icon: Icons.ssid_chart, color: const Color(0xFF4FA8E8)),
-      _make(id: 'temp', label: 'Temperatura', value: 0, decimals: 1, unit: '°C', icon: Icons.thermostat, color: const Color(0xFFF0A646)),
-      _make(id: 'alcohol', label: 'Alcohol', value: 0, decimals: 1, unit: '%v/v', icon: Icons.science, color: const Color(0xFFFF6B6B)),
-      _make(id: 'conductividad', label: 'Conductividad', value: 0, decimals: 1, unit: 'mS', icon: Icons.bolt, color: const Color(0xFF14B8A6)),
-      _make(id: 'turbidez', label: 'Turbidez', value: 0, decimals: 0, unit: 'NTU', icon: Icons.grain, color: const Color(0xFFA78BFA)),
-      _make(id: 'rpm', label: 'RPM del motor', value: 0, decimals: 0, unit: 'rpm', icon: Icons.settings, color: const Color(0xFFF97316)),
+      _make(
+        id: 'ph',
+        label: 'pH',
+        value: 0,
+        decimals: 2,
+        unit: '',
+        icon: Icons.ssid_chart,
+        color: const Color(0xFF4FA8E8),
+      ),
+      _make(
+        id: 'temp',
+        label: 'Temperatura',
+        value: 0,
+        decimals: 1,
+        unit: '°C',
+        icon: Icons.thermostat,
+        color: const Color(0xFFF0A646),
+      ),
+      _make(
+        id: 'alcohol',
+        label: 'Alcohol',
+        value: 0,
+        decimals: 1,
+        unit: '%v/v',
+        icon: Icons.science,
+        color: const Color(0xFFFF6B6B),
+      ),
+      _make(
+        id: 'conductividad',
+        label: 'Conductividad',
+        value: 0,
+        decimals: 1,
+        unit: 'mS',
+        icon: Icons.bolt,
+        color: const Color(0xFF14B8A6),
+      ),
+      _make(
+        id: 'turbidez',
+        label: 'Turbidez',
+        value: 0,
+        decimals: 0,
+        unit: 'NTU',
+        icon: Icons.grain,
+        color: const Color(0xFFA78BFA),
+      ),
+      _make(
+        id: 'rpm',
+        label: 'RPM del motor',
+        value: 0,
+        decimals: 0,
+        unit: 'rpm',
+        icon: Icons.settings,
+        color: const Color(0xFFF97316),
+      ),
     ];
   }
 

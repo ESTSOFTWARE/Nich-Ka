@@ -39,12 +39,15 @@ class SensorDetailProvider extends ChangeNotifier {
   String _window = '1m';
   String get window => _window;
 
-  SensorDetailProvider(SensorReading initial, {SensorsRealtimeRepository? repository})
-      : _reading = initial,
-        _repository = repository ??
-            SensorsRealtimeRepositoryImpl(
-              SensorsRealtimeDataSource(HttpClient.instance),
-            ) {
+  SensorDetailProvider(
+    SensorReading initial, {
+    SensorsRealtimeRepository? repository,
+  }) : _reading = initial,
+       _repository =
+           repository ??
+           SensorsRealtimeRepositoryImpl(
+             SensorsRealtimeDataSource(HttpClient.instance),
+           ) {
     _getMyCircuitId = GetMyCircuitIdUseCase(_repository);
     _watchSensors = WatchSensorsUseCase(_repository);
     scrollController.addListener(_onScroll);

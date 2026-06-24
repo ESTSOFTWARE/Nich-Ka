@@ -20,6 +20,8 @@ class ActiveFermentationDatasource {
     final json = jsonDecode(body);
     if (json == null) return null;
 
-    return FermentationSessionResponseDto.fromJson(json as Map<String, dynamic>);
+    return FermentationSessionResponseDto.fromJson(
+      json as Map<String, dynamic>,
+    );
   }
 }

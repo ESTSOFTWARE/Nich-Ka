@@ -38,16 +38,18 @@ class FermentationDetailProvider extends ChangeNotifier {
   FermentationDetailProvider({
     GetActiveFermentationUseCase? getActive,
     SensorsRealtimeRepository? sensorsRepo,
-  })  : _getActive = getActive ??
-            GetActiveFermentationUseCase(
-              ActiveFermentationRepositoryImpl(
-                ActiveFermentationDatasource(HttpClient.instance),
-              ),
-            ),
-        _sensorsRepo = sensorsRepo ??
-            SensorsRealtimeRepositoryImpl(
-              SensorsRealtimeDataSource(HttpClient.instance),
-            ) {
+  }) : _getActive =
+           getActive ??
+           GetActiveFermentationUseCase(
+             ActiveFermentationRepositoryImpl(
+               ActiveFermentationDatasource(HttpClient.instance),
+             ),
+           ),
+       _sensorsRepo =
+           sensorsRepo ??
+           SensorsRealtimeRepositoryImpl(
+             SensorsRealtimeDataSource(HttpClient.instance),
+           ) {
     _watchSensors = WatchSensorsUseCase(_sensorsRepo);
     scrollController.addListener(_onScroll);
     _init();
@@ -79,10 +81,13 @@ class FermentationDetailProvider extends ChangeNotifier {
       } else {
         final wasNull = _session == null;
         _session = active;
-        if (wasNull) _sub = _watchSensors(active.circuitId).listen(_applyReading);
+        if (wasNull)
+          _sub = _watchSensors(active.circuitId).listen(_applyReading);
       }
       notifyListeners();
-    } catch (_) {/* reintenta luego */}
+    } catch (_) {
+      /* reintenta luego */
+    }
   }
 
   void _applyReading(SensorRealtimeReading r) {
@@ -127,8 +132,10 @@ class FermentationDetailProvider extends ChangeNotifier {
     final n = _tempHistory.length;
     return [
       for (var i = 0; i < n; i++)
-        ChartPoint(n == 1 ? 0.0 : i / (n - 1),
-            ((_tempHistory[i] - minV) / range).clamp(0.0, 1.0)),
+        ChartPoint(
+          n == 1 ? 0.0 : i / (n - 1),
+          ((_tempHistory[i] - minV) / range).clamp(0.0, 1.0),
+        ),
     ];
   }
 
@@ -142,11 +149,21 @@ class FermentationDetailProvider extends ChangeNotifier {
   FermentationDetail get detail {
     final s = _session;
     final ph = _metric('PH', 'ph', '', AppPalette.metricCyan, decimals: 2);
-    final density =
-        _metric('DENSIDAD', 'density', '', AppPalette.accent, decimals: 3);
+    final density = _metric(
+      'DENSIDAD',
+      'density',
+      '',
+      AppPalette.accent,
+      decimals: 3,
+    );
     final alcohol = _metric('ALCOHOL', 'alcohol', '%', AppPalette.metricRed);
-    final turbidity = _metric('TURBIDEZ', 'turbidity', 'NTU',
-        AppPalette.metricPurple, decimals: 0);
+    final turbidity = _metric(
+      'TURBIDEZ',
+      'turbidity',
+      'NTU',
+      AppPalette.metricPurple,
+      decimals: 0,
+    );
 
     if (s == null) {
       return FermentationDetail(
