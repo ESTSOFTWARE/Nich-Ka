@@ -18,7 +18,8 @@ class EthanolBarsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxY = [detected, theoretical, 1.0].reduce((a, b) => a > b ? a : b) * 1.3;
+    final maxY =
+        [detected, theoretical, 1.0].reduce((a, b) => a > b ? a : b) * 1.3;
 
     return Container(
       width: double.infinity,
@@ -54,9 +55,15 @@ class EthanolBarsCard extends StatelessWidget {
                 borderData: FlBorderData(show: false),
                 barTouchData: BarTouchData(enabled: false),
                 titlesData: FlTitlesData(
-                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -64,7 +71,9 @@ class EthanolBarsCard extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         const labels = ['Teórico', 'Detectado'];
                         final i = value.toInt();
-                        final txt = i >= 0 && i < labels.length ? labels[i] : '';
+                        final txt = i >= 0 && i < labels.length
+                            ? labels[i]
+                            : '';
                         return Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
@@ -88,14 +97,14 @@ class EthanolBarsCard extends StatelessWidget {
   }
 
   BarChartGroupData _bar(int x, double y, Color color) => BarChartGroupData(
-        x: x,
-        barRods: [
-          BarChartRodData(
-            toY: y,
-            color: color,
-            width: 38,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-          ),
-        ],
-      );
+    x: x,
+    barRods: [
+      BarChartRodData(
+        toY: y,
+        color: color,
+        width: 38,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+      ),
+    ],
+  );
 }
