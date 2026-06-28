@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/components/circle_icon_button.dart';
@@ -255,6 +256,36 @@ class ProfileView extends StatelessWidget {
                       Icons.chevron_right,
                       color: palette.textMuted,
                       size: 22,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => launchUrl(
+                      Uri.parse('https://www.nich-ka.space/delete-account'),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: Colors.red,
+                    ),
+                    label: Text(
+                      'Eliminar cuenta',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),

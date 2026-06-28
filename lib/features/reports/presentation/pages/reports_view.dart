@@ -263,13 +263,20 @@ class ReportsView extends StatelessWidget {
   ) {
     return switch (provider.reportsState) {
       UiLoading<List<ReportItem>>() => ReportsListSkeleton(palette: palette),
-      UiError<List<ReportItem>>(:final message) => ReportsErrorState(
-        message: message,
-        palette: palette,
-        onRetry: provider.refresh,
+      UiError<List<ReportItem>>(:final message) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Center(
+          child: ReportsErrorState(
+            message: message,
+            palette: palette,
+            onRetry: provider.refresh,
+          ),
+        ),
       ),
-      UiSuccess<List<ReportItem>>(:final data) when data.isEmpty =>
-        ReportsEmptyState(palette: palette),
+      UiSuccess<List<ReportItem>>(:final data) when data.isEmpty => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Center(child: ReportsEmptyState(palette: palette)),
+      ),
       UiSuccess<List<ReportItem>>(:final data) => ReportsList(
         reports: data,
         palette: palette,
