@@ -8,6 +8,7 @@ import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../../domain/entities/report_detail.dart';
 import '../components/efficiency_card.dart';
+import '../components/ethanol_bars_card.dart';
 import '../components/nlp_analysis_card.dart';
 import '../components/report_detail_skeleton.dart';
 import '../components/report_metadata.dart';
@@ -262,6 +263,12 @@ class ReportDetailView extends StatelessWidget {
             ethanolDetected: detail.ethanolDetected,
             ethanolTheoretical: detail.ethanolTheoretical,
             duration: detail.duration,
+            palette: palette,
+          ),
+          const SizedBox(height: 12),
+          EthanolBarsCard(
+            detected: detail.ethanolDetected,
+            theoretical: detail.ethanolTheoretical,
             palette: palette,
           ),
           const SizedBox(height: 12),
