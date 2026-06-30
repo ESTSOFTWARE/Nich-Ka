@@ -24,15 +24,14 @@ class ChatUserBubble extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: palette.rowSurface,
+            color: AppPalette.accent,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: palette.border),
           ),
           child: Text(
             message.text,
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: palette.textPrimary,
+              color: Colors.black,
               height: 1.5,
             ),
           ),

@@ -74,7 +74,7 @@ class AssistantView extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Hola Ameth, ',
+                                text: 'Hola ${drawerProvider.user?.firstName ?? ''}, ',
                                 style: GoogleFonts.poppins(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w400,

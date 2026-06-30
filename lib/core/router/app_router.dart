@@ -22,6 +22,8 @@ import '../../features/reports/presentation/pages/reports_view.dart';
 import '../../features/calculator/presentation/pages/calculator_view.dart';
 import '../../features/class/domain/entities/class_detail.dart';
 import '../../features/class/presentation/pages/class_detail_view.dart';
+import '../../features/class/presentation/pages/class_members_view.dart';
+import '../../features/class/domain/entities/class_member.dart';
 import '../../features/class/presentation/pages/class_list_view.dart';
 import '../../features/class/presentation/pages/join_class_view.dart';
 import '../../features/sensors/domain/entities/sensor_reading.dart';
@@ -175,6 +177,16 @@ final GoRouter appRouter = GoRouter(
       path: '/class-detail',
       builder: (BuildContext context, GoRouterState state) =>
           ClassDetailView(detail: state.extra as ClassDetail),
+    ),
+    GoRoute(
+      path: '/class-members',
+      builder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return ClassMembersView(
+          className: extra['className'] as String,
+          members: extra['members'] as List<ClassMember>,
+        );
+      },
     ),
     GoRoute(
       path: '/messages',

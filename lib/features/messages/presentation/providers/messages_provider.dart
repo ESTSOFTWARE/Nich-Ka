@@ -22,6 +22,7 @@ class MessagesProvider extends ChangeNotifier {
   final CreateConversationUseCase _createConversation;
   late final ChatRemoteDataSource _ds;
   final ScrollController scrollController = ScrollController();
+  final TextEditingController searchController = TextEditingController();
 
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
@@ -257,6 +258,7 @@ class MessagesProvider extends ChangeNotifier {
     _channel?.sink.close();
     scrollController.removeListener(_onScroll);
     scrollController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 }

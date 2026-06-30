@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
+import '../../data/groq_api_service.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/chat_message_type.dart';
 
 class ChatProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
+  final GroqApiService _api = GroqApiService();
+
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  String? _error;
+  String? get error => _error;
+
+  final List<ChatMessage> messages = [];
+
+  final List<String> suggestions = const [
+    'Comparar F-023',
+    'Predicción de sabor',
+    '¿Cuándo termina?',
+  ];
 
   ChatProvider() {
     scrollController.addListener(_onScroll);
@@ -19,49 +36,63 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  final List<ChatMessage> messages = const [
-    ChatMessage(
-      text:
-          'Hola Ameth. Detecté que la fermentación F-024 entró en fase pico hace 14 minutos.',
-      type: ChatMessageType.ai,
-      time: '16:38',
-      highlightId: 'F-024',
-    ),
-    ChatMessage(
-      text: '¿Eso es bueno?',
-      type: ChatMessageType.user,
-      time: '16:39',
-    ),
-    ChatMessage(
-      text:
-          'Sí — la actividad microbiana está en su máximo. Tu densidad bajó de 1.064 → 1.024 a un ritmo saludable.',
-      type: ChatMessageType.ai,
-      time: '16:39',
-    ),
-    ChatMessage(
-      text:
-          'Recomendación: reducir 1.5 °C en las próximas 2 h para perfil floral.',
-      type: ChatMessageType.recommendation,
-      time: '16:40',
-    ),
-    ChatMessage(
-      text: '¿Y si quiero notas más afrutadas?',
-      type: ChatMessageType.user,
-      time: '16:41',
-    ),
-    ChatMessage(
-      text:
-          'Mantén la temperatura actual y extiende 4 h más. Ajusto la predicción a perfil afrutado-cítrico.',
-      type: ChatMessageType.ai,
-      time: '16:41',
-    ),
-  ];
+  String _now() {
+    final t = DateTime.now();
+    final h = t.hour.toString().padLeft(2, '0');
+    final m = t.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
 
-  final List<String> suggestions = const [
-    'Comparar F-023',
-    'Predicción de sabor',
-    '¿Cuándo termina?',
-  ];
+  Future<void> sendMessage(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty || _isLoading) return;
+
+    _error = null;
+    messages.add(ChatMessage(text: trimmed, type: ChatMessageType.user, time: _now()));
+    _isLoading = true;
+    notifyListeners();
+    _scrollToBottom();
+
+    try {
+      final reply = await _api.send(trimmed);
+      messages.add(ChatMessage(text: reply, type: ChatMessageType.ai, time: _now()));
+    } on Exception catch (e) {
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      if (msg == 'rate_limit') {
+        _error = 'Demasiadas solicitudes. Espera un momento.';
+      } else {
+        _error = 'No se pudo conectar con el asistente.';
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+      _scrollToBottom();
+    }
+  }
+
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
+  void clearChat() {
+    messages.clear();
+    _api.clearHistory();
+    _error = null;
+    notifyListeners();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {

@@ -26,6 +26,20 @@ class ChatView extends StatelessWidget {
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
+
+        if (provider.error != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(provider.error!),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+            provider.clearError();
+          });
+        }
+
         return Scaffold(
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
@@ -92,6 +106,16 @@ class ChatView extends StatelessWidget {
                     ],
                   ),
                   actions: [
+                    if (provider.messages.isNotEmpty)
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: palette.textMuted,
+                          size: 20,
+                        ),
+                        onPressed: provider.clearChat,
+                        tooltip: 'Limpiar chat',
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: Container(
@@ -125,39 +149,48 @@ class ChatView extends StatelessWidget {
               Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      controller: provider.scrollController,
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                        16,
-                        16,
-                      ),
-                      itemCount: provider.messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = provider.messages[index];
-                        final isUser = msg.type == ChatMessageType.user;
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Column(
-                            crossAxisAlignment: isUser
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            children: [
-                              _buildBubble(msg, palette),
-                              const SizedBox(height: 4),
-                              Text(
-                                msg.time,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: palette.textMuted,
-                                ),
-                              ),
-                            ],
+                    child: provider.messages.isEmpty && !provider.isLoading
+                      ? _buildEmptyState(palette)
+                      : ListView.builder(
+                          controller: provider.scrollController,
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            MediaQuery.of(context).padding.top +
+                                kToolbarHeight +
+                                8,
+                            16,
+                            16,
                           ),
-                        );
-                      },
-                    ),
+                          itemCount: provider.messages.length +
+                              (provider.isLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (provider.isLoading &&
+                                index == provider.messages.length) {
+                              return _buildTypingIndicator(palette);
+                            }
+                            final msg = provider.messages[index];
+                            final isUser = msg.type == ChatMessageType.user;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Column(
+                                crossAxisAlignment: isUser
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  _buildBubble(msg, palette),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    msg.time,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 11,
+                                      color: palette.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(
@@ -176,9 +209,14 @@ class ChatView extends StatelessWidget {
                         ChatSuggestionChips(
                           chips: provider.suggestions,
                           palette: palette,
+                          onTap: provider.sendMessage,
                         ),
                         const SizedBox(height: 8),
-                        ChatInputBar(palette: palette),
+                        ChatInputBar(
+                          palette: palette,
+                          isLoading: provider.isLoading,
+                          onSend: provider.sendMessage,
+                        ),
                       ],
                     ),
                   ),
@@ -188,6 +226,79 @@ class ChatView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(AppPalette palette) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppPalette.accent.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.auto_awesome,
+                color: AppPalette.accent,
+                size: 30,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Asistente Nich-Ka',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: palette.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Pregúntame sobre fermentación de café, perfiles de sabor, sensores o el uso de la plataforma.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: palette.textSecondary,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicator(AppPalette palette) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: palette.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: palette.border),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _Dot(delay: 0),
+                const SizedBox(width: 4),
+                _Dot(delay: 200),
+                const SizedBox(width: 4),
+                _Dot(delay: 400),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -203,5 +314,52 @@ class ChatView extends StatelessWidget {
         palette: palette,
       ),
     };
+  }
+}
+
+class _Dot extends StatefulWidget {
+  final int delay;
+  const _Dot({required this.delay});
+
+  @override
+  State<_Dot> createState() => _DotState();
+}
+
+class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _ctrl.repeat(reverse: true);
+    });
+    _anim = Tween(begin: 0.3, end: 1.0).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _anim,
+      child: Container(
+        width: 7,
+        height: 7,
+        decoration: const BoxDecoration(
+          color: AppPalette.accent,
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
   }
 }

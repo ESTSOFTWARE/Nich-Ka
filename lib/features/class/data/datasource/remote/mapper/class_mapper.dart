@@ -45,6 +45,7 @@ class ClassMapper {
         initials: memberInitials,
         color: color,
         name: '${m.name} ${m.lastName}',
+        email: m.email,
       );
     }).toList();
 
@@ -63,7 +64,7 @@ class ClassMapper {
       studentCount: dto.members.length,
       createdAt: createdAt,
       teacherName: teacher,
-      teacherEmail:
+      teacherEmail: dto.professorEmail ??
           '${teacher.toLowerCase().replaceAll(' ', '.')}@nich-ka.space',
       teacherInitials: initials,
       teacherAvatarColor: const Color(0xFF75D079),
