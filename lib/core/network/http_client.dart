@@ -5,6 +5,8 @@ class HttpClient {
   HttpClient._();
   static final HttpClient instance = HttpClient._();
 
+  // arreglar esto para que se use la variable de entorno del .env
+  // static const _apiUrl = String.fromEnvironment('BASE_URL', defaultValue: '');
   //static const String _baseUrl = 'https://backend.nich-ka.space/api';
   static const String _baseUrl = 'https://api.nich-ka.space/api';
   // Local en celular físico (misma WiFi): IP LAN de la PC. Backend debe correr en --host 0.0.0.0.
