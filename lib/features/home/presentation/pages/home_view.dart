@@ -26,11 +26,25 @@ class HomeView extends StatelessWidget {
     return ChangeNotifierProvider<HomeProvider>(
       create: () => HomeProvider(),
       builder: (context, provider) {
+        // Sin fermentación activa esta vista no aplica → al home normal.
+        if (!provider.isLoading && !provider.hasActive) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) context.go('/');
+          });
+          return const Scaffold(
+            backgroundColor: Color(0xFF0A0A0B),
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
         return ChangeNotifierProvider<DrawerProvider>(
           create: () => DrawerProvider(),
           builder: (context, drawerProvider) {
+            final firstName = (drawerProvider.user?.fullName ?? '')
+                .trim()
+                .split(' ')
+                .first;
             return Scaffold(
               key: provider.scaffoldKey,
               backgroundColor: palette.background,
@@ -42,6 +56,7 @@ class HomeView extends StatelessWidget {
                 onSettings: () => context.push('/profile'),
                 userName: drawerProvider.user?.fullName,
                 userRole: drawerProvider.user?.role.toUpperCase(),
+                profileImage: drawerProvider.user?.profileImage,
                 onLogout: () async {
                   await drawerProvider.logout();
                   if (context.mounted) context.go('/login');
@@ -73,7 +88,9 @@ class HomeView extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Hola Ameth, ',
+                                text: firstName.isEmpty
+                                    ? 'Hola, '
+                                    : 'Hola $firstName, ',
                                 style: GoogleFonts.poppins(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w400,

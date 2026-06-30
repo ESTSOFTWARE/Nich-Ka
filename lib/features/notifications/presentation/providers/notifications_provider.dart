@@ -1,14 +1,101 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../../../../core/network/http_client.dart';
+import '../../data/datasource/remote/notification_datasource.dart';
+import '../../data/repositories/notification_repository_impl.dart';
+import '../../domain/entities/connection_state.dart';
 import '../../domain/entities/notification_item.dart';
-import '../../domain/entities/notification_type.dart';
+import '../../domain/repositories/notification_repository.dart';
+import '../../domain/use_cases/connect_notifications_use_case.dart';
+import '../../domain/use_cases/fetch_notifications_use_case.dart';
+import '../../domain/use_cases/listen_notifications_use_case.dart';
+import '../../domain/use_cases/mark_all_read_use_case.dart';
+import '../../domain/use_cases/mark_read_use_case.dart';
+import '../../domain/use_cases/watch_connection_state_use_case.dart';
 
 class NotificationsProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController();
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
 
-  NotificationsProvider() {
+  final ConnectNotificationsUseCase _connect;
+  final ListenNotificationsUseCase _listen;
+  final FetchNotificationsUseCase _fetch;
+  final MarkReadUseCase _markRead;
+  final MarkAllReadUseCase _markAllRead;
+  final WatchConnectionStateUseCase _watchState;
+  StreamSubscription<NotificationItem>? _sub;
+  StreamSubscription<NotificationConnectionState>? _stateSub;
+
+  NotificationConnectionState _connectionState =
+      NotificationConnectionState.connecting;
+  NotificationConnectionState get connectionState => _connectionState;
+
+  NotificationsProvider({NotificationRepository? repository})
+    : this._(
+        repository ??
+            NotificationRepositoryImpl(
+              NotificationDatasource(HttpClient.instance),
+            ),
+      );
+
+  NotificationsProvider._(NotificationRepository repository)
+    : _connect = ConnectNotificationsUseCase(repository),
+      _listen = ListenNotificationsUseCase(repository),
+      _fetch = FetchNotificationsUseCase(repository),
+      _markRead = MarkReadUseCase(repository),
+      _markAllRead = MarkAllReadUseCase(repository),
+      _watchState = WatchConnectionStateUseCase(repository) {
     scrollController.addListener(_onScroll);
+    _init();
+  }
+
+  Future<void> _init() async {
+    final userId = HttpClient.instance.userId;
+    if (userId == 0) return;
+
+    _stateSub = _watchState().listen(_onConnectionState);
+    _connect(userId: userId);
+
+    final items = await _fetch();
+    _items = items.reversed.toList();
+    notifyListeners();
+
+    _sub = _listen().listen(_onNotificationReceived);
+  }
+
+  void _onConnectionState(NotificationConnectionState state) {
+    _connectionState = state;
+    notifyListeners();
+  }
+
+  void _onNotificationReceived(NotificationItem item) {
+    _items = [item, ..._items];
+    notifyListeners();
+  }
+
+  List<NotificationItem> _items = const [];
+
+  List<NotificationItem> get items => _items;
+
+  int get unreadCount => _items.where((i) => !i.isRead).length;
+
+  Future<void> markAsRead(int notificationId) async {
+    final ok = await _markRead(notificationId);
+    if (!ok) return;
+    _items = _items.map((i) {
+      if (i.id == notificationId) return i.copyWith(isRead: true);
+      return i;
+    }).toList();
+    notifyListeners();
+  }
+
+  Future<void> markAllRead() async {
+    await _markAllRead();
+    _items = _items.map((i) => i.copyWith(isRead: true)).toList();
+    notifyListeners();
   }
 
   void _onScroll() {
@@ -21,60 +108,10 @@ class NotificationsProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _sub?.cancel();
+    _stateSub?.cancel();
     scrollController.removeListener(_onScroll);
     scrollController.dispose();
     super.dispose();
-  }
-
-  List<NotificationItem> _items = const [
-    NotificationItem(
-      id: '1',
-      title: 'Recomendación IA',
-      description: 'Reduce 1.5 °C en F-024 para perfil floral.',
-      time: 'ahora',
-      type: NotificationType.recommendation,
-      isRead: false,
-    ),
-    NotificationItem(
-      id: '2',
-      title: 'Alerta de pH',
-      description: 'F-024 cruzó pH 4.2 — fase pico iniciada.',
-      time: '12m',
-      type: NotificationType.alert,
-      isRead: false,
-    ),
-    NotificationItem(
-      id: '3',
-      title: 'Fermentación completada',
-      description: 'F-022 Bourbon Natural finalizó secado (calidad 87.2 SCA).',
-      time: '2h',
-      type: NotificationType.completed,
-      isRead: true,
-    ),
-    NotificationItem(
-      id: '4',
-      title: 'Análisis disponible',
-      description: 'Reporte sensorial de F-021 listo para revisar.',
-      time: '1d',
-      type: NotificationType.analysis,
-      isRead: true,
-    ),
-    NotificationItem(
-      id: '5',
-      title: 'Sensor desconectado',
-      description: 'Sensor de pH del Tanque 03 sin señal por 10m.',
-      time: '2d',
-      type: NotificationType.sensor,
-      isRead: true,
-    ),
-  ];
-
-  List<NotificationItem> get items => _items;
-
-  int get unreadCount => _items.where((i) => !i.isRead).length;
-
-  void markAllRead() {
-    _items = _items.map((i) => i.copyWith(isRead: true)).toList();
-    notifyListeners();
   }
 }

@@ -92,7 +92,6 @@ class ClassCard extends StatelessWidget {
         'assets/icons/logo.svg',
         width: 32,
         height: 32,
-        colorFilter: ColorFilter.mode(ClassPalette.accent, BlendMode.srcIn),
       ),
     ),
   );

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart' hide ChangeNotifierProvider;
 import '../../../../core/providers/auth_provider.dart';
+import '../../../../core/navigation/entry_route.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -136,7 +137,9 @@ class LoginEmailView extends StatelessWidget {
                         pendingJoinCode = null;
                         context.go('/join?code=$code');
                       } else {
-                        context.go('/');
+                        // Si hay fermentación activa entra al /overview; si no, al home.
+                        final route = await resolveEntryRoute();
+                        if (context.mounted) context.go(route);
                       }
                     }
                   },

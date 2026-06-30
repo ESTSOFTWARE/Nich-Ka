@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/reports_remote_datasource.dart';
 import '../../data/repositories/reports_repository_impl.dart';
@@ -81,13 +82,15 @@ class ReportsProvider extends ChangeNotifier {
     if (_selectedFilter == filter) return;
     _selectedFilter = filter;
     notifyListeners();
-    _loadData();
+    _loadData(silent: true);
   }
 
-  Future<void> _loadData() async {
-    _reportsState = const UiLoading();
-    _summaryState = const UiLoading();
-    notifyListeners();
+  Future<void> _loadData({bool silent = false}) async {
+    if (!silent) {
+      _reportsState = const UiLoading();
+      _summaryState = const UiLoading();
+      notifyListeners();
+    }
 
     try {
       final results = await Future.wait([
@@ -124,6 +127,8 @@ class ReportsProvider extends ChangeNotifier {
       await file.writeAsBytes(bytes);
       _isDownloading = false;
       _downloadCompleted = true;
+      // Abre el PDF con el visor del sistema.
+      await OpenFilex.open(file.path);
     } catch (e) {
       _isDownloading = false;
       _downloadError = e.toString().replaceFirst('Exception: ', '');

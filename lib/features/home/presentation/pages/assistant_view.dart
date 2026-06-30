@@ -42,6 +42,7 @@ class AssistantView extends StatelessWidget {
                 onSettings: () => context.push('/profile'),
                 userName: drawerProvider.user?.fullName,
                 userRole: drawerProvider.user?.role.toUpperCase(),
+                profileImage: drawerProvider.user?.profileImage,
                 onLogout: () async {
                   await drawerProvider.logout();
                   if (context.mounted) context.go('/login');
@@ -73,7 +74,7 @@ class AssistantView extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Hola Ameth, ',
+                                text: 'Hola ${drawerProvider.user?.firstName ?? ''}, ',
                                 style: GoogleFonts.poppins(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w400,

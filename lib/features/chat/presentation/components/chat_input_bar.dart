@@ -2,43 +2,116 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_palette.dart';
 
-class ChatInputBar extends StatelessWidget {
+class ChatInputBar extends StatefulWidget {
   final AppPalette palette;
+  final bool isLoading;
+  final void Function(String) onSend;
+  final TextEditingController? controller;
 
-  const ChatInputBar({super.key, required this.palette});
+  const ChatInputBar({
+    super.key,
+    required this.palette,
+    required this.onSend,
+    this.isLoading = false,
+    this.controller,
+  });
+
+  @override
+  State<ChatInputBar> createState() => _ChatInputBarState();
+}
+
+class _ChatInputBarState extends State<ChatInputBar> {
+  late final TextEditingController _ctrl;
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = widget.controller ?? TextEditingController();
+    _ctrl.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    final has = _ctrl.text.trim().isNotEmpty;
+    if (has != _hasText) setState(() => _hasText = has);
+  }
+
+  void _submit() {
+    if (widget.isLoading || !_hasText) return;
+    final text = _ctrl.text.trim();
+    _ctrl.clear();
+    widget.onSend(text);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.removeListener(_onTextChanged);
+    if (widget.controller == null) _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
       decoration: BoxDecoration(
-        color: palette.surface,
+        color: widget.palette.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.border),
+        border: Border.all(color: widget.palette.border),
       ),
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              'Pregunta a Nich-Ka...',
+            child: TextField(
+              controller: _ctrl,
+              enabled: !widget.isLoading,
+              onSubmitted: (_) => _submit(),
+              textInputAction: TextInputAction.send,
+              maxLines: null,
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: palette.textMuted,
+                color: widget.palette.textPrimary,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Pregunta a Nich-Ka...',
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: widget.palette.textMuted,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 6),
               ),
             ),
           ),
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppPalette.accent,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-              size: 16,
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: _submit,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 34,
+              height: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: (_hasText && !widget.isLoading)
+                    ? AppPalette.accent
+                    : widget.palette.border,
+                shape: BoxShape.circle,
+              ),
+              child: widget.isLoading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.arrow_upward,
+                      color: Colors.white,
+                      size: 16,
+                    ),
             ),
           ),
         ],

@@ -13,6 +13,7 @@ class AppDrawer extends StatelessWidget {
   final VoidCallback? onLogout;
   final String? userName;
   final String? userRole;
+  final String? profileImage;
 
   const AppDrawer({
     super.key,
@@ -23,6 +24,7 @@ class AppDrawer extends StatelessWidget {
     this.onLogout,
     this.userName,
     this.userRole,
+    this.profileImage,
   });
 
   @override
@@ -42,8 +44,9 @@ class AppDrawer extends StatelessWidget {
           children: [
             AppDrawerHeader(
               palette: palette,
-              userName: userName ?? 'Ameth Toledo',
+              userName: userName ?? 'Usuario',
               userRole: userRole ?? 'ESTUDIANTE',
+              profileImage: profileImage,
             ),
             ...AppDrawerItem.values.map(
               (item) => DrawerMenuItem(

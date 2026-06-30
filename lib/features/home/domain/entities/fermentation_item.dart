@@ -10,6 +10,7 @@ class FermentationItem {
   final String timeInfo;
   final double ringProgress;
   final Color ringColor;
+  final int? sessionId; // id de la sesión, para abrir su reporte
 
   const FermentationItem({
     required this.id,
@@ -21,5 +22,6 @@ class FermentationItem {
     required this.timeInfo,
     required this.ringProgress,
     required this.ringColor,
+    this.sessionId,
   });
 }
