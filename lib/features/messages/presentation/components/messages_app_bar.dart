@@ -32,12 +32,14 @@ class MessagesAppBar extends StatelessWidget implements PreferredSizeWidget {
           sigmaY: isScrolled ? 20 : 0,
         ),
         child: AppBar(
-          backgroundColor:
-              isScrolled ? palette.glassBackground : Colors.transparent,
+          backgroundColor: isScrolled
+              ? palette.glassBackground
+              : Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
-          systemOverlayStyle:
-              isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+          systemOverlayStyle: isDark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
           automaticallyImplyLeading: false,
           centerTitle: false,
           toolbarHeight: 64,

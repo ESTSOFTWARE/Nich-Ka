@@ -25,8 +25,10 @@ class ChatSuggestionChips extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTap?.call(chip),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: palette.surface,
                   borderRadius: BorderRadius.circular(20),

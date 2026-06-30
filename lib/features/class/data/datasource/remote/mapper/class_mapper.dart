@@ -64,7 +64,8 @@ class ClassMapper {
       studentCount: dto.members.length,
       createdAt: createdAt,
       teacherName: teacher,
-      teacherEmail: dto.professorEmail ??
+      teacherEmail:
+          dto.professorEmail ??
           '${teacher.toLowerCase().replaceAll(' ', '.')}@nich-ka.space',
       teacherInitials: initials,
       teacherAvatarColor: const Color(0xFF75D079),

@@ -17,13 +17,10 @@ class ReportMetadata extends StatelessWidget {
   });
 
   Widget _dot(ReportsPalette p) => Container(
-        width: 3,
-        height: 3,
-        decoration: BoxDecoration(
-          color: palette.textMuted,
-          shape: BoxShape.circle,
-        ),
-      );
+    width: 3,
+    height: 3,
+    decoration: BoxDecoration(color: palette.textMuted, shape: BoxShape.circle),
+  );
 
   @override
   Widget build(BuildContext context) {

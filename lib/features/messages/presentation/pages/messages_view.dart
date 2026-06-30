@@ -44,7 +44,8 @@ class MessagesView extends StatelessWidget {
                 context.canPop() ? context.pop() : context.go('/home'),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => _openNewConversationSheet(context, provider, palette),
+            onPressed: () =>
+                _openNewConversationSheet(context, provider, palette),
             backgroundColor: AppPalette.accent,
             elevation: 4,
             child: const Icon(Icons.edit_outlined, color: Colors.black),
@@ -99,20 +100,21 @@ class MessagesView extends StatelessWidget {
     return switch (provider.state) {
       MessagesUiState.loading => ConversationsSkeleton(palette: palette),
       MessagesUiState.error => MessagesErrorState(
-          message: provider.error,
-          onRetry: provider.refresh,
-          palette: palette,
-        ),
-      _ when provider.conversations.isEmpty =>
-        EmptyConversationsState(palette: palette),
+        message: provider.error,
+        onRetry: provider.refresh,
+        palette: palette,
+      ),
+      _ when provider.conversations.isEmpty => EmptyConversationsState(
+        palette: palette,
+      ),
       _ => ConversationsList(
-          conversations: provider.conversations,
-          palette: palette,
-          onTap: (c) {
-            provider.markReadLocally(c.id);
-            context.push('/group-chat', extra: c);
-          },
-        ),
+        conversations: provider.conversations,
+        palette: palette,
+        onTap: (c) {
+          provider.markReadLocally(c.id);
+          context.push('/group-chat', extra: c);
+        },
+      ),
     };
   }
 
@@ -127,12 +129,8 @@ class MessagesView extends StatelessWidget {
       context: context,
       palette: palette,
       contacts: provider.contacts,
-      onCreate: ({required type, required memberIds, name}) =>
-          provider.createConversation(
-        type: type,
-        memberIds: memberIds,
-        name: name,
-      ),
+      onCreate: ({required type, required memberIds, name}) => provider
+          .createConversation(type: type, memberIds: memberIds, name: name),
     );
     if (conv != null && context.mounted) {
       context.push('/group-chat', extra: conv);

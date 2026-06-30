@@ -58,10 +58,7 @@ class ChatAiBubble extends StatelessWidget {
               ),
               blockquoteDecoration: BoxDecoration(
                 border: Border(
-                  left: BorderSide(
-                    color: AppPalette.accent,
-                    width: 3,
-                  ),
+                  left: BorderSide(color: AppPalette.accent, width: 3),
                 ),
               ),
               blockquote: GoogleFonts.poppins(

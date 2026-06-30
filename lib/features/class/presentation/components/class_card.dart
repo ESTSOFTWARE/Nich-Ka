@@ -88,11 +88,7 @@ class ClassCard extends StatelessWidget {
   Widget _buildPlaceholder() => Container(
     color: ClassPalette.accent.withValues(alpha: 0.10),
     child: Center(
-      child: SvgPicture.asset(
-        'assets/icons/logo.svg',
-        width: 32,
-        height: 32,
-      ),
+      child: SvgPicture.asset('assets/icons/logo.svg', width: 32, height: 32),
     ),
   );
 

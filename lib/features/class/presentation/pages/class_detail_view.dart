@@ -163,10 +163,13 @@ class ClassDetailView extends StatelessWidget {
                       members: provider.detail.members,
                       totalMembers: provider.detail.totalMembers,
                       palette: palette,
-                      onViewAll: () => context.push('/class-members', extra: {
-                        'className': provider.detail.name,
-                        'members': provider.detail.members,
-                      }),
+                      onViewAll: () => context.push(
+                        '/class-members',
+                        extra: {
+                          'className': provider.detail.name,
+                          'members': provider.detail.members,
+                        },
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Row(

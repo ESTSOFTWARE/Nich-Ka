@@ -150,47 +150,48 @@ class ChatView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: provider.messages.isEmpty && !provider.isLoading
-                      ? _buildEmptyState(palette)
-                      : ListView.builder(
-                          controller: provider.scrollController,
-                          padding: EdgeInsets.fromLTRB(
-                            16,
-                            MediaQuery.of(context).padding.top +
-                                kToolbarHeight +
-                                8,
-                            16,
-                            16,
-                          ),
-                          itemCount: provider.messages.length +
-                              (provider.isLoading ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (provider.isLoading &&
-                                index == provider.messages.length) {
-                              return _buildTypingIndicator(palette);
-                            }
-                            final msg = provider.messages[index];
-                            final isUser = msg.type == ChatMessageType.user;
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Column(
-                                crossAxisAlignment: isUser
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
-                                children: [
-                                  _buildBubble(msg, palette),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    msg.time,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11,
-                                      color: palette.textMuted,
+                        ? _buildEmptyState(palette)
+                        : ListView.builder(
+                            controller: provider.scrollController,
+                            padding: EdgeInsets.fromLTRB(
+                              16,
+                              MediaQuery.of(context).padding.top +
+                                  kToolbarHeight +
+                                  8,
+                              16,
+                              16,
+                            ),
+                            itemCount:
+                                provider.messages.length +
+                                (provider.isLoading ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (provider.isLoading &&
+                                  index == provider.messages.length) {
+                                return _buildTypingIndicator(palette);
+                              }
+                              final msg = provider.messages[index];
+                              final isUser = msg.type == ChatMessageType.user;
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Column(
+                                  crossAxisAlignment: isUser
+                                      ? CrossAxisAlignment.end
+                                      : CrossAxisAlignment.start,
+                                  children: [
+                                    _buildBubble(msg, palette),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      msg.time,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11,
+                                        color: palette.textMuted,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(

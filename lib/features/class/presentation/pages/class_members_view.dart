@@ -225,7 +225,11 @@ class _ClassMembersViewState extends State<ClassMembersView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.person_search_outlined, size: 56, color: palette.textMuted),
+          Icon(
+            Icons.person_search_outlined,
+            size: 56,
+            color: palette.textMuted,
+          ),
           const SizedBox(height: 16),
           Text(
             'Sin resultados',

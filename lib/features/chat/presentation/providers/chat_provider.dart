@@ -48,14 +48,18 @@ class ChatProvider extends ChangeNotifier {
     if (trimmed.isEmpty || _isLoading) return;
 
     _error = null;
-    messages.add(ChatMessage(text: trimmed, type: ChatMessageType.user, time: _now()));
+    messages.add(
+      ChatMessage(text: trimmed, type: ChatMessageType.user, time: _now()),
+    );
     _isLoading = true;
     notifyListeners();
     _scrollToBottom();
 
     try {
       final reply = await _api.send(trimmed);
-      messages.add(ChatMessage(text: reply, type: ChatMessageType.ai, time: _now()));
+      messages.add(
+        ChatMessage(text: reply, type: ChatMessageType.ai, time: _now()),
+      );
     } on Exception catch (e) {
       final msg = e.toString().replaceFirst('Exception: ', '');
       if (msg == 'rate_limit') {
