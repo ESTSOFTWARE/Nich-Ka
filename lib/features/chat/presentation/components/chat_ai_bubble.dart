@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../../../shared/theme/app_palette.dart';
@@ -24,40 +25,67 @@ class ChatAiBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: palette.border),
           ),
-          child: _buildText(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildText() {
-    final base = GoogleFonts.poppins(
-      fontSize: 14,
-      color: palette.textPrimary,
-      height: 1.5,
-    );
-    if (message.highlightId == null) {
-      return Text(message.text, style: base);
-    }
-    final parts = message.text.split(message.highlightId!);
-    return RichText(
-      text: TextSpan(
-        style: base,
-        children: [
-          for (int i = 0; i < parts.length; i++) ...[
-            TextSpan(text: parts[i]),
-            if (i < parts.length - 1)
-              TextSpan(
-                text: message.highlightId!,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppPalette.accent,
-                  height: 1.5,
+          child: MarkdownBody(
+            data: message.text,
+            shrinkWrap: true,
+            styleSheet: MarkdownStyleSheet(
+              p: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textPrimary,
+                height: 1.5,
+              ),
+              strong: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppPalette.accent,
+                height: 1.5,
+              ),
+              em: GoogleFonts.poppins(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: palette.textPrimary,
+                height: 1.5,
+              ),
+              listBullet: GoogleFonts.poppins(
+                fontSize: 14,
+                color: AppPalette.accent,
+                height: 1.5,
+              ),
+              code: GoogleFonts.poppins(
+                fontSize: 13,
+                color: AppPalette.accent,
+                backgroundColor: AppPalette.accent.withValues(alpha: 0.1),
+              ),
+              blockquoteDecoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: AppPalette.accent, width: 3),
                 ),
               ),
-          ],
-        ],
+              blockquote: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textSecondary,
+                height: 1.5,
+              ),
+              h1: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: palette.textPrimary,
+              ),
+              h2: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: palette.textPrimary,
+              ),
+              h3: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: palette.textPrimary,
+              ),
+              pPadding: EdgeInsets.zero,
+              blockSpacing: 6,
+            ),
+          ),
+        ),
       ),
     );
   }

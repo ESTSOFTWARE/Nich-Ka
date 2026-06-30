@@ -74,6 +74,7 @@ class ClassTeacherCard extends StatelessWidget {
                     ),
                     Text(
                       email,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: palette.textSecondary,

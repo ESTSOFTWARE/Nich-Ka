@@ -110,24 +110,62 @@ class NotificationsView extends StatelessWidget {
           body: Stack(
             children: [
               HomeGlow(palette: palette),
-              ListView.builder(
-                controller: provider.scrollController,
-                padding: EdgeInsets.fromLTRB(
-                  0,
-                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                  0,
-                  8,
-                ),
-                itemCount: provider.items.length,
-                itemBuilder: (context, index) => NotificationListItem(
-                  item: provider.items[index],
-                  palette: palette,
-                ),
-              ),
+              provider.items.isEmpty
+                  ? _buildEmpty(context, palette)
+                  : ListView.builder(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        0,
+                        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                        0,
+                        8,
+                      ),
+                      itemCount: provider.items.length,
+                      itemBuilder: (context, index) => NotificationListItem(
+                        item: provider.items[index],
+                        palette: palette,
+                      ),
+                    ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmpty(BuildContext context, AppPalette palette) {
+    final topPad = MediaQuery.of(context).padding.top + kToolbarHeight;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(32, topPad + 40, 32, 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.notifications_none_outlined,
+            size: 72,
+            color: palette.textMuted,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Sin notificaciones',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: palette.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Cuando tengas actividad nueva aparecerá aquí. Por ahora todo está al día.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: palette.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

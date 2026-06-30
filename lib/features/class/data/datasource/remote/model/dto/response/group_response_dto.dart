@@ -6,6 +6,7 @@ class GroupResponseDto {
   final String subject;
   final String? coverImage;
   final String? professorName;
+  final String? professorEmail;
   final String createdAt;
   final List<GroupMemberResponseDto> members;
 
@@ -15,6 +16,7 @@ class GroupResponseDto {
     required this.subject,
     this.coverImage,
     this.professorName,
+    this.professorEmail,
     required this.createdAt,
     required this.members,
   });
@@ -26,6 +28,7 @@ class GroupResponseDto {
         subject: json['subject'] as String,
         coverImage: json['cover_image'] as String?,
         professorName: json['professor_name'] as String?,
+        professorEmail: json['professor_email'] as String?,
         createdAt: json['created_at'] as String? ?? '',
         members: (json['members'] as List<dynamic>)
             .map(
