@@ -17,8 +17,8 @@ class SoundService {
     }
   }
 
-  Future<void> notification()    => _play('sound_notification.mp3');
-  Future<void> message()         => _play('sound_message.mp3');
+  Future<void> notification() => _play('sound_notification.mp3');
+  Future<void> message() => _play('sound_message.mp3');
   Future<void> responseMessage() => _play('sound_response_message.mp3');
 }
 

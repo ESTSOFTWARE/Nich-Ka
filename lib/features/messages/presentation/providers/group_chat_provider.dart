@@ -107,7 +107,8 @@ class GroupChatProvider extends ChangeNotifier {
     _markRead = MarkReadUseCase(repo);
 
     scrollController.addListener(_onScroll);
-    ActiveChat.conversationId = conversation.id; // estoy dentro de esta conversación
+    ActiveChat.conversationId =
+        conversation.id; // estoy dentro de esta conversación
     _init();
   }
 
