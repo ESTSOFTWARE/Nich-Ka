@@ -28,7 +28,7 @@ class ChatMapper {
 
   static SendMessageRequestDto toSendMessageRequest({
     String? content,
-    List<AttachmentDto> attachments = const [],
+    List<MessageAttachment> attachments = const [],
     int? replyToId,
   }) => SendMessageRequestDto(
     content: content,

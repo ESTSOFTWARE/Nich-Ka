@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../../../shared/theme/app_palette.dart';
+import 'image_viewer_page.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -112,7 +113,7 @@ class ChatMessageBubble extends StatelessWidget {
                 if (isFirst && message.isImportant) _buildPriorityBadge(),
 
                 // Bubble
-                _buildBubble(),
+                _buildBubble(context),
 
                 // Timestamp + edited — only on last of block
                 if (isLast)
@@ -250,7 +251,7 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildBubble() {
+  Widget _buildBubble(BuildContext context) {
     final bgColor = isMe ? AppPalette.accent : palette.surface;
     final textColor = isMe ? Colors.black : palette.textPrimary;
     final borderColor = isMe ? Colors.transparent : palette.border;
@@ -265,6 +266,13 @@ class ChatMessageBubble extends StatelessWidget {
     final hasAttachments = message.attachments.isNotEmpty;
 
     if (!hasContent && !hasAttachments) return const SizedBox.shrink();
+
+    // Image-only: render image directly without bubble frame
+    if (!hasContent &&
+        hasAttachments &&
+        message.attachments.every((a) => a.isImage)) {
+      return _buildImageOnly(context);
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -299,10 +307,43 @@ class ChatMessageBubble extends StatelessWidget {
                 ),
 
               // Attachments
-              if (hasAttachments) _buildAttachments(textColor),
+              if (hasAttachments) _buildAttachments(context, textColor),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageOnly(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: message.attachments.map((a) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: GestureDetector(
+            onTap: () => _openImageViewer(context, a.url),
+            child: Image.network(
+              a.url,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => Container(
+                height: 80,
+                color: palette.rowSurface,
+                child: Icon(Icons.broken_image, color: palette.textMuted),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  void _openImageViewer(BuildContext context, String url) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ImageViewerPage(imageUrl: url),
+        fullscreenDialog: true,
       ),
     );
   }
@@ -355,14 +396,14 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildAttachments(Color textColor) {
+  Widget _buildAttachments(BuildContext context, Color textColor) {
     return Column(
       children: message.attachments.map((a) {
         if (a.isImage) {
           return Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+            child: GestureDetector(
+              onTap: () => _openImageViewer(context, a.url),
               child: Image.network(
                 a.url,
                 width: double.infinity,

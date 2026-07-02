@@ -66,6 +66,7 @@ class ChatRepositoryImpl implements ChatRepository {
   }) async {
     final request = ChatMapper.toSendMessageRequest(
       content: content,
+      attachments: attachments,
       replyToId: replyToId,
     );
     final dto = await _ds.sendMessage(conversationId, request);

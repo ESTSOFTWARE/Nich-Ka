@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as ep;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ class ChatInputBar extends StatefulWidget {
   final void Function(String text) onSend;
   final void Function(String text) onChanged;
   final void Function(File file) onImagePicked;
+  final void Function(File file)? onFilePicked;
 
   const ChatInputBar({
     super.key,
@@ -18,6 +20,7 @@ class ChatInputBar extends StatefulWidget {
     required this.onSend,
     required this.onChanged,
     required this.onImagePicked,
+    this.onFilePicked,
     this.editingContent,
   });
 
@@ -84,6 +87,33 @@ class _ChatInputBarState extends State<ChatInputBar> {
     if (picked != null) widget.onImagePicked(File(picked.path));
   }
 
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'ppt',
+        'pptx',
+        'txt',
+        'csv',
+        'zip',
+        'rar',
+        '7z',
+        'mp4',
+        'mov',
+        'avi',
+        'mkv',
+      ],
+    );
+    if (result != null && result.files.single.path != null) {
+      widget.onFilePicked?.call(File(result.files.single.path!));
+    }
+  }
+
   void _toggleEmoji() {
     if (_emojiOpen) {
       _focusNode.requestFocus();
@@ -134,6 +164,19 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 padding: const EdgeInsets.all(4),
                 constraints: const BoxConstraints(),
               ),
+              const SizedBox(width: 2),
+              // File picker
+              if (widget.onFilePicked != null)
+                IconButton(
+                  onPressed: _pickFile,
+                  icon: Icon(
+                    Icons.attach_file_outlined,
+                    color: widget.palette.textMuted,
+                    size: 22,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(),
+                ),
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(

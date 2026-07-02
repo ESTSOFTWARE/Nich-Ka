@@ -369,6 +369,10 @@ class GroupChatProvider extends ChangeNotifier {
   }
 
   Future<void> sendImage(File file) async {
+    await sendFile(file);
+  }
+
+  Future<void> sendFile(File file) async {
     _isUploading = true;
     notifyListeners();
     try {
