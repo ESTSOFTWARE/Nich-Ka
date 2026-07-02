@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/chat_remote_datasource.dart';
 import '../../data/datasource/remote/mapper/chat_mapper.dart';
@@ -168,6 +169,12 @@ class MessagesProvider extends ChangeNotifier {
                       : conv.unreadCount + 1,
                 );
               notifyListeners();
+            }
+            // Sonido: mensaje nuevo en otra conversación (si no es mío y no estoy dentro de ella;
+            // si estoy dentro, GroupChatProvider reproduce sound_response_message).
+            if (msg.senderId != myId &&
+                msg.conversationId != ActiveChat.conversationId) {
+              SoundService.instance.message();
             }
           }
 

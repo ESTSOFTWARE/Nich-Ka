@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/chat_remote_datasource.dart';
 import '../../data/datasource/remote/mapper/chat_mapper.dart';
@@ -106,6 +107,7 @@ class GroupChatProvider extends ChangeNotifier {
     _markRead = MarkReadUseCase(repo);
 
     scrollController.addListener(_onScroll);
+    ActiveChat.conversationId = conversation.id; // estoy dentro de esta conversación
     _init();
   }
 
@@ -187,6 +189,10 @@ class GroupChatProvider extends ChangeNotifier {
               _messages.add(msg);
               notifyListeners();
               _scrollToBottom();
+              // Estoy dentro de la conversación → sonido de respuesta (si no es mío).
+              if (msg.senderId != myUserId) {
+                SoundService.instance.responseMessage();
+              }
             }
           }
 
@@ -489,6 +495,9 @@ class GroupChatProvider extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    if (ActiveChat.conversationId == conversation.id) {
+      ActiveChat.conversationId = null; // salí de la conversación
+    }
     _stopTypingTimer?.cancel();
     _retryTimer?.cancel();
     _notifyTyping(false);

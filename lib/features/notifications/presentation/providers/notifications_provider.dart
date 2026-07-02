@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/notification_datasource.dart';
 import '../../data/repositories/notification_repository_impl.dart';
@@ -74,6 +75,7 @@ class NotificationsProvider extends ChangeNotifier {
   void _onNotificationReceived(NotificationItem item) {
     _items = [item, ..._items];
     notifyListeners();
+    SoundService.instance.notification();
   }
 
   List<NotificationItem> _items = const [];
