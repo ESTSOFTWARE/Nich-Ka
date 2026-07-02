@@ -402,6 +402,7 @@ class GroupChatView extends StatelessWidget {
         onSend: provider.sendText,
         onChanged: provider.onInputChanged,
         onImagePicked: provider.sendImage,
+        onFilePicked: provider.sendFile,
       ),
     );
   }

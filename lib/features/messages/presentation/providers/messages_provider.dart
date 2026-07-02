@@ -237,17 +237,23 @@ class MessagesProvider extends ChangeNotifier {
     required List<int> memberIds,
     String? name,
   }) async {
-    final conv = await _createConversation(
-      type: type,
-      memberIds: memberIds,
-      name: name,
-    );
-    if (!_conversations.any((c) => c.id == conv.id)) {
-      _conversations = [conv, ..._conversations];
-      _state = MessagesUiState.success;
+    try {
+      final conv = await _createConversation(
+        type: type,
+        memberIds: memberIds,
+        name: name,
+      );
+      if (!_conversations.any((c) => c.id == conv.id)) {
+        _conversations = [conv, ..._conversations];
+        _state = MessagesUiState.success;
+        notifyListeners();
+      }
+      return conv;
+    } catch (e) {
+      _error = e.toString().replaceFirst('Exception: ', '');
       notifyListeners();
+      return null;
     }
-    return conv;
   }
 
   @override

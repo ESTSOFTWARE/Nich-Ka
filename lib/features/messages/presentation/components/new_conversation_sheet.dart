@@ -90,12 +90,21 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
   Future<void> _submit() async {
     if (!_canCreate || _loading) return;
     setState(() => _loading = true);
-    final conv = await widget.onCreate(
-      type: _type,
-      memberIds: List.from(_selected),
-      name: _type == 'group' ? _groupName.trim() : null,
-    );
-    if (mounted) Navigator.of(context).pop(conv);
+    try {
+      final conv = await widget.onCreate(
+        type: _type,
+        memberIds: List.from(_selected),
+        name: _type == 'group' ? _groupName.trim() : null,
+      );
+      if (mounted) Navigator.of(context).pop(conv);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    }
   }
 
   @override
