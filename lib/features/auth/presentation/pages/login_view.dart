@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart' hide ChangeNotifierProvider;
+import '../../../../core/providers/auth_provider.dart';
+import '../../../../core/navigation/entry_route.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../providers/login_provider.dart';
+import '../states/ui_state.dart';
 import '../components/legal_footer.dart';
 import '../components/social_login_button.dart';
 import '../components/spotlight_background.dart';
@@ -12,7 +19,10 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpotlightBackground(
+    return ChangeNotifierProvider<LoginProvider>(
+      create: () => LoginProvider(),
+      builder: (context, provider) {
+        return SpotlightBackground(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -70,7 +80,31 @@ class LoginView extends StatelessWidget {
             SocialLoginButton(
               text: 'Continuar con Google',
               iconPath: 'assets/icons/google.svg',
-              onPressed: () {},
+              onPressed: () async {
+                final ok = await provider.loginWithGoogle();
+                if (!ok && context.mounted) {
+                  final msg = provider.loginState is UiError
+                      ? (provider.loginState as UiError).message
+                      : 'No se pudo iniciar sesión con Google.';
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(msg)),
+                  );
+                  return;
+                }
+                if (ok && context.mounted) {
+                  if (provider.lastToken != null) {
+                    context.read<AuthProvider>().setUser(provider.lastToken!);
+                  }
+                  final code = pendingJoinCode;
+                  if (code != null) {
+                    pendingJoinCode = null;
+                    context.go('/join?code=$code');
+                  } else {
+                    final route = await resolveEntryRoute();
+                    if (context.mounted) context.go(route);
+                  }
+                }
+              },
             ),
             const SizedBox(height: 16),
             SocialLoginButton(
@@ -88,6 +122,8 @@ class LoginView extends StatelessWidget {
           ],
         ),
       ),
+        );
+      },
     );
   }
 }

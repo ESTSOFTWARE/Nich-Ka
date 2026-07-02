@@ -149,7 +149,24 @@ class LoginEmailView extends StatelessWidget {
                 SocialLoginButton(
                   text: 'Iniciar con Google',
                   iconPath: 'assets/icons/google.svg',
-                  onPressed: () {},
+                  onPressed: () async {
+                    final ok = await provider.loginWithGoogle();
+                    if (ok && context.mounted) {
+                      if (provider.lastToken != null) {
+                        context.read<AuthProvider>().setUser(
+                          provider.lastToken!,
+                        );
+                      }
+                      final code = pendingJoinCode;
+                      if (code != null) {
+                        pendingJoinCode = null;
+                        context.go('/join?code=$code');
+                      } else {
+                        final route = await resolveEntryRoute();
+                        if (context.mounted) context.go(route);
+                      }
+                    }
+                  },
                 ),
 
                 const SizedBox(height: 32),
