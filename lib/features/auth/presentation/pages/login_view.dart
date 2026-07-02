@@ -23,105 +23,107 @@ class LoginView extends StatelessWidget {
       create: () => LoginProvider(),
       builder: (context, provider) {
         return SpotlightBackground(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
               children: [
+                const SizedBox(height: 16),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Nich-Ká',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    SvgPicture.asset('assets/icons/logo.svg', height: 40),
+                  ],
+                ),
+                const Spacer(),
+
+                Image.asset(
+                  'assets/img/nich-ka-animado.png',
+                  height: 250,
+                  fit: BoxFit.contain,
+                ),
+
+                const Spacer(),
+
                 Text(
-                  'Nich-Ká',
+                  'Comienza tu experiencia',
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
+                    height: 1.2,
                   ),
                 ),
-                SvgPicture.asset('assets/icons/logo.svg', height: 40),
+                const SizedBox(height: 12),
+                Text(
+                  'Un sistema automatizado que optimiza y controla la fermentación del café para obtener perfiles de sabor únicos y consistentes.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
+                SocialLoginButton(
+                  text: 'Continuar con Google',
+                  iconPath: 'assets/icons/google.svg',
+                  onPressed: () async {
+                    final ok = await provider.loginWithGoogle();
+                    if (!ok && context.mounted) {
+                      final msg = provider.loginState is UiError
+                          ? (provider.loginState as UiError).message
+                          : 'No se pudo iniciar sesión con Google.';
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(msg)));
+                      return;
+                    }
+                    if (ok && context.mounted) {
+                      if (provider.lastToken != null) {
+                        context.read<AuthProvider>().setUser(
+                          provider.lastToken!,
+                        );
+                      }
+                      final code = pendingJoinCode;
+                      if (code != null) {
+                        pendingJoinCode = null;
+                        context.go('/join?code=$code');
+                      } else {
+                        final route = await resolveEntryRoute();
+                        if (context.mounted) context.go(route);
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                SocialLoginButton(
+                  text: 'Continuar con Correo',
+                  iconPath: 'assets/icons/gmail.svg',
+                  onPressed: () {
+                    context.go('/login-email');
+                  },
+                ),
+
+                const SizedBox(height: 32),
+
+                const LegalFooter(),
+                const SizedBox(height: 16),
               ],
             ),
-            const Spacer(),
-
-            Image.asset(
-              'assets/img/nich-ka-animado.png',
-              height: 250,
-              fit: BoxFit.contain,
-            ),
-
-            const Spacer(),
-
-            Text(
-              'Comienza tu experiencia',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Un sistema automatizado que optimiza y controla la fermentación del café para obtener perfiles de sabor únicos y consistentes.',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                height: 1.5,
-              ),
-            ),
-
-            const SizedBox(height: 48),
-
-            SocialLoginButton(
-              text: 'Continuar con Google',
-              iconPath: 'assets/icons/google.svg',
-              onPressed: () async {
-                final ok = await provider.loginWithGoogle();
-                if (!ok && context.mounted) {
-                  final msg = provider.loginState is UiError
-                      ? (provider.loginState as UiError).message
-                      : 'No se pudo iniciar sesión con Google.';
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(msg)),
-                  );
-                  return;
-                }
-                if (ok && context.mounted) {
-                  if (provider.lastToken != null) {
-                    context.read<AuthProvider>().setUser(provider.lastToken!);
-                  }
-                  final code = pendingJoinCode;
-                  if (code != null) {
-                    pendingJoinCode = null;
-                    context.go('/join?code=$code');
-                  } else {
-                    final route = await resolveEntryRoute();
-                    if (context.mounted) context.go(route);
-                  }
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            SocialLoginButton(
-              text: 'Continuar con Correo',
-              iconPath: 'assets/icons/gmail.svg',
-              onPressed: () {
-                context.go('/login-email');
-              },
-            ),
-
-            const SizedBox(height: 32),
-
-            const LegalFooter(),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+          ),
         );
       },
     );
