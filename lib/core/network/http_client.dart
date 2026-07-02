@@ -5,13 +5,7 @@ class HttpClient {
   HttpClient._();
   static final HttpClient instance = HttpClient._();
 
-  // arreglar esto para que se use la variable de entorno del .env
-  // static const _apiUrl = String.fromEnvironment('BASE_URL', defaultValue: '');
-  //static const String _baseUrl = 'https://backend.nich-ka.space/api';
-  static const String _baseUrl = 'https://api.nich-ka.space/api';
-  // Local en celular físico (misma WiFi): IP LAN de la PC. Backend debe correr en --host 0.0.0.0.
-  // Emulador Android sería http://10.0.2.2:8000/api ; producción, los dominios de arriba.
-  // static const String _baseUrl = 'http://localhost:8000/api'; // descomenten para probar en local y asugurense que el backend se corra con los parametros --host 0.0.0.0 si no, no va a funcionar
+  static const String _baseUrl = String.fromEnvironment('BASE_URL');
 
   final http.Client _client = http.Client();
   String? _accessToken;
@@ -33,16 +27,10 @@ class HttpClient {
 
   bool get hasToken => _accessToken != null;
 
-  /// ID del usuario en sesión. Lo usan componentes que necesitan identificar
-  /// mensajes propios sin pasar el ID como parámetro por toda la cadena.
   int get userId => _userId;
 
-  /// Token de acceso actual (JWT). Para abrir WebSockets que se autentican por
-  /// cookie `access_token` en el handshake.
   String? get accessToken => _accessToken;
 
-  /// Base WebSocket derivada del API (https→wss, sin el sufijo `/api`).
-  /// Ej: https://api.nich-ka.space/api → wss://api.nich-ka.space
   static String get wsBaseUrl => _baseUrl
       .replaceFirst(RegExp(r'^http'), 'ws')
       .replaceFirst(RegExp(r'/api/?$'), '');

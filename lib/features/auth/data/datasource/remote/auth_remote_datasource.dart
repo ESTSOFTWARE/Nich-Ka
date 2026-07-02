@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../../core/network/http_client.dart';
 import '../../../domain/entities/auth_credentials.dart';
 import '../../../domain/entities/auth_token.dart';
@@ -8,6 +9,11 @@ import 'mapper/auth_mapper.dart';
 
 class AuthRemoteDataSource {
   final HttpClient _client;
+
+  // Cliente OAuth **Web** (mismo que GOOGLE_CLIENT_ID del backend). Se usa como
+  // serverClientId para que el id_token traiga aud = este id, que el backend valida.
+  static const String _googleServerClientId =
+      '811899751140-04kfrfnpdledl3ieceif4epk271q3tgn.apps.googleusercontent.com';
 
   const AuthRemoteDataSource(this._client);
 
@@ -30,16 +36,50 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthToken> loginWithGoogle() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
-    return const AuthToken(
-      token: 'mock-google-token',
-      userId: 0,
-      name: 'Google',
-      lastName: 'User',
-      email: 'user@gmail.com',
-      role: 'estudiante',
-      oauthProvider: 'google',
+    // 1. Sign-In nativo de Google → id_token (aud = serverClientId Web)
+    final googleSignIn = GoogleSignIn(
+      serverClientId: _googleServerClientId,
+      scopes: const ['email', 'profile'],
     );
+    // Cierra sesión previa para que siempre muestre el selector de cuenta
+    await googleSignIn.signOut();
+
+    final account = await googleSignIn.signIn();
+    if (account == null) {
+      throw Exception('Inicio de sesión con Google cancelado.');
+    }
+
+    final auth = await account.authentication;
+    final idToken = auth.idToken;
+    if (idToken == null) {
+      throw Exception('No se pudo obtener el token de Google.');
+    }
+
+    // 2. El backend valida el token y SOLO deja entrar si el correo ya existe
+    final response = await _client.post('/auth/google/mobile', {
+      'id_token': idToken,
+    });
+
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      // Cierra la sesión de Google para no dejarla “pegada”
+      await googleSignIn.signOut();
+      throw Exception(
+        'Tu correo no está registrado. Pide a tu administrador o docente que te dé de alta.',
+      );
+    }
+    _assertSuccess(response, 'No se pudo iniciar sesión con Google.');
+
+    // 3. Mismo formato que el login normal → guardar tokens
+    final loginDto = LoginResponseDto.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
+    final token = AuthMapper.fromLoginResponse(loginDto);
+    _client.setTokens(
+      access: loginDto.accessToken,
+      refresh: loginDto.refreshToken,
+      userId: token.userId,
+    );
+    return token;
   }
 
   Future<void> sendForgotPassword(String email) async {
