@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../audio/sound_service.dart';
 import '../network/http_client.dart';
 
 /// Notificaciones push (FCM). Pide permiso, registra el token en el backend
@@ -57,6 +58,14 @@ class PushService {
   void _showForeground(RemoteMessage msg) {
     final n = msg.notification;
     if (n == null) return;
+
+    // Si es un mensaje de chat y ya estoy dentro de esa conversación, no mostrar
+    // el push (ya se ve el mensaje en pantalla + suena sound_response_message).
+    if (msg.data['type'] == 'chat_message') {
+      final convId = int.tryParse('${msg.data['conversation_id']}');
+      if (convId != null && convId == ActiveChat.conversationId) return;
+    }
+
     _local.show(
       n.hashCode,
       n.title,
