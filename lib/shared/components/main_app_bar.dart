@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_palette.dart';
+import '../../features/notifications/presentation/providers/notifications_provider.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppPalette palette;
@@ -97,18 +99,19 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      width: 7,
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        color: AppPalette.accent,
-                        shape: BoxShape.circle,
+                  if (context.watch<NotificationsProvider>().unreadCount > 0)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: AppPalette.accent,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

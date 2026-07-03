@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../components/notification_list_item.dart';
 import '../providers/notifications_provider.dart';
@@ -15,9 +15,8 @@ class NotificationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NotificationsProvider>(
-      create: () => NotificationsProvider(),
-      builder: (context, provider) {
+    return Consumer<NotificationsProvider>(
+      builder: (context, provider, _) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
         return Scaffold(

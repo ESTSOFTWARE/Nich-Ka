@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1065750100017",
+    "project_id": "nich-ka-41c4b",
+    "storage_bucket": "nich-ka-41c4b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065750100017:android:600b3c03d86a05775e7d10",
+        "android_client_info": {
+          "package_name": "com.nichka.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD9bNx2Gd_m1E6e4VJt5j6_oiZz7RlnAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
