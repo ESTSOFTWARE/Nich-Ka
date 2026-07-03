@@ -33,6 +33,7 @@ class MessageDto {
   final String? content;
   final DateTime createdAt;
   final bool read;
+  final String status;
   final bool deleted;
   final bool edited;
   final DateTime? editedAt;
@@ -51,6 +52,7 @@ class MessageDto {
     required this.createdAt,
     this.content,
     this.read = false,
+    this.status = 'sent',
     this.deleted = false,
     this.edited = false,
     this.editedAt,
@@ -78,6 +80,7 @@ class MessageDto {
       content: json['content'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       read: json['read'] as bool? ?? false,
+      status: json['status'] as String? ?? 'sent',
       deleted: json['deleted'] as bool? ?? false,
       edited: json['edited'] as bool? ?? false,
       editedAt: json['editedAt'] != null

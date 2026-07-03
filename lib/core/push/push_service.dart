@@ -27,9 +27,7 @@ class PushService {
     if (_localReady) return;
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    await _local.initialize(
-      const InitializationSettings(android: androidInit),
-    );
+    await _local.initialize(const InitializationSettings(android: androidInit));
     await _local
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin

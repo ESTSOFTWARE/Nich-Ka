@@ -190,11 +190,27 @@ class GroupChatProvider extends ChangeNotifier {
               _messages.add(msg);
               notifyListeners();
               _scrollToBottom();
-              // Estoy dentro de la conversación → sonido de respuesta (si no es mío).
+              // Estoy dentro de la conversación → sonido + ack de entrega (si no es mío).
               if (msg.senderId != myUserId) {
                 SoundService.instance.responseMessage();
+                _ds.markDelivered(conversation.id).catchError((_) {});
               }
             }
+          }
+
+        case 'conversation:delivered':
+          if ((data['conversationId'] as int?) == conversation.id &&
+              (data['userId'] as int?) != myUserId) {
+            _applyStatusUpTo(
+              DateTime.parse(data['deliveredAt'] as String),
+              'delivered',
+            );
+          }
+
+        case 'conversation:read':
+          if ((data['conversationId'] as int?) == conversation.id &&
+              (data['userId'] as int?) != myUserId) {
+            _applyStatusUpTo(DateTime.parse(data['readAt'] as String), 'read');
           }
 
         case 'message:edited':
@@ -295,6 +311,21 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Marca MIS mensajes hasta `ts` con el estado dado (entregado/leído).
+  void _applyStatusUpTo(DateTime ts, String status) {
+    var changed = false;
+    for (var i = 0; i < _messages.length; i++) {
+      final m = _messages[i];
+      if (m.senderId != myUserId || m.createdAt.isAfter(ts)) continue;
+      if (m.status == status) continue;
+      // No degradar: si ya está leído, no volver a 'delivered'.
+      if (status == 'delivered' && m.status == 'read') continue;
+      _messages[i] = m.copyWith(status: status);
+      changed = true;
+    }
+    if (changed) notifyListeners();
+  }
+
   void _applyReactions(int id, Map<String, List<int>> reactions) {
     final idx = _messages.indexWhere((m) => m.id == id);
     if (idx == -1) return;
@@ -365,6 +396,7 @@ class GroupChatProvider extends ChangeNotifier {
 
     final replyToId = _replyTarget?.id;
     clearActionTargets();
+    SoundService.instance.sent(); // sonido al enviar
     try {
       final sent = await _sendMessage(
         conversation.id,
@@ -382,6 +414,7 @@ class GroupChatProvider extends ChangeNotifier {
   Future<void> sendFile(File file) async {
     _isUploading = true;
     notifyListeners();
+    SoundService.instance.sent(); // sonido al enviar
     try {
       final attachment = await _uploadFile(file);
       final sent = await _sendMessage(

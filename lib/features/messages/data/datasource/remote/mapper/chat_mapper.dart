@@ -53,6 +53,7 @@ class ChatMapper {
     content: dto.content,
     createdAt: dto.createdAt,
     read: dto.read,
+    status: dto.status,
     deleted: dto.deleted,
     edited: dto.edited,
     editedAt: dto.editedAt,
