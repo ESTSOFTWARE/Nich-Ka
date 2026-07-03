@@ -10,6 +10,7 @@ class ChatMessage {
   final String? content;
   final DateTime createdAt;
   final bool read;
+  final String status; // sent | delivered | read (para MIS mensajes)
   final bool deleted;
   final bool edited;
   final DateTime? editedAt;
@@ -28,6 +29,7 @@ class ChatMessage {
     required this.createdAt,
     this.content,
     this.read = false,
+    this.status = 'sent',
     this.deleted = false,
     this.edited = false,
     this.editedAt,
@@ -55,6 +57,7 @@ class ChatMessage {
     bool? pinned,
     String? priority,
     Map<String, List<int>>? reactions,
+    String? status,
   }) {
     return ChatMessage(
       id: id,
@@ -65,6 +68,7 @@ class ChatMessage {
       createdAt: createdAt,
       content: content ?? this.content,
       read: read,
+      status: status ?? this.status,
       deleted: deleted ?? this.deleted,
       edited: edited ?? this.edited,
       editedAt: editedAt ?? this.editedAt,

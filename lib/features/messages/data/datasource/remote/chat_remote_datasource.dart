@@ -52,6 +52,10 @@ class ChatRemoteDataSource {
     await _client.post('/chat/conversations/$conversationId/read', {});
   }
 
+  Future<void> markDelivered(int conversationId) async {
+    await _client.post('/chat/conversations/$conversationId/delivered', {});
+  }
+
   Future<void> leaveConversation(int conversationId) async {
     final res = await _client.delete(
       '/chat/conversations/$conversationId/leave',

@@ -176,6 +176,10 @@ class MessagesProvider extends ChangeNotifier {
                 msg.conversationId != ActiveChat.conversationId) {
               SoundService.instance.message();
             }
+            // Ack de entrega: me llegó (aunque no esté dentro del chat) → doble flecha gris.
+            if (msg.senderId != myId) {
+              _ds.markDelivered(msg.conversationId).catchError((_) {});
+            }
           }
 
         case 'conversation:updated':

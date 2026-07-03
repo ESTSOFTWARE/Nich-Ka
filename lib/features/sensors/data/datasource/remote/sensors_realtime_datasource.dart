@@ -16,7 +16,12 @@ class SensorsRealtimeDataSource {
 
   WebSocketChannel? _channel;
   StreamController<SensorRealtimeReading>? _controller;
+  StreamController<void>? _stopController;
   Timer? _retryTimer;
+
+  /// Emite cuando el backend detiene la fermentación (evento WS, sin polling).
+  Stream<void> get onFermentationStopped =>
+      (_stopController ??= StreamController<void>.broadcast()).stream;
   bool _closed = false;
   int _circuitId = 0;
 
@@ -62,9 +67,12 @@ class SensorsRealtimeDataSource {
 
   void _onData(dynamic raw) {
     try {
-      final dto = SensorDataResponseDto.fromJson(
-        jsonDecode(raw as String) as Map<String, dynamic>,
-      );
+      final json = jsonDecode(raw as String) as Map<String, dynamic>;
+      if (json['type'] == 'fermentation_stopped') {
+        _stopController?.add(null);
+        return;
+      }
+      final dto = SensorDataResponseDto.fromJson(json);
       if (dto.type != 'sensor_data' || dto.sensorType.isEmpty) return;
       _controller?.add(SensorsRealtimeMapper.fromDataResponse(dto));
     } catch (_) {}
@@ -84,5 +92,7 @@ class SensorsRealtimeDataSource {
     _channel = null;
     await _controller?.close();
     _controller = null;
+    await _stopController?.close();
+    _stopController = null;
   }
 }

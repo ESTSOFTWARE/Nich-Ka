@@ -24,6 +24,7 @@ class FermentationDetailProvider extends ChangeNotifier {
   final SensorsRealtimeRepository _sensorsRepo;
   late final WatchSensorsUseCase _watchSensors;
   StreamSubscription? _sub;
+  StreamSubscription<void>? _stopSub;
   Timer? _ticker;
 
   bool _loading = true;
@@ -66,26 +67,31 @@ class FermentationDetailProvider extends ChangeNotifier {
     if (_session != null) {
       _sub = _watchSensors(_session!.circuitId).listen(_applyReading);
     }
-    _ticker = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
+
+    // Fin de fermentación → llega por WebSocket (sin polling mientras corre).
+    _stopSub = _sensorsRepo.onFermentationStopped.listen((_) {
+      if (_session != null) {
+        _session = null;
+        _sub?.cancel();
+        _sub = null;
+        notifyListeners();
+      }
+    });
+
+    // Ticker solo para detectar el INICIO de una fermentación mientras no hay
+    // ninguna (mientras corre, el stop llega por WS → cero peticiones).
+    _ticker = Timer.periodic(const Duration(seconds: 20), (_) => _refresh());
   }
 
   Future<void> _refresh() async {
+    if (_session != null) return; // corriendo: el stop llega por WS
     try {
       final active = await _getActive();
-      if (active == null) {
-        if (_session != null) {
-          _session = null;
-          await _sub?.cancel();
-          _sub = null;
-        }
-      } else {
-        final wasNull = _session == null;
+      if (active != null) {
         _session = active;
-        if (wasNull) {
-          _sub = _watchSensors(active.circuitId).listen(_applyReading);
-        }
+        _sub = _watchSensors(active.circuitId).listen(_applyReading);
+        notifyListeners();
       }
-      notifyListeners();
     } catch (_) {
       /* reintenta luego */
     }
@@ -204,6 +210,7 @@ class FermentationDetailProvider extends ChangeNotifier {
   @override
   void dispose() {
     _sub?.cancel();
+    _stopSub?.cancel();
     _ticker?.cancel();
     _sensorsRepo.dispose();
     scrollController.removeListener(_onScroll);

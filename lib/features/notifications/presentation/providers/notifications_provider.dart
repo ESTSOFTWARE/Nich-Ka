@@ -50,12 +50,17 @@ class NotificationsProvider extends ChangeNotifier {
       _markAllRead = MarkAllReadUseCase(repository),
       _watchState = WatchConnectionStateUseCase(repository) {
     scrollController.addListener(_onScroll);
-    _init();
   }
 
-  Future<void> _init() async {
+  bool _connected = false;
+
+  /// Conecta el WebSocket y carga las notificaciones. Idempotente: se llama
+  /// tras el login (desde el ProxyProvider en app.dart). Global a toda la app.
+  Future<void> connect() async {
+    if (_connected) return;
     final userId = HttpClient.instance.userId;
     if (userId == 0) return;
+    _connected = true;
 
     _stateSub = _watchState().listen(_onConnectionState);
     _connect(userId: userId);
@@ -65,6 +70,17 @@ class NotificationsProvider extends ChangeNotifier {
     notifyListeners();
 
     _sub = _listen().listen(_onNotificationReceived);
+  }
+
+  /// Corta todo (al cerrar sesión).
+  void reset() {
+    _sub?.cancel();
+    _stateSub?.cancel();
+    _sub = null;
+    _stateSub = null;
+    _items = const [];
+    _connected = false;
+    notifyListeners();
   }
 
   void _onConnectionState(NotificationConnectionState state) {

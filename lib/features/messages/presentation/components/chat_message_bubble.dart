@@ -145,6 +145,19 @@ class ChatMessageBubble extends StatelessWidget {
                             ),
                           ),
                         ],
+                        // Estado del mensaje (solo los míos): flechas.
+                        if (isMe && !message.deleted) ...[
+                          const SizedBox(width: 3),
+                          Icon(
+                            message.status == 'sent'
+                                ? Icons.done
+                                : Icons.done_all,
+                            size: 14,
+                            color: message.status == 'read'
+                                ? const Color(0xFF3399FF)
+                                : palette.textMuted,
+                          ),
+                        ],
                       ],
                     ),
                   ),

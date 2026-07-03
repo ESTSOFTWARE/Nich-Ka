@@ -15,5 +15,8 @@ class SensorsRealtimeRepositoryImpl implements SensorsRealtimeRepository {
       _dataSource.watch(circuitId);
 
   @override
+  Stream<void> get onFermentationStopped => _dataSource.onFermentationStopped;
+
+  @override
   Future<void> dispose() => _dataSource.dispose();
 }
