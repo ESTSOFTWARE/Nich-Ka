@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../network/http_client.dart';
 import '../../features/auth/presentation/pages/login_email_view.dart';
 import '../../features/auth/presentation/pages/login_view.dart';
+import '../../features/auth/presentation/pages/splash_gate_view.dart';
 import '../../features/auth/presentation/pages/forgot_password_view.dart';
 import '../../features/auth/presentation/pages/change_password_view.dart';
 import '../../features/legal/presentation/pages/privacy_policy_view.dart';
@@ -39,7 +40,7 @@ import '../../features/messages/presentation/pages/group_chat_view.dart';
 String? pendingJoinCode;
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/gate',
   redirect: (BuildContext context, GoRouterState state) {
     // Deep link a /join sin sesión → guardar el código y mandar al login.
     if (state.matchedLocation == '/join' && !HttpClient.instance.hasToken) {
@@ -58,6 +59,11 @@ final GoRouter appRouter = GoRouter(
       path: '/assistant-empty',
       builder: (BuildContext context, GoRouterState state) =>
           const AssistantEmptyView(),
+    ),
+    GoRoute(
+      path: '/gate',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SplashGateView(),
     ),
     GoRoute(
       path: '/login',

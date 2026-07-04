@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../audio/sound_service.dart';
+import '../audio/active_chat.dart';
 import '../network/http_client.dart';
 
 /// Notificaciones push (FCM). Pide permiso, registra el token en el backend

@@ -9,6 +9,8 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/notifications/presentation/providers/notifications_provider.dart';
 
+part 'app_content.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -35,29 +37,6 @@ class App extends StatelessWidget {
         ),
       ],
       child: const _AppContent(),
-    );
-  }
-}
-
-class _AppContent extends StatelessWidget {
-  const _AppContent();
-
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = context.watch<AppThemeProvider>();
-
-    return AppThemeScope(
-      notifier: themeProvider,
-      child: MaterialApp.router(
-        title: 'Nich-Ká',
-        debugShowCheckedModeBanner: false,
-        locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
-        routerConfig: appRouter,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
-      ),
     );
   }
 }

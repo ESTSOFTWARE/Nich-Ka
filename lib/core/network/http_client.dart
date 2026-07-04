@@ -9,6 +9,7 @@ class HttpClient {
 
   final http.Client _client = http.Client();
   String? _accessToken;
+  String? _refreshToken;
   int _userId = 0;
 
   void setTokens({
@@ -17,11 +18,18 @@ class HttpClient {
     int userId = 0,
   }) {
     _accessToken = access;
+    _refreshToken = refresh;
     _userId = userId;
+  }
+
+  /// Solo el access token (tras renovar con el refresh). Mantiene el resto.
+  void setAccessToken(String access) {
+    _accessToken = access;
   }
 
   void clearTokens() {
     _accessToken = null;
+    _refreshToken = null;
     _userId = 0;
   }
 
@@ -30,6 +38,8 @@ class HttpClient {
   int get userId => _userId;
 
   String? get accessToken => _accessToken;
+
+  String? get refreshToken => _refreshToken;
 
   static String get wsBaseUrl => _baseUrl
       .replaceFirst(RegExp(r'^http'), 'ws')

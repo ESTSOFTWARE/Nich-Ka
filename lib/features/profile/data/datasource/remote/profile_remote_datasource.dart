@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import '../../../../../core/network/http_client.dart';
 import 'model/dto/response/user_profile_dto.dart';
 
@@ -18,7 +19,20 @@ class ProfileRemoteDataSource {
   }
 
   Future<String> uploadProfileImage(File file) async {
-    final multipart = await http.MultipartFile.fromPath('file', file.path);
+    // El backend solo acepta jpeg/png/webp/svg; hay que declarar el content-type
+    // (si no, Dart manda application/octet-stream y lo rechaza).
+    final ext = file.path.split('.').last.toLowerCase();
+    final subtype = switch (ext) {
+      'png' => 'png',
+      'webp' => 'webp',
+      'svg' => 'svg+xml',
+      _ => 'jpeg',
+    };
+    final multipart = await http.MultipartFile.fromPath(
+      'file',
+      file.path,
+      contentType: MediaType('image', subtype),
+    );
     final response = await _client.postMultipart('/users/me/profile-image', [
       multipart,
     ]);

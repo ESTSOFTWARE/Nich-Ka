@@ -48,6 +48,28 @@ class ChatRemoteDataSource {
         .toList();
   }
 
+  Future<ConversationDto> getConversationDetail(int conversationId) async {
+    final res = await _client.get('/chat/conversations/$conversationId');
+    _assertOk(res, 'No se pudo cargar la conversación.');
+    return ConversationDto.fromJson(
+      jsonDecode(res.body) as Map<String, dynamic>,
+    );
+  }
+
+  Future<ConversationDto> addMembers(
+    int conversationId,
+    List<int> userIds,
+  ) async {
+    final res = await _client.post(
+      '/chat/conversations/$conversationId/members',
+      {'user_ids': userIds},
+    );
+    _assertOk(res, 'No se pudo agregar al integrante.');
+    return ConversationDto.fromJson(
+      jsonDecode(res.body) as Map<String, dynamic>,
+    );
+  }
+
   Future<void> markRead(int conversationId) async {
     await _client.post('/chat/conversations/$conversationId/read', {});
   }
