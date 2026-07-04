@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../../core/audio/active_chat.dart';
 import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/chat_remote_datasource.dart';
@@ -14,8 +15,9 @@ import '../../domain/use_cases/create_conversation_use_case.dart';
 import '../../domain/use_cases/get_contacts_use_case.dart';
 import '../../domain/use_cases/get_conversations_use_case.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'messages_ui_state.dart';
 
-enum MessagesUiState { loading, success, error, empty }
+export 'messages_ui_state.dart';
 
 class MessagesProvider extends ChangeNotifier {
   final GetConversationsUseCase _getConversations;

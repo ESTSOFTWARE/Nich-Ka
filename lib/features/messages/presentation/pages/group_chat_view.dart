@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../components/group_members_sheet.dart';
 import '../../domain/entities/chat_conversation.dart';
 import '../../domain/entities/chat_message.dart';
 import '../components/chat_input_bar.dart';
@@ -75,41 +76,47 @@ class GroupChatView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  title: Row(
-                    children: [
-                      _buildAvatar(
-                        palette,
-                        provider.conversation,
-                        provider.myUserId,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              provider.conversation.displayName(
-                                provider.myUserId,
-                              ),
-                              style: GoogleFonts.poppins(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: palette.textPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              '${provider.conversation.members.length} miembros',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: palette.textSecondary,
-                              ),
-                            ),
-                          ],
+                  title: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: provider.conversation.isGroup
+                        ? () => _showMembers(context, provider, palette)
+                        : null,
+                    child: Row(
+                      children: [
+                        _buildAvatar(
+                          palette,
+                          provider.conversation,
+                          provider.myUserId,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                provider.conversation.displayName(
+                                  provider.myUserId,
+                                ),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: palette.textPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                '${provider.conversation.members.length} miembros',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: palette.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   // Only show menu for groups (personal chats: just press back)
                   actions: [
@@ -574,6 +581,26 @@ class GroupChatView extends StatelessWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       isDense: true,
+    );
+  }
+
+  void _showMembers(
+    BuildContext context,
+    GroupChatProvider provider,
+    AppPalette palette,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: palette.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => GroupMembersSheet(
+        provider: provider,
+        palette: palette,
+        myUserId: provider.myUserId,
+      ),
     );
   }
 

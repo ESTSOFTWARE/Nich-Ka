@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../../core/network/http_client.dart';
+import '../../../../../core/auth/session_manager.dart';
 import '../../../domain/entities/auth_credentials.dart';
 import '../../../domain/entities/auth_token.dart';
 import 'model/dto/response/login_response_dto.dart';
@@ -32,6 +33,8 @@ class AuthRemoteDataSource {
       refresh: loginDto.refreshToken,
       userId: token.userId,
     );
+    // Guarda la sesión para volver a entrar con huella.
+    await SessionManager.instance.save(token, loginDto.refreshToken);
     return token;
   }
 
@@ -79,6 +82,8 @@ class AuthRemoteDataSource {
       refresh: loginDto.refreshToken,
       userId: token.userId,
     );
+    // Guarda la sesión para volver a entrar con huella.
+    await SessionManager.instance.save(token, loginDto.refreshToken);
     return token;
   }
 
@@ -108,6 +113,8 @@ class AuthRemoteDataSource {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       _client.clearTokens();
     }
+    // Siempre borra la sesión guardada (para que no vuelva a entrar con huella).
+    await SessionManager.instance.clear();
   }
 
   void _assertSuccess(http.Response response, String fallbackMessage) {

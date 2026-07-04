@@ -22,11 +22,3 @@ class SoundService {
   Future<void> responseMessage() => _play('sound_response_message.mp3');
   Future<void> sent() => _play('send_message.mp3');
 }
-
-/// ID de la conversación abierta actualmente. Sirve para no reproducir
-/// `sound_message` (lista) cuando ya estás dentro del chat (que suena
-/// `sound_response_message`).
-class ActiveChat {
-  ActiveChat._();
-  static int? conversationId;
-}

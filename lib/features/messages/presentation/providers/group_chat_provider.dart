@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../../../../core/audio/active_chat.dart';
 import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/chat_remote_datasource.dart';
@@ -11,6 +12,7 @@ import '../../data/datasource/remote/model/dto/response/conversation_dto.dart';
 import '../../data/datasource/remote/model/dto/response/message_dto.dart';
 import '../../data/repositories/chat_repository_impl.dart';
 import '../../domain/entities/chat_conversation.dart';
+import '../../domain/entities/chat_member.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/reply_preview.dart';
 import '../../domain/use_cases/delete_message_use_case.dart';
@@ -24,12 +26,9 @@ import '../../domain/use_cases/set_priority_use_case.dart';
 import '../../domain/use_cases/toggle_reaction_use_case.dart';
 import '../../domain/use_cases/update_conversation_use_case.dart';
 import '../../domain/use_cases/upload_file_use_case.dart';
+import 'typing_user.dart';
 
-class TypingUser {
-  final int userId;
-  final String userName;
-  TypingUser(this.userId, this.userName);
-}
+export 'typing_user.dart';
 
 class GroupChatProvider extends ChangeNotifier {
   ChatConversation conversation;
@@ -121,9 +120,50 @@ class GroupChatProvider extends ChangeNotifier {
   }
 
   Future<void> _init() async {
+    _refreshConversation(); // trae avatar/nombre/miembros actuales (no bloquea)
     await _loadMessages();
     _markRead(conversation.id).catchError((_) {});
     _connectWs();
+  }
+
+  /// Recarga los datos de la conversación (avatar/nombre/miembros) por si
+  /// cambiaron desde otro dispositivo mientras la app estaba cerrada.
+  Future<void> _refreshConversation() async {
+    try {
+      final dto = await _ds.getConversationDetail(conversation.id);
+      conversation = ChatMapper.fromConversationDto(dto);
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  // ── Miembros ───────────────────────────────────────────────────────────────
+  List<ChatMember> _contacts = [];
+  List<ChatMember> get contacts => _contacts;
+
+  Future<void> loadContacts() async {
+    try {
+      final dtos = await _ds.getContacts();
+      _contacts = dtos
+          .map(
+            (m) => ChatMember(
+              id: m.id,
+              name: m.name,
+              role: m.role,
+              avatar: m.avatar,
+            ),
+          )
+          .toList();
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  Future<void> addMembers(List<int> userIds) async {
+    if (userIds.isEmpty) return;
+    try {
+      final dto = await _ds.addMembers(conversation.id, userIds);
+      conversation = ChatMapper.fromConversationDto(dto);
+      notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> _loadMessages() async {

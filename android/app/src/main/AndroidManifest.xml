@@ -7,6 +7,8 @@
         android:maxSdkVersion="32" />
     <!-- Notificaciones push (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Login con huella / biometría -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <application
         android:label="Nich-Ká"
         android:name="${applicationName}"

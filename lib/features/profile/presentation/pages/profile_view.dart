@@ -11,7 +11,7 @@ import '../components/profile_header_card.dart';
 import '../components/profile_section.dart';
 import '../components/profile_info_row.dart';
 import '../components/profile_tile_row.dart';
-import '../components/theme_toggle.dart';
+import '../components/theme_mode_selector.dart';
 import '../components/top_glow.dart';
 import '../components/edit_button.dart';
 import '../states/ui_state.dart';
@@ -214,14 +214,13 @@ class ProfileView extends StatelessWidget {
                 ProfileSection(
                   title: 'Apariencia',
                   palette: palette,
-                  child: ProfileTileRow(
-                    title: 'Tema',
-                    palette: palette,
-                    trailing: ThemeToggle(
-                      isDark: isDark,
-                      palette: palette,
-                      onChanged: AppThemeScope.of(context).setDark,
-                    ),
+                  child: ThemeModeSelector(
+                    choice: AppThemeScope.of(context).choice,
+                    surface: palette.surface,
+                    border: palette.border,
+                    textMuted: palette.textMuted,
+                    textSecondary: palette.textSecondary,
+                    onChanged: AppThemeScope.of(context).setChoice,
                   ),
                 ),
                 const SizedBox(height: 24),
