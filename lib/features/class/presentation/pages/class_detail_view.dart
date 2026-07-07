@@ -156,6 +156,7 @@ class ClassDetailView extends StatelessWidget {
                       email: provider.detail.teacherEmail,
                       initials: provider.detail.teacherInitials,
                       avatarColor: provider.detail.teacherAvatarColor,
+                      avatar: provider.detail.teacherAvatar,
                       palette: palette,
                     ),
                     const SizedBox(height: 20),

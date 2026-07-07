@@ -8,5 +8,4 @@ enum AppDrawerItem {
   simulador,
   clases,
   reportes,
-  historico,
 }

@@ -108,7 +108,7 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                                     ? _selected.remove(c.id)
                                     : _selected.add(c.id),
                               ),
-                              leading: _avatar(c.name),
+                              leading: _avatar(c.name, c.avatar),
                               title: Text(
                                 c.name,
                                 style: GoogleFonts.poppins(
@@ -138,7 +138,7 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                         .map(
                           (m) => ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: _avatar(m.name),
+                            leading: _avatar(m.name, m.avatar),
                             title: Text(
                               m.id == widget.myUserId
                                   ? '${m.name} (tú)'
@@ -194,12 +194,30 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
     );
   }
 
-  Widget _avatar(String name) => CircleAvatar(
-    radius: 18,
-    backgroundColor: AppPalette.accent.withValues(alpha: 0.2),
-    child: Text(
+  Widget _avatar(String name, [String? avatar]) {
+    final initials = Text(
       name.isNotEmpty ? name[0].toUpperCase() : '?',
       style: const TextStyle(color: AppPalette.accent, fontSize: 14),
-    ),
-  );
+    );
+    if (avatar == null || avatar.isEmpty) {
+      return CircleAvatar(
+        radius: 18,
+        backgroundColor: AppPalette.accent.withValues(alpha: 0.2),
+        child: initials,
+      );
+    }
+    return CircleAvatar(
+      radius: 18,
+      backgroundColor: AppPalette.accent.withValues(alpha: 0.2),
+      child: ClipOval(
+        child: Image.network(
+          avatar,
+          width: 36,
+          height: 36,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stack) => initials,
+        ),
+      ),
+    );
+  }
 }

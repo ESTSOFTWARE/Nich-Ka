@@ -18,6 +18,15 @@ class ClassCard extends StatelessWidget {
 
   static const double _coverSize = 76;
 
+  Widget _professorInitial() => Text(
+    item.professor.isNotEmpty ? item.professor[0].toUpperCase() : '?',
+    style: GoogleFonts.poppins(
+      fontSize: 9,
+      fontWeight: FontWeight.w700,
+      color: Colors.black,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -129,20 +138,23 @@ class ClassCard extends StatelessWidget {
               width: 18,
               height: 18,
               alignment: Alignment.center,
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: ClassPalette.accent,
                 shape: BoxShape.circle,
               ),
-              child: Text(
-                item.professor.isNotEmpty
-                    ? item.professor[0].toUpperCase()
-                    : '?',
-                style: GoogleFonts.poppins(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
-              ),
+              child:
+                  (item.professorAvatar != null &&
+                      item.professorAvatar!.isNotEmpty)
+                  ? Image.network(
+                      item.professorAvatar!,
+                      width: 18,
+                      height: 18,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) =>
+                          _professorInitial(),
+                    )
+                  : _professorInitial(),
             ),
             const SizedBox(width: 6),
             Expanded(

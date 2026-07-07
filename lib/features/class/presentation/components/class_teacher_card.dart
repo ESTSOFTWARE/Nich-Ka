@@ -8,6 +8,7 @@ class ClassTeacherCard extends StatelessWidget {
   final String initials;
   final Color avatarColor;
   final ClassPalette palette;
+  final String? avatar;
 
   const ClassTeacherCard({
     super.key,
@@ -16,7 +17,17 @@ class ClassTeacherCard extends StatelessWidget {
     required this.initials,
     required this.avatarColor,
     required this.palette,
+    this.avatar,
   });
+
+  Widget _initials() => Text(
+    initials,
+    style: GoogleFonts.poppins(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +57,20 @@ class ClassTeacherCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 alignment: Alignment.center,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: avatarColor,
                   shape: BoxShape.circle,
                 ),
-                child: Text(
-                  initials,
-                  style: GoogleFonts.poppins(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
+                child: (avatar != null && avatar!.isNotEmpty)
+                    ? Image.network(
+                        avatar!,
+                        width: 44,
+                        height: 44,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stack) => _initials(),
+                      )
+                    : _initials(),
               ),
               const SizedBox(width: 12),
               Expanded(

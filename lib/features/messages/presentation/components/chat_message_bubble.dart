@@ -206,26 +206,37 @@ class ChatMessageBubble extends StatelessWidget {
 
   Widget _buildAvatar() {
     final color = _colorForSender(message.senderName);
+    final initial = Center(
+      child: Text(
+        message.senderName.isNotEmpty
+            ? message.senderName[0].toUpperCase()
+            : '?',
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
+      ),
+    );
+    final avatar = message.senderAvatar;
     return Container(
       width: 28,
       height: 28,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color.withValues(alpha: 0.15),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Center(
-        child: Text(
-          message.senderName.isNotEmpty
-              ? message.senderName[0].toUpperCase()
-              : '?',
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
-        ),
-      ),
+      child: (avatar != null && avatar.isNotEmpty)
+          ? Image.network(
+              avatar,
+              width: 28,
+              height: 28,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => initial,
+            )
+          : initial,
     );
   }
 

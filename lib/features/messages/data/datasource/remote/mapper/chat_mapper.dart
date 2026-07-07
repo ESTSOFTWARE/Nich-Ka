@@ -14,6 +14,13 @@ import '../model/dto/response/message_dto.dart';
 class ChatMapper {
   const ChatMapper._();
 
+  // Solo aceptamos URLs http(s) reales. Ignora blobs locales (blob:) que
+  // pudieron quedar guardados por error y que no cargan al recargar.
+  static String? _cleanAvatar(String? url) =>
+      (url != null && (url.startsWith('http://') || url.startsWith('https://')))
+      ? url
+      : null;
+
   // ── To request ───────────────────────────────────────────────────────────────
 
   static CreateConversationRequestDto toCreateConversationRequest({
@@ -50,6 +57,7 @@ class ChatMapper {
     senderId: dto.senderId,
     senderName: dto.senderName,
     senderRole: dto.senderRole,
+    senderAvatar: _cleanAvatar(dto.senderAvatar),
     content: dto.content,
     createdAt: dto.createdAt,
     read: dto.read,
@@ -70,14 +78,14 @@ class ChatMapper {
         type: dto.type,
         name: dto.name,
         description: dto.description,
-        avatar: dto.avatar,
+        avatar: _cleanAvatar(dto.avatar),
         members: dto.members
             .map(
               (m) => ChatMember(
                 id: m.id,
                 name: m.name,
                 role: m.role,
-                avatar: m.avatar,
+                avatar: _cleanAvatar(m.avatar),
               ),
             )
             .toList(),

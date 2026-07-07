@@ -30,6 +30,7 @@ class MessageDto {
   final int senderId;
   final String senderName;
   final String senderRole;
+  final String? senderAvatar;
   final String? content;
   final DateTime createdAt;
   final bool read;
@@ -50,6 +51,7 @@ class MessageDto {
     required this.senderName,
     required this.senderRole,
     required this.createdAt,
+    this.senderAvatar,
     this.content,
     this.read = false,
     this.status = 'sent',
@@ -77,6 +79,7 @@ class MessageDto {
       senderId: json['senderId'] as int,
       senderName: json['senderName'] as String,
       senderRole: json['senderRole'] as String,
+      senderAvatar: json['senderAvatar'] as String?,
       content: json['content'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       read: json['read'] as bool? ?? false,

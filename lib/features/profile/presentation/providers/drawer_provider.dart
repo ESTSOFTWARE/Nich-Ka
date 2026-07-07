@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/network/http_client.dart';
+import '../../../../core/session/current_user_avatar.dart';
 import '../../../auth/data/datasource/remote/auth_remote_datasource.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/use_cases/logout_use_case.dart';
@@ -58,6 +59,7 @@ class DrawerProvider extends ChangeNotifier {
     _setUserState(const UiLoading());
     try {
       final user = await _getProfile();
+      CurrentUserAvatar.instance.value = user.profileImage;
       _setUserState(UiSuccess(user));
     } catch (e) {
       _setUserState(UiError(e.toString().replaceFirst('Exception: ', '')));

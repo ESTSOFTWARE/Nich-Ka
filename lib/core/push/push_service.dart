@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../audio/active_chat.dart';
@@ -24,7 +25,7 @@ class PushService {
 
   /// Inicializa el canal + listener de primer plano. Se llama al arrancar la app.
   Future<void> initLocalNotifications() async {
-    if (_localReady) return;
+    if (kIsWeb || _localReady) return;
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     await _local.initialize(const InitializationSettings(android: androidInit));
@@ -41,7 +42,7 @@ class PushService {
 
   /// Pide permiso, obtiene el token FCM y lo manda al backend. Se llama tras login.
   Future<void> registerForUser() async {
-    if (_registered) return;
+    if (kIsWeb || _registered) return;
     final messaging = FirebaseMessaging.instance;
 
     await messaging.requestPermission(alert: true, badge: true, sound: true);

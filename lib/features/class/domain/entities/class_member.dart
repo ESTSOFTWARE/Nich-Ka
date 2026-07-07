@@ -5,11 +5,13 @@ class ClassMember {
   final Color color;
   final String name;
   final String? email;
+  final String? avatar;
 
   const ClassMember({
     required this.initials,
     required this.color,
     required this.name,
     this.email,
+    this.avatar,
   });
 }

@@ -177,7 +177,7 @@ class GroupChatProvider extends ChangeNotifier {
     } catch (_) {}
     _loadingMessages = false;
     notifyListeners();
-    _scrollToBottom(immediate: true);
+    _jumpToBottomStable();
   }
 
   // ── WebSocket ────────────────────────────────────────────────────────────────
@@ -241,16 +241,29 @@ class GroupChatProvider extends ChangeNotifier {
         case 'conversation:delivered':
           if ((data['conversationId'] as int?) == conversation.id &&
               (data['userId'] as int?) != myUserId) {
-            _applyStatusUpTo(
-              DateTime.parse(data['deliveredAt'] as String),
-              'delivered',
-            );
+            // En grupos el estado depende de TODOS los miembros: recargamos
+            // del backend (que aplica la regla). En 1:1 basta el evento.
+            if (conversation.isGroup) {
+              _scheduleStatusReload();
+            } else {
+              _applyStatusUpTo(
+                DateTime.parse(data['deliveredAt'] as String),
+                'delivered',
+              );
+            }
           }
 
         case 'conversation:read':
           if ((data['conversationId'] as int?) == conversation.id &&
               (data['userId'] as int?) != myUserId) {
-            _applyStatusUpTo(DateTime.parse(data['readAt'] as String), 'read');
+            if (conversation.isGroup) {
+              _scheduleStatusReload();
+            } else {
+              _applyStatusUpTo(
+                DateTime.parse(data['readAt'] as String),
+                'read',
+              );
+            }
           }
 
         case 'message:edited':
@@ -349,6 +362,37 @@ class GroupChatProvider extends ChangeNotifier {
       priority: priority,
     );
     notifyListeners();
+  }
+
+  // En grupos, el status "leído/entregado" solo aplica cuando TODOS los
+  // miembros leyeron/recibieron. Un evento de un solo miembro no basta, así
+  // que recargamos los estados del backend (que ya aplica la regla), con un
+  // pequeño debounce para no golpear la red por cada evento.
+  Timer? _statusReloadTimer;
+
+  void _scheduleStatusReload() {
+    _statusReloadTimer?.cancel();
+    _statusReloadTimer = Timer(
+      const Duration(milliseconds: 600),
+      _reloadStatuses,
+    );
+  }
+
+  Future<void> _reloadStatuses() async {
+    if (_disposed) return;
+    try {
+      final fresh = await _getMessages(conversation.id);
+      final statusById = {for (final m in fresh) m.id: m.status};
+      var changed = false;
+      for (var i = 0; i < _messages.length; i++) {
+        final s = statusById[_messages[i].id];
+        if (s != null && s != _messages[i].status) {
+          _messages[i] = _messages[i].copyWith(status: s);
+          changed = true;
+        }
+      }
+      if (changed && !_disposed) notifyListeners();
+    } catch (_) {}
   }
 
   // Marca MIS mensajes hasta `ts` con el estado dado (entregado/leído).
@@ -566,6 +610,23 @@ class GroupChatProvider extends ChangeNotifier {
     });
   }
 
+  /// Al abrir el chat, re-ancla al fondo varias veces durante un momento. Así
+  /// cae al último mensaje aunque las imágenes carguen después (crecen y, si
+  /// no, te dejarían a media conversación).
+  void _jumpToBottomStable() {
+    var attempts = 0;
+    void snap() {
+      if (_disposed || !scrollController.hasClients) return;
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      attempts++;
+      if (attempts < 6) {
+        Future.delayed(const Duration(milliseconds: 120), snap);
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => snap());
+  }
+
   @override
   void dispose() {
     _disposed = true;
@@ -574,6 +635,7 @@ class GroupChatProvider extends ChangeNotifier {
     }
     _stopTypingTimer?.cancel();
     _retryTimer?.cancel();
+    _statusReloadTimer?.cancel();
     _notifyTyping(false);
     _wsSub?.cancel();
     _channel?.sink.close();

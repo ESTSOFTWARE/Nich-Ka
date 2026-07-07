@@ -14,6 +14,7 @@ class ClassDetail {
   final String teacherEmail;
   final String teacherInitials;
   final Color teacherAvatarColor;
+  final String? teacherAvatar;
   final List<ClassMember> members;
   final int totalMembers;
   final List<ClassFermentation> fermentations;
@@ -30,6 +31,7 @@ class ClassDetail {
     required this.teacherEmail,
     required this.teacherInitials,
     required this.teacherAvatarColor,
+    this.teacherAvatar,
     required this.members,
     required this.totalMembers,
     required this.fermentations,

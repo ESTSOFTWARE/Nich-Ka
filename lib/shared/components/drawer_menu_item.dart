@@ -103,8 +103,6 @@ class DrawerMenuItem extends StatelessWidget {
         return Icons.school_outlined;
       case AppDrawerItem.reportes:
         return Icons.description_outlined;
-      case AppDrawerItem.historico:
-        return Icons.history;
       default:
         return Icons.circle_outlined;
     }
@@ -130,8 +128,6 @@ class DrawerMenuItem extends StatelessWidget {
         return 'Clases';
       case AppDrawerItem.reportes:
         return 'Reportes';
-      case AppDrawerItem.historico:
-        return 'Histórico';
     }
   }
 }

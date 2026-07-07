@@ -16,11 +16,18 @@ class ClassMapper {
     Color(0xFF14B8A6),
   ];
 
+  // Solo URLs http(s) reales; ignora blobs u otros valores inválidos.
+  static String? _httpOrNull(String? url) =>
+      (url != null && (url.startsWith('http://') || url.startsWith('https://')))
+      ? url
+      : null;
+
   static ClassItem toItem(GroupResponseDto dto) => ClassItem(
     id: dto.id.toString(),
     name: dto.name,
     subject: dto.subject,
     professor: dto.professorName ?? '',
+    professorAvatar: _httpOrNull(dto.professorAvatar),
     studentCount: dto.members.length,
     lastActivity: '',
     imageUrl: dto.coverImage,
@@ -46,6 +53,7 @@ class ClassMapper {
         color: color,
         name: '${m.name} ${m.lastName}',
         email: m.email,
+        avatar: _httpOrNull(m.avatar),
       );
     }).toList();
 
@@ -69,6 +77,7 @@ class ClassMapper {
           '${teacher.toLowerCase().replaceAll(' ', '.')}@nich-ka.space',
       teacherInitials: initials,
       teacherAvatarColor: const Color(0xFF75D079),
+      teacherAvatar: _httpOrNull(dto.professorAvatar),
       members: members,
       totalMembers: dto.members.length,
       fermentations: const [],
