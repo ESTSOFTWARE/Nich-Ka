@@ -51,19 +51,49 @@ class _ChatInputBarState extends State<ChatInputBar> {
     _ctrl.clear();
   }
 
+  /// Muestra un selector para elegir entre cámara y galería, y sube la foto.
   Future<void> _pickImage() async {
-    final picked = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
+    _focusNode.unfocus();
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: widget.palette.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            ListTile(
+              leading: Icon(
+                Icons.photo_camera_outlined,
+                color: widget.palette.textSecondary,
+              ),
+              title: Text(
+                'Tomar foto',
+                style: GoogleFonts.poppins(color: widget.palette.textPrimary),
+              ),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.image_outlined,
+                color: widget.palette.textSecondary,
+              ),
+              title: Text(
+                'Elegir de la galería',
+                style: GoogleFonts.poppins(color: widget.palette.textPrimary),
+              ),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
-    if (picked != null) widget.onImagePicked(File(picked.path));
-  }
-
-  Future<void> _takePhoto() async {
-    final picked = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
+    if (source == null) return;
+    final picked = await _picker.pickImage(source: source, imageQuality: 85);
     if (picked != null) widget.onImagePicked(File(picked.path));
   }
 
@@ -133,19 +163,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 constraints: const BoxConstraints(),
               ),
               const SizedBox(width: 2),
-              // Camera (tomar foto)
-              IconButton(
-                onPressed: _takePhoto,
-                icon: Icon(
-                  Icons.photo_camera_outlined,
-                  color: widget.palette.textMuted,
-                  size: 22,
-                ),
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
-              ),
-              const SizedBox(width: 2),
-              // Image picker (galería)
+              // Image picker (cámara o galería)
               IconButton(
                 onPressed: _pickImage,
                 icon: Icon(

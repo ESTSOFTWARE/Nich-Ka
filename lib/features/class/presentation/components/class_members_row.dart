@@ -69,6 +69,7 @@ class ClassMembersRow extends StatelessWidget {
                     color: members[i].color,
                     borderColor: palette.background,
                     size: avatarSize,
+                    avatar: members[i].avatar,
                   ),
                 ),
               if (remaining > 0)

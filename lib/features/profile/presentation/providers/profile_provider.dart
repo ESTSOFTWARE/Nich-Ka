@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../core/network/http_client.dart';
+import '../../../../core/session/current_user_avatar.dart';
 import '../../data/datasource/remote/profile_remote_datasource.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/entities/profile_user.dart';
@@ -63,6 +64,7 @@ class ProfileProvider extends ChangeNotifier {
     _setState(const UiLoading());
     try {
       final user = await _getProfile();
+      CurrentUserAvatar.instance.value = user.profileImage;
       _setState(UiSuccess(user));
     } catch (e) {
       _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
@@ -82,6 +84,7 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       final url = await _uploadImage(File(picked.path));
+      CurrentUserAvatar.instance.value = url;
       final current = user;
       if (current != null) {
         _setState(

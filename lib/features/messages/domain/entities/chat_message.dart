@@ -7,6 +7,7 @@ class ChatMessage {
   final int senderId;
   final String senderName;
   final String senderRole;
+  final String? senderAvatar;
   final String? content;
   final DateTime createdAt;
   final bool read;
@@ -27,6 +28,7 @@ class ChatMessage {
     required this.senderName,
     required this.senderRole,
     required this.createdAt,
+    this.senderAvatar,
     this.content,
     this.read = false,
     this.status = 'sent',
@@ -65,6 +67,7 @@ class ChatMessage {
       senderId: senderId,
       senderName: senderName,
       senderRole: senderRole,
+      senderAvatar: senderAvatar,
       createdAt: createdAt,
       content: content ?? this.content,
       read: read,

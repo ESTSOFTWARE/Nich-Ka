@@ -283,14 +283,31 @@ class _MemberTile extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: Text(
-              member.initials,
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: member.color,
-              ),
-            ),
+            child: (member.avatar == null || member.avatar!.isEmpty)
+                ? Text(
+                    member.initials,
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: member.color,
+                    ),
+                  )
+                : ClipOval(
+                    child: Image.network(
+                      member.avatar!,
+                      width: 44,
+                      height: 44,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) => Text(
+                        member.initials,
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: member.color,
+                        ),
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(width: 14),
           Expanded(

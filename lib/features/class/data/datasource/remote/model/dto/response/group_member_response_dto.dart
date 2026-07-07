@@ -4,6 +4,7 @@ class GroupMemberResponseDto {
   final String name;
   final String lastName;
   final String email;
+  final String? avatar;
 
   const GroupMemberResponseDto({
     required this.id,
@@ -11,6 +12,7 @@ class GroupMemberResponseDto {
     required this.name,
     required this.lastName,
     required this.email,
+    this.avatar,
   });
 
   factory GroupMemberResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -20,5 +22,6 @@ class GroupMemberResponseDto {
         name: json['name'] as String,
         lastName: json['last_name'] as String,
         email: json['email'] as String,
+        avatar: json['avatar'] as String?,
       );
 }

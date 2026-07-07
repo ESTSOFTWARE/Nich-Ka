@@ -11,9 +11,14 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
-  await PushService.instance.initLocalNotifications();
+
+  // Firebase / notificaciones push son solo para móvil. En web no hay
+  // google-services y Firebase.initializeApp() sin opciones falla.
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+    await PushService.instance.initLocalNotifications();
+  }
 
   runApp(
     DevicePreview(enabled: !kReleaseMode, builder: (context) => const App()),

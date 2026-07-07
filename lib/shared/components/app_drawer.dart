@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/session/current_user_avatar.dart';
 import '../theme/app_palette.dart';
 import 'app_drawer_header.dart';
 import 'app_drawer_item.dart';
@@ -42,11 +43,14 @@ class AppDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppDrawerHeader(
-              palette: palette,
-              userName: userName ?? 'Usuario',
-              userRole: userRole ?? 'ESTUDIANTE',
-              profileImage: profileImage,
+            ValueListenableBuilder<String?>(
+              valueListenable: CurrentUserAvatar.instance,
+              builder: (context, liveAvatar, child) => AppDrawerHeader(
+                palette: palette,
+                userName: userName ?? 'Usuario',
+                userRole: userRole ?? 'ESTUDIANTE',
+                profileImage: liveAvatar ?? profileImage,
+              ),
             ),
             ...AppDrawerItem.values.map(
               (item) => DrawerMenuItem(

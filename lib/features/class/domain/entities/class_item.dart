@@ -3,6 +3,7 @@ class ClassItem {
   final String name;
   final String subject;
   final String professor;
+  final String? professorAvatar;
   final int studentCount;
   final String lastActivity;
   final bool hasUnread;
@@ -14,6 +15,7 @@ class ClassItem {
     required this.name,
     required this.subject,
     required this.professor,
+    this.professorAvatar,
     required this.studentCount,
     required this.lastActivity,
     this.hasUnread = false,
