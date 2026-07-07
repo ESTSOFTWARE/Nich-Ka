@@ -163,12 +163,15 @@ class MessagesProvider extends ChangeNotifier {
             );
             if (idx != -1) {
               final conv = _conversations[idx];
+              // Si el mensaje es mío, o estoy dentro de esa conversación
+              // viéndola, no suma no leídos.
+              final seen =
+                  msg.senderId == myId ||
+                  msg.conversationId == ActiveChat.conversationId;
               _conversations = List.from(_conversations)
                 ..[idx] = conv.copyWith(
                   lastMessage: msg,
-                  unreadCount: msg.senderId == myId
-                      ? conv.unreadCount
-                      : conv.unreadCount + 1,
+                  unreadCount: seen ? conv.unreadCount : conv.unreadCount + 1,
                 );
               notifyListeners();
             }

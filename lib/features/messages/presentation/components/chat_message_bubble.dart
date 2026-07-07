@@ -14,6 +14,7 @@ class ChatMessageBubble extends StatelessWidget {
   final int myUserId;
   final void Function(ChatMessage)? onLongPress;
   final void Function(String emoji)? onQuickReact;
+  final void Function(ChatMessage)? onShowReactions;
 
   const ChatMessageBubble({
     super.key,
@@ -26,6 +27,7 @@ class ChatMessageBubble extends StatelessWidget {
     this.groupChat = true,
     this.onLongPress,
     this.onQuickReact,
+    this.onShowReactions,
   });
 
   static const List<Color> _senderColors = [
@@ -509,7 +511,8 @@ class ChatMessageBubble extends StatelessWidget {
               final users = e.value;
               final iMine = users.contains(myUserId);
               return GestureDetector(
-                onTap: () => onQuickReact?.call(emoji),
+                onTap: () => onShowReactions?.call(message),
+                onLongPress: () => onQuickReact?.call(emoji),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
