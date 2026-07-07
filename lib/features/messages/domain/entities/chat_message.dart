@@ -43,9 +43,11 @@ class ChatMessage {
   });
 
   String get time {
-    final h = createdAt.hour.toString().padLeft(2, '0');
     final m = createdAt.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+    final suffix = createdAt.hour < 12 ? 'a. m.' : 'p. m.';
+    var h = createdAt.hour % 12;
+    if (h == 0) h = 12;
+    return '$h:$m $suffix';
   }
 
   bool get isImportant => priority == 'important' || priority == 'urgent';

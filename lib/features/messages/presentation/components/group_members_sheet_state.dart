@@ -68,7 +68,8 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                 ),
               ),
               const Spacer(),
-              if (!_adding)
+              // Solo el creador del grupo puede agregar miembros.
+              if (!_adding && widget.provider.isCreator)
                 TextButton.icon(
                   onPressed: _startAdding,
                   icon: const Icon(

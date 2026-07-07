@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../../../core/audio/active_chat.dart';
+import '../../../../core/utils/server_date.dart';
 import '../../../../core/audio/sound_service.dart';
 import '../../../../core/network/http_client.dart';
 import '../../data/datasource/remote/chat_remote_datasource.dart';
@@ -116,6 +117,58 @@ class GroupChatProvider extends ChangeNotifier {
     if (scrolled != _isScrolled) {
       _isScrolled = scrolled;
       notifyListeners();
+    }
+    // Cerca del inicio (subiendo por el historial) → cargar más viejos.
+    // Pedimos que haya contenido desplazable para no auto-cargar al abrir.
+    if (scrollController.hasClients &&
+        scrollController.position.maxScrollExtent > 400 &&
+        scrollController.offset <=
+            scrollController.position.minScrollExtent + 200) {
+      loadOlder();
+    }
+  }
+
+  // Paginación hacia atrás (mensajes viejos).
+  bool _loadingOlder = false;
+  bool _hasMoreOlder = true;
+  bool get loadingOlder => _loadingOlder;
+
+  Future<void> loadOlder() async {
+    if (_loadingOlder || !_hasMoreOlder || _messages.isEmpty || _disposed) {
+      return;
+    }
+    _loadingOlder = true;
+    notifyListeners();
+    try {
+      final cursor = _messages.first.id;
+      final older = await _getMessages(conversation.id, cursor: cursor);
+      final nuevos = older
+          .where((m) => !_messages.any((e) => e.id == m.id))
+          .toList();
+      if (nuevos.isEmpty) {
+        _hasMoreOlder = false;
+      } else {
+        // Preservamos la posición: medimos el alto antes y saltamos por el
+        // delta tras insertar, para que la vista no brinque.
+        final before = scrollController.hasClients
+            ? scrollController.position.maxScrollExtent
+            : 0.0;
+        final offset = scrollController.hasClients
+            ? scrollController.offset
+            : 0.0;
+        _messages.insertAll(0, nuevos);
+        if (older.length < 40) _hasMoreOlder = false;
+        notifyListeners();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!scrollController.hasClients) return;
+          final after = scrollController.position.maxScrollExtent;
+          scrollController.jumpTo(offset + (after - before));
+        });
+      }
+    } catch (_) {
+    } finally {
+      _loadingOlder = false;
+      if (!_disposed) notifyListeners();
     }
   }
 
@@ -230,10 +283,11 @@ class GroupChatProvider extends ChangeNotifier {
               _messages.add(msg);
               notifyListeners();
               _scrollToBottom();
-              // Estoy dentro de la conversación → sonido + ack de entrega (si no es mío).
+              // Estoy dentro de la conversación → sonido + marcar leído (lo
+              // estoy viendo), así no queda como no leído al salir.
               if (msg.senderId != myUserId) {
                 SoundService.instance.responseMessage();
-                _ds.markDelivered(conversation.id).catchError((_) {});
+                _markRead(conversation.id).catchError((_) {});
               }
             }
           }
@@ -247,7 +301,7 @@ class GroupChatProvider extends ChangeNotifier {
               _scheduleStatusReload();
             } else {
               _applyStatusUpTo(
-                DateTime.parse(data['deliveredAt'] as String),
+                parseServerDate(data['deliveredAt'] as String),
                 'delivered',
               );
             }
@@ -260,7 +314,7 @@ class GroupChatProvider extends ChangeNotifier {
               _scheduleStatusReload();
             } else {
               _applyStatusUpTo(
-                DateTime.parse(data['readAt'] as String),
+                parseServerDate(data['readAt'] as String),
                 'read',
               );
             }
@@ -333,7 +387,11 @@ class GroupChatProvider extends ChangeNotifier {
           if (userId != myUserId && convId == conversation.id) {
             _typingUsers.removeWhere((t) => t.userId == userId);
             if (isTyping && userId != null) {
-              _typingUsers.add(TypingUser(userId, userName));
+              final avatar = conversation.members
+                  .where((m) => m.id == userId)
+                  .map((m) => m.avatar)
+                  .firstOrNull;
+              _typingUsers.add(TypingUser(userId, userName, avatar: avatar));
             }
             notifyListeners();
           }
@@ -630,6 +688,9 @@ class GroupChatProvider extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    // Al salir, marca leído todo lo visto (mis mensajes y los que llegaron
+    // mientras estaba dentro), para no quedar como "no leído" en la lista.
+    _markRead(conversation.id).catchError((_) {});
     if (ActiveChat.conversationId == conversation.id) {
       ActiveChat.conversationId = null; // salí de la conversación
     }

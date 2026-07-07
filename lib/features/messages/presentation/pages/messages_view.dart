@@ -110,9 +110,11 @@ class MessagesView extends StatelessWidget {
       _ => ConversationsList(
         conversations: provider.conversations,
         palette: palette,
-        onTap: (c) {
+        onTap: (c) async {
           provider.markReadLocally(c.id);
-          context.push('/group-chat', extra: c);
+          await context.push('/group-chat', extra: c);
+          // Al volver, limpia cualquier no leído acumulado dentro del chat.
+          provider.markReadLocally(c.id);
         },
       ),
     };

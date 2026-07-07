@@ -7,6 +7,7 @@ import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../components/group_members_sheet.dart';
+import '../components/reactions_viewer_sheet.dart';
 import '../../domain/entities/chat_conversation.dart';
 import '../../domain/entities/chat_message.dart';
 import '../components/chat_input_bar.dart';
@@ -241,18 +242,40 @@ class GroupChatView extends StatelessWidget {
         final isLast = next == null || next.senderId != msg.senderId;
         final topPad = isFirst ? 10.0 : 2.0;
 
-        return Padding(
-          padding: EdgeInsets.only(top: topPad),
-          child: ChatMessageBubble(
-            message: msg,
-            palette: palette,
-            isMe: msg.senderId == provider.myUserId,
-            isFirst: isFirst,
-            isLast: isLast,
-            groupChat: provider.conversation.isGroup,
-            myUserId: provider.myUserId,
-            onLongPress: (m) => _showActions(context, provider, palette, m),
-            onQuickReact: (emoji) => provider.react(msg.id, emoji),
+        return Dismissible(
+          key: ValueKey('msg-${msg.id}'),
+          direction: DismissDirection.startToEnd,
+          dismissThresholds: const {DismissDirection.startToEnd: 0.25},
+          confirmDismiss: (_) async {
+            provider.setReplyTarget(msg); // deslizar → responder (sin borrar)
+            return false;
+          },
+          background: Padding(
+            padding: const EdgeInsets.only(left: 24),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Icon(
+                Icons.reply_rounded,
+                color: AppPalette.accent,
+                size: 22,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(top: topPad),
+            child: ChatMessageBubble(
+              message: msg,
+              palette: palette,
+              isMe: msg.senderId == provider.myUserId,
+              isFirst: isFirst,
+              isLast: isLast,
+              groupChat: provider.conversation.isGroup,
+              myUserId: provider.myUserId,
+              onLongPress: (m) => _showActions(context, provider, palette, m),
+              onQuickReact: (emoji) => provider.react(msg.id, emoji),
+              onShowReactions: (m) =>
+                  _showReactions(context, provider, palette, m),
+            ),
           ),
         );
       },
@@ -278,6 +301,29 @@ class GroupChatView extends StatelessWidget {
       onDelete: () => provider.deleteMessage(msg.id),
       onPin: () => provider.pinMessage(msg.id),
       onPriority: (p) => provider.setPriority(msg.id, p),
+    );
+  }
+
+  void _showReactions(
+    BuildContext context,
+    GroupChatProvider provider,
+    AppPalette palette,
+    ChatMessage msg,
+  ) {
+    if (msg.reactions.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: palette.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => ReactionsViewerSheet(
+        reactions: msg.reactions,
+        members: provider.conversation.members,
+        myUserId: provider.myUserId,
+        palette: palette,
+        onToggle: (emoji) => provider.react(msg.id, emoji),
+      ),
     );
   }
 

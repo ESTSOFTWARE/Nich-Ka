@@ -1,3 +1,4 @@
+import '../../../../../../../../core/utils/server_date.dart';
 import 'attachment_dto.dart';
 
 class ReplyPreviewDto {
@@ -81,13 +82,13 @@ class MessageDto {
       senderRole: json['senderRole'] as String,
       senderAvatar: json['senderAvatar'] as String?,
       content: json['content'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: parseServerDate(json['createdAt'] as String),
       read: json['read'] as bool? ?? false,
       status: json['status'] as String? ?? 'sent',
       deleted: json['deleted'] as bool? ?? false,
       edited: json['edited'] as bool? ?? false,
       editedAt: json['editedAt'] != null
-          ? DateTime.parse(json['editedAt'] as String)
+          ? parseServerDate(json['editedAt'] as String)
           : null,
       pinned: json['pinned'] as bool? ?? false,
       priority: json['priority'] as String? ?? 'normal',

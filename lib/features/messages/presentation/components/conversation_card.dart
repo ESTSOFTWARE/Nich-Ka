@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_conversation.dart';
+import '../../../../core/utils/server_date.dart';
 import '../../../../shared/theme/app_palette.dart';
 
 class ConversationCard extends StatelessWidget {
@@ -200,9 +201,7 @@ class ConversationCard extends StatelessWidget {
   Widget _buildMeta(dynamic last) {
     String time = '';
     if (last != null) {
-      final dt = last.createdAt as DateTime;
-      time =
-          '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      time = formatTime12h(last.createdAt as DateTime);
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
