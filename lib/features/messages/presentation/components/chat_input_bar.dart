@@ -5,16 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../domain/entities/chat_member.dart';
 
 part 'chat_input_bar_state.dart';
 
 class ChatInputBar extends StatefulWidget {
   final AppPalette palette;
   final String? editingContent;
-  final void Function(String text) onSend;
+  final void Function(String text, List<int> mentions) onSend;
   final void Function(String text) onChanged;
   final void Function(File file) onImagePicked;
   final void Function(File file)? onFilePicked;
+
+  /// Miembros del grupo, para autocompletar menciones (@). Vacío en 1:1.
+  final List<ChatMember> members;
+
+  /// Mi propio id, para no ofrecerme a mí mismo en las menciones.
+  final int myUserId;
 
   const ChatInputBar({
     super.key,
@@ -24,6 +31,8 @@ class ChatInputBar extends StatefulWidget {
     required this.onImagePicked,
     this.onFilePicked,
     this.editingContent,
+    this.members = const [],
+    this.myUserId = 0,
   });
 
   @override

@@ -10,10 +10,12 @@ class SendMessageUseCase {
     String? content,
     List<MessageAttachment> attachments = const [],
     int? replyToId,
+    List<int> mentions = const [],
   }) => _repo.sendMessage(
     conversationId,
     content: content,
     attachments: attachments,
     replyToId: replyToId,
+    mentions: mentions,
   );
 }

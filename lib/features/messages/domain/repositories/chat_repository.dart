@@ -19,6 +19,7 @@ abstract class ChatRepository {
     String? content,
     List<MessageAttachment> attachments,
     int? replyToId,
+    List<int> mentions,
   });
   Future<ChatMessage> editMessage(int messageId, String content);
   Future<void> deleteMessage(int messageId);

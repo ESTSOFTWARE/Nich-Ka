@@ -3,10 +3,14 @@ part of 'group_members_sheet.dart';
 class _GroupMembersSheetState extends State<GroupMembersSheet> {
   bool _adding = false;
   bool _loading = false;
+  String _search = '';
   final Set<int> _selected = {};
 
   Future<void> _startAdding() async {
-    setState(() => _adding = true);
+    setState(() {
+      _adding = true;
+      _search = '';
+    });
     await widget.provider.loadContacts();
     if (mounted) setState(() {});
   }
@@ -27,11 +31,15 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
   @override
   Widget build(BuildContext context) {
     final p = widget.palette;
-    final members = widget.provider.conversation.members;
+    final conv = widget.provider.conversation;
+    final members = conv.members;
     final memberIds = members.map((m) => m.id).toSet();
+    final q = _search.trim().toLowerCase();
     final available = widget.provider.contacts
         .where((c) => !memberIds.contains(c.id))
+        .where((c) => q.isEmpty || c.name.toLowerCase().contains(q))
         .toList();
+    final description = conv.description?.trim() ?? '';
 
     return Padding(
       padding: EdgeInsets.only(
@@ -87,6 +95,50 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                 ),
             ],
           ),
+          // Descripción del grupo (visible para todos).
+          if (!_adding && description.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: GoogleFonts.poppins(
+                color: p.textSecondary,
+                fontSize: 13,
+                height: 1.4,
+              ),
+            ),
+          ],
+          // Buscador de contactos al agregar.
+          if (_adding) ...[
+            const SizedBox(height: 10),
+            TextField(
+              autofocus: true,
+              onChanged: (v) => setState(() => _search = v),
+              style: GoogleFonts.poppins(color: p.textPrimary, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: 'Buscar integrante...',
+                hintStyle: GoogleFonts.poppins(
+                  color: p.textMuted,
+                  fontSize: 14,
+                ),
+                prefixIcon: Icon(Icons.search, size: 20, color: p.textMuted),
+                isDense: true,
+                filled: true,
+                fillColor: p.rowSurface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: p.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: p.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppPalette.accent),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           Flexible(
             child: _adding
@@ -94,7 +146,9 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                       ? Padding(
                           padding: const EdgeInsets.symmetric(vertical: 24),
                           child: Text(
-                            'No hay contactos para agregar.',
+                            q.isEmpty
+                                ? 'No hay contactos para agregar.'
+                                : 'Sin resultados para "$_search".',
                             style: GoogleFonts.poppins(color: p.textMuted),
                           ),
                         )

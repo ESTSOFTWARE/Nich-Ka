@@ -63,11 +63,13 @@ class ChatRepositoryImpl implements ChatRepository {
     String? content,
     List<MessageAttachment> attachments = const [],
     int? replyToId,
+    List<int> mentions = const [],
   }) async {
     final request = ChatMapper.toSendMessageRequest(
       content: content,
       attachments: attachments,
       replyToId: replyToId,
+      mentions: mentions,
     );
     final dto = await _ds.sendMessage(conversationId, request);
     return ChatMapper.fromMessageDto(dto);
