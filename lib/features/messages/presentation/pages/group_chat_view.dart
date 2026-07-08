@@ -19,13 +19,21 @@ import '../providers/group_chat_provider.dart';
 
 class GroupChatView extends StatelessWidget {
   final ChatConversation conversation;
+  final int? highlightMessageId;
 
-  const GroupChatView({super.key, required this.conversation});
+  const GroupChatView({
+    super.key,
+    required this.conversation,
+    this.highlightMessageId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GroupChatProvider>(
-      create: () => GroupChatProvider(conversation),
+      create: () => GroupChatProvider(
+        conversation,
+        highlightMessageId: highlightMessageId,
+      ),
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
@@ -169,6 +177,9 @@ class GroupChatView extends StatelessWidget {
           ),
           body: Column(
             children: [
+              // Importantes/urgentes fijados arriba (estilo WhatsApp)
+              if (provider.importantMessages.isNotEmpty)
+                _buildImportantBanner(context, provider, palette),
               Expanded(child: _buildMessageList(context, provider, palette)),
               // Pinned message banner
               if (provider.pinnedMessage != null)
@@ -327,6 +338,68 @@ class GroupChatView extends StatelessWidget {
     );
   }
 
+  Widget _buildImportantBanner(
+    BuildContext context,
+    GroupChatProvider provider,
+    AppPalette palette,
+  ) {
+    final list = provider.importantMessages;
+    final msg = list.last;
+    final urgent = msg.isUrgent;
+    final color = urgent ? const Color(0xFFEF4444) : const Color(0xFFFBBF24);
+    return GestureDetector(
+      onTap: () => provider.scrollToMessage(msg.id),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.10),
+          border: Border(
+            bottom: BorderSide(color: color.withValues(alpha: 0.3)),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              urgent
+                  ? Icons.priority_high_rounded
+                  : Icons.warning_amber_rounded,
+              size: 15,
+              color: color,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    list.length > 1
+                        ? '${urgent ? 'Urgente' : 'Importante'} · ${list.length} mensajes'
+                        : (urgent ? 'Urgente' : 'Importante'),
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                  Text(
+                    msg.content ??
+                        (msg.attachments.isNotEmpty ? '📎 Archivo' : ''),
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: palette.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPinnedBanner(GroupChatProvider provider, AppPalette palette) {
     final msg = provider.pinnedMessage!;
     return Container(
@@ -452,7 +525,11 @@ class GroupChatView extends StatelessWidget {
       child: ChatInputBar(
         palette: palette,
         editingContent: provider.editTarget?.content,
-        onSend: provider.sendText,
+        members: provider.conversation.isGroup
+            ? provider.conversation.members
+            : const [],
+        myUserId: provider.myUserId,
+        onSend: (text, mentions) => provider.sendText(text, mentions: mentions),
         onChanged: provider.onInputChanged,
         onImagePicked: provider.sendImage,
         onFilePicked: provider.sendFile,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
+import '../../../../core/utils/server_date.dart';
 import '../../../../shared/theme/app_palette.dart';
 import 'image_viewer_page.dart';
 
@@ -321,16 +322,8 @@ class ChatMessageBubble extends StatelessWidget {
               // Reply quote
               if (message.replyTo != null) _buildReplyQuote(textColor),
 
-              // Text content
-              if (hasContent)
-                Text(
-                  message.content!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: textColor,
-                    height: 1.4,
-                  ),
-                ),
+              // Text content (con menciones @ resaltadas)
+              if (hasContent) _buildContentText(textColor),
 
               // Attachments
               if (hasAttachments) _buildAttachments(context, textColor),
@@ -349,14 +342,17 @@ class ChatMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.only(top: 2),
           child: GestureDetector(
             onTap: () => _openImageViewer(context, a.url),
-            child: Image.network(
-              a.url,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                height: 80,
-                color: palette.rowSurface,
-                child: Icon(Icons.broken_image, color: palette.textMuted),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                a.url,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => Container(
+                  height: 80,
+                  color: palette.rowSurface,
+                  child: Icon(Icons.broken_image, color: palette.textMuted),
+                ),
               ),
             ),
           ),
@@ -430,14 +426,17 @@ class ChatMessageBubble extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6),
             child: GestureDetector(
               onTap: () => _openImageViewer(context, a.url),
-              child: Image.network(
-                a.url,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  height: 80,
-                  color: palette.rowSurface,
-                  child: Icon(Icons.broken_image, color: palette.textMuted),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.network(
+                  a.url,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Container(
+                    height: 80,
+                    color: palette.rowSurface,
+                    child: Icon(Icons.broken_image, color: palette.textMuted),
+                  ),
                 ),
               ),
             ),
@@ -544,10 +543,38 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  static String _formatTime(DateTime dt) {
-    final h = dt.hour.toString().padLeft(2, '0');
-    final m = dt.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+  static String _formatTime(DateTime dt) => formatTime12h(dt);
+
+  /// Renderiza el contenido resaltando las menciones (@nombre, @todos).
+  Widget _buildContentText(Color textColor) {
+    final content = message.content!;
+    final base = GoogleFonts.poppins(
+      fontSize: 14,
+      color: textColor,
+      height: 1.4,
+    );
+    final matches = RegExp(r'@[^\s@]+').allMatches(content).toList();
+    if (matches.isEmpty) return Text(content, style: base);
+
+    final mentionColor = isMe ? Colors.white : AppPalette.accent;
+    final spans = <TextSpan>[];
+    var last = 0;
+    for (final m in matches) {
+      if (m.start > last) {
+        spans.add(TextSpan(text: content.substring(last, m.start)));
+      }
+      spans.add(
+        TextSpan(
+          text: content.substring(m.start, m.end),
+          style: TextStyle(fontWeight: FontWeight.w700, color: mentionColor),
+        ),
+      );
+      last = m.end;
+    }
+    if (last < content.length) {
+      spans.add(TextSpan(text: content.substring(last)));
+    }
+    return Text.rich(TextSpan(style: base, children: spans));
   }
 
   static String _formatSize(int bytes) {

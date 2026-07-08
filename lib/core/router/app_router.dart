@@ -201,8 +201,12 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/group-chat',
-      builder: (BuildContext context, GoRouterState state) =>
-          GroupChatView(conversation: state.extra as ChatConversation),
+      builder: (BuildContext context, GoRouterState state) => GroupChatView(
+        conversation: state.extra as ChatConversation,
+        highlightMessageId: int.tryParse(
+          state.uri.queryParameters['highlight'] ?? '',
+        ),
+      ),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(

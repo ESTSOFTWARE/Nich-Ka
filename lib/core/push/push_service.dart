@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../../features/messages/presentation/open_chat_from_push.dart';
 import '../audio/active_chat.dart';
 import '../network/http_client.dart';
 
@@ -28,7 +31,11 @@ class PushService {
     if (kIsWeb || _localReady) return;
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    await _local.initialize(const InitializationSettings(android: androidInit));
+    await _local.initialize(
+      const InitializationSettings(android: androidInit),
+      // Tap en la notificación local (app en primer plano).
+      onDidReceiveNotificationResponse: (resp) => _handlePayload(resp.payload),
+    );
     await _local
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -37,7 +44,35 @@ class PushService {
 
     // App en primer plano → FCM no muestra nada solo; lo mostramos nosotros.
     FirebaseMessaging.onMessage.listen(_showForeground);
+
+    // Tap en el push con la app en segundo plano.
+    FirebaseMessaging.onMessageOpenedApp.listen((m) => _navigate(m.data));
+    // App abierta desde cero por tocar un push.
+    final initial = await FirebaseMessaging.instance.getInitialMessage();
+    if (initial != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _navigate(initial.data),
+      );
+    }
     _localReady = true;
+  }
+
+  void _handlePayload(String? payload) {
+    if (payload == null || payload.isEmpty) return;
+    try {
+      _navigate(jsonDecode(payload) as Map<String, dynamic>);
+    } catch (_) {}
+  }
+
+  /// Abre el chat (y salta al mensaje si es una mención) a partir de los datos
+  /// del push.
+  void _navigate(Map<String, dynamic> data) {
+    final type = data['type'];
+    if (type != 'chat_message' && type != 'chat_mention') return;
+    final convId = int.tryParse('${data['conversation_id']}');
+    if (convId == null) return;
+    final msgId = int.tryParse('${data['message_id'] ?? ''}');
+    openChatFromPush(convId, messageId: msgId);
   }
 
   /// Pide permiso, obtiene el token FCM y lo manda al backend. Se llama tras login.
@@ -79,6 +114,7 @@ class PushService {
           icon: '@mipmap/ic_launcher',
         ),
       ),
+      payload: jsonEncode(msg.data),
     );
   }
 

@@ -63,6 +63,24 @@ class GroupChatProvider extends ChangeNotifier {
   ChatMessage? get pinnedMessage =>
       _messages.where((m) => m.pinned && !m.deleted).lastOrNull;
 
+  // Importantes/urgentes (para el banner de arriba, estilo fijado).
+  List<ChatMessage> get importantMessages =>
+      _messages.where((m) => !m.deleted && m.isImportant).toList();
+
+  /// Desplaza la lista hasta el mensaje dado (aproximado por índice).
+  void scrollToMessage(int id) {
+    final list = messages;
+    final idx = list.indexWhere((m) => m.id == id);
+    if (idx < 0 || !scrollController.hasClients) return;
+    final max = scrollController.position.maxScrollExtent;
+    final target = list.length <= 1 ? max : (idx / (list.length - 1)) * max;
+    scrollController.animateTo(
+      target,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   // Reply / Edit
   ChatMessage? _replyTarget;
   ChatMessage? get replyTarget => _replyTarget;
@@ -90,7 +108,10 @@ class GroupChatProvider extends ChangeNotifier {
   Timer? _retryTimer;
   bool _disposed = false;
 
-  GroupChatProvider(this.conversation, {int? myUserId})
+  // Mensaje a resaltar/saltar al abrir (viene de un push de mención).
+  final int? highlightMessageId;
+
+  GroupChatProvider(this.conversation, {int? myUserId, this.highlightMessageId})
     : myUserId = myUserId ?? HttpClient.instance.userId {
     final repo = ChatRepositoryImpl(ChatRemoteDataSource(HttpClient.instance));
     _ds = ChatRemoteDataSource(HttpClient.instance);
@@ -177,6 +198,12 @@ class GroupChatProvider extends ChangeNotifier {
     await _loadMessages();
     _markRead(conversation.id).catchError((_) {});
     _connectWs();
+    // Si venimos de un push de mención, salta a ese mensaje.
+    if (highlightMessageId != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => scrollToMessage(highlightMessageId!),
+      );
+    }
   }
 
   /// Recarga los datos de la conversación (avatar/nombre/miembros) por si
@@ -521,7 +548,7 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendText(String text) async {
+  Future<void> sendText(String text, {List<int> mentions = const []}) async {
     if (text.trim().isEmpty) return;
     _notifyTyping(false);
     _stopTypingTimer?.cancel();
@@ -544,6 +571,7 @@ class GroupChatProvider extends ChangeNotifier {
         conversation.id,
         content: text.trim(),
         replyToId: replyToId,
+        mentions: mentions,
       );
       _addIfNew(sent);
     } catch (_) {}

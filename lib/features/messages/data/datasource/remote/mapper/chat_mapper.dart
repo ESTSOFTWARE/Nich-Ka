@@ -37,10 +37,12 @@ class ChatMapper {
     String? content,
     List<MessageAttachment> attachments = const [],
     int? replyToId,
+    List<int> mentions = const [],
   }) => SendMessageRequestDto(
     content: content,
     attachments: attachments.map((a) => a.toJson()).toList(),
     replyToId: replyToId,
+    mentions: mentions,
   );
 
   static EditMessageRequestDto toEditMessageRequest(String content) =>
