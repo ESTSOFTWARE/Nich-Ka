@@ -18,6 +18,17 @@ class ProfileRemoteDataSource {
     );
   }
 
+  Future<UserProfileDto> updateProfile({String? name, String? lastName}) async {
+    final response = await _client.put('/users/${_client.userId}', {
+      'name': ?name,
+      'last_name': ?lastName,
+    });
+    _assertSuccess(response, 'No se pudo actualizar el perfil.');
+    // El PUT devuelve el usuario en formato admin; releemos /users/me para
+    // tener el perfil completo y consistente.
+    return getCurrentUser();
+  }
+
   Future<String> uploadProfileImage(File file) async {
     // El backend solo acepta jpeg/png/webp/svg; hay que declarar el content-type
     // (si no, Dart manda application/octet-stream y lo rechaza).

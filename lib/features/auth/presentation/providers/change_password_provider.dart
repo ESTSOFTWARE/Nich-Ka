@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/network/http_client.dart';
-import '../../data/datasource/remote/auth_remote_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import '../../di/auth_dependencies.dart';
 import '../../domain/use_cases/change_password_use_case.dart';
 import '../states/ui_state.dart';
 
@@ -24,11 +22,7 @@ class ChangePasswordProvider extends ChangeNotifier {
   UiState<void> get state => _state;
 
   ChangePasswordProvider({ChangePasswordUseCase? changePassword})
-    : _changePassword =
-          changePassword ??
-          ChangePasswordUseCase(
-            AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
-          );
+    : _changePassword = changePassword ?? AuthDependencies.changePassword;
 
   void toggleCurrentObscured() {
     _currentObscured = !_currentObscured;
