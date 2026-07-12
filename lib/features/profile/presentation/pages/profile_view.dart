@@ -124,6 +124,78 @@ class ProfileView extends StatelessWidget {
     );
   }
 
+  Future<void> _showEditProfileDialog(
+    BuildContext context,
+    ProfileProvider provider,
+    ProfileUser user,
+  ) async {
+    final nameCtrl = TextEditingController(text: user.firstName);
+    final lastCtrl = TextEditingController(text: user.lastName);
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1A1A1D),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            'Editar perfil',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                style: GoogleFonts.poppins(color: Colors.white),
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(labelText: 'Nombre'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: lastCtrl,
+                style: GoogleFonts.poppins(color: Colors.white),
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(labelText: 'Apellido'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx, false),
+              child: Text(
+                'Cancelar',
+                style: GoogleFonts.poppins(color: Colors.white54),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final name = nameCtrl.text.trim();
+                final last = lastCtrl.text.trim();
+                if (name.isEmpty || last.isEmpty) return;
+                final ok = await provider.updateProfile(
+                  name: name,
+                  lastName: last,
+                );
+                if (dialogCtx.mounted) Navigator.pop(dialogCtx, ok);
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+    if (saved == true && context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Perfil actualizado')));
+    }
+  }
+
   Widget _buildContent(
     BuildContext context,
     ProfileProvider provider,
@@ -157,7 +229,10 @@ class ProfileView extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              EditButton(palette: palette, onTap: () {}),
+              EditButton(
+                palette: palette,
+                onTap: () => _showEditProfileDialog(context, provider, user),
+              ),
             ],
           ),
         ),

@@ -21,6 +21,9 @@ class ProfileProvider extends ChangeNotifier {
   bool _isUploading = false;
   bool get isUploading => _isUploading;
 
+  bool _isSaving = false;
+  bool get isSaving => _isSaving;
+
   String? _uploadError;
   String? get uploadError => _uploadError;
 
@@ -68,6 +71,32 @@ class ProfileProvider extends ChangeNotifier {
       _setState(UiSuccess(user));
     } catch (e) {
       _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  /// Actualiza nombre y apellido del perfil. Devuelve true si guardó bien.
+  Future<bool> updateProfile({
+    required String name,
+    required String lastName,
+  }) async {
+    _isSaving = true;
+    _uploadError = null;
+    notifyListeners();
+    try {
+      final repo = ProfileRepositoryImpl(
+        ProfileRemoteDataSource(HttpClient.instance),
+      );
+      final updated = await repo.updateProfile(name: name, lastName: lastName);
+      CurrentUserAvatar.instance.value = updated.profileImage;
+      _setState(UiSuccess(updated));
+      return true;
+    } catch (e) {
+      _uploadError = e.toString().replaceFirst('Exception: ', '');
+      notifyListeners();
+      return false;
+    } finally {
+      _isSaving = false;
+      notifyListeners();
     }
   }
 

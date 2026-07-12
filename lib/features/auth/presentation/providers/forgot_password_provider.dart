@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/network/http_client.dart';
-import '../../data/datasource/remote/auth_remote_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import '../../di/auth_dependencies.dart';
 import '../../domain/use_cases/send_forgot_password_use_case.dart';
 import '../states/ui_state.dart';
 
@@ -15,10 +13,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
 
   ForgotPasswordProvider({SendForgotPasswordUseCase? sendForgotPassword})
     : _sendForgotPassword =
-          sendForgotPassword ??
-          SendForgotPasswordUseCase(
-            AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
-          );
+          sendForgotPassword ?? AuthDependencies.sendForgotPassword;
 
   void _setState(UiState<void> state) {
     _sendState = state;

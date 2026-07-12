@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/network/http_client.dart';
-import '../../data/datasource/remote/auth_remote_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import '../../di/auth_dependencies.dart';
 import '../../domain/entities/auth_credentials.dart';
 import '../../domain/entities/auth_token.dart';
 import '../../domain/use_cases/login_use_case.dart';
@@ -26,16 +24,8 @@ class LoginProvider extends ChangeNotifier {
   LoginProvider({
     LoginUseCase? loginWithEmail,
     LoginWithGoogleUseCase? loginWithGoogle,
-  }) : _loginWithEmail =
-           loginWithEmail ??
-           LoginUseCase(
-             AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
-           ),
-       _loginWithGoogle =
-           loginWithGoogle ??
-           LoginWithGoogleUseCase(
-             AuthRepositoryImpl(AuthRemoteDataSource(HttpClient.instance)),
-           );
+  }) : _loginWithEmail = loginWithEmail ?? AuthDependencies.loginWithEmail,
+       _loginWithGoogle = loginWithGoogle ?? AuthDependencies.loginWithGoogle;
 
   void togglePasswordVisibility() {
     _isPasswordObscured = !_isPasswordObscured;
