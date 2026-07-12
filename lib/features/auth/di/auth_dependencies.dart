@@ -10,14 +10,13 @@ import '../domain/use_cases/send_forgot_password_use_case.dart';
 class AuthDependencies {
   AuthDependencies._();
 
-  static final AuthRemoteDataSource _dataSource =
-      AuthRemoteDataSource(HttpClient.instance);
+  static final AuthRemoteDataSource _dataSource = AuthRemoteDataSource(
+    HttpClient.instance,
+  );
 
-  static final AuthRepositoryImpl _repository =
-      AuthRepositoryImpl(_dataSource);
+  static final AuthRepositoryImpl _repository = AuthRepositoryImpl(_dataSource);
 
-  static LoginUseCase get loginWithEmail =>
-      LoginUseCase(_repository);
+  static LoginUseCase get loginWithEmail => LoginUseCase(_repository);
 
   static LoginWithGoogleUseCase get loginWithGoogle =>
       LoginWithGoogleUseCase(_repository);
@@ -28,6 +27,5 @@ class AuthDependencies {
   static ChangePasswordUseCase get changePassword =>
       ChangePasswordUseCase(_repository);
 
-  static LogoutUseCase get logout =>
-      LogoutUseCase(_repository);
+  static LogoutUseCase get logout => LogoutUseCase(_repository);
 }
