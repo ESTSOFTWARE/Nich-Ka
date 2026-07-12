@@ -49,6 +49,7 @@ class ClassMapper {
           '${m.name.isNotEmpty ? m.name[0] : ''}${m.lastName.isNotEmpty ? m.lastName[0] : ''}'
               .toUpperCase();
       return ClassMember(
+        id: m.studentId,
         initials: memberInitials,
         color: color,
         name: '${m.name} ${m.lastName}',

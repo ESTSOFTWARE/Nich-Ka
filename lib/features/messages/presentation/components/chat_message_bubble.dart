@@ -294,6 +294,14 @@ class ChatMessageBubble extends StatelessWidget {
 
     if (!hasContent && !hasAttachments) return const SizedBox.shrink();
 
+    // Sticker-only: render sticker directly without bubble frame
+    if (!hasContent &&
+        hasAttachments &&
+        message.attachments.length == 1 &&
+        message.attachments.first.isSticker) {
+      return _buildStickerOnly(context, textColor);
+    }
+
     // Image-only: render image directly without bubble frame
     if (!hasContent &&
         hasAttachments &&
@@ -331,6 +339,37 @@ class ChatMessageBubble extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStickerOnly(BuildContext context, Color textColor) {
+    final sticker = message.attachments.first;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        if (message.replyTo != null) _buildReplyQuote(textColor),
+        GestureDetector(
+          onTap: () => _openImageViewer(context, sticker.url),
+          child: SizedBox(
+            width: 128,
+            height: 128,
+            child: Image.network(
+              sticker.url,
+              fit: BoxFit.contain,
+              errorBuilder: (_, _, _) => Container(
+                width: 128,
+                height: 128,
+                decoration: BoxDecoration(
+                  color: palette.rowSurface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.sticky_note_2, color: palette.textMuted, size: 48),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

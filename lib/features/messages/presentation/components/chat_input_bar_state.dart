@@ -6,6 +6,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
   final ImagePicker _picker = ImagePicker();
   bool _hasText = false;
   bool _emojiOpen = false;
+  bool _stickerOpen = false;
   String? _mentionQuery; // texto tras la @ actual (null = no hay mención)
 
   // ── Menciones (@) ─────────────────────────────────────────────────────────
@@ -94,10 +95,12 @@ class _ChatInputBarState extends State<ChatInputBar> {
         widget.editingContent != oldWidget.editingContent) {
       _ctrl.text = widget.editingContent!;
       _ctrl.selection = TextSelection.collapsed(offset: _ctrl.text.length);
+      _focusNode.requestFocus();
       setState(() => _hasText = true);
     }
     if (widget.editingContent == null && oldWidget.editingContent != null) {
       _ctrl.clear();
+      _focusNode.unfocus();
       setState(() => _hasText = false);
     }
   }
@@ -112,8 +115,11 @@ class _ChatInputBarState extends State<ChatInputBar> {
       _updateMentionQuery();
     });
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus && _emojiOpen) {
-        setState(() => _emojiOpen = false);
+      if (_focusNode.hasFocus && (_emojiOpen || _stickerOpen)) {
+        setState(() {
+          _emojiOpen = false;
+          _stickerOpen = false;
+        });
       }
     });
   }
@@ -209,10 +215,32 @@ class _ChatInputBarState extends State<ChatInputBar> {
   void _toggleEmoji() {
     if (_emojiOpen) {
       _focusNode.requestFocus();
-      setState(() => _emojiOpen = false);
+      setState(() {
+        _emojiOpen = false;
+        _stickerOpen = false;
+      });
     } else {
       _focusNode.unfocus();
-      setState(() => _emojiOpen = true);
+      setState(() {
+        _emojiOpen = true;
+        _stickerOpen = false;
+      });
+    }
+  }
+
+  void _toggleSticker() {
+    if (_stickerOpen) {
+      _focusNode.requestFocus();
+      setState(() {
+        _stickerOpen = false;
+        _emojiOpen = false;
+      });
+    } else {
+      _focusNode.unfocus();
+      setState(() {
+        _stickerOpen = true;
+        _emojiOpen = false;
+      });
     }
   }
 
@@ -346,6 +374,21 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 padding: const EdgeInsets.all(4),
                 constraints: const BoxConstraints(),
               ),
+              const SizedBox(width: 2),
+              // Sticker toggle
+              if (widget.onStickerPicked != null)
+                IconButton(
+                  onPressed: _toggleSticker,
+                  icon: Icon(
+                    Icons.sticky_note_2_outlined,
+                    color: _stickerOpen
+                        ? AppPalette.accent
+                        : widget.palette.textMuted,
+                    size: 22,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(),
+                ),
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
@@ -471,6 +514,21 @@ class _ChatInputBarState extends State<ChatInputBar> {
             ),
           ),
         ),
+        // Sticker picker panel
+        if (widget.onStickerPicked != null)
+          Offstage(
+            offstage: !_stickerOpen,
+            child: StickerPicker(
+              palette: widget.palette,
+              onStickerSelected: (file) {
+                widget.onStickerPicked?.call(file);
+                setState(() {
+                  _stickerOpen = false;
+                });
+                _focusNode.requestFocus();
+              },
+            ),
+          ),
       ],
     );
   }

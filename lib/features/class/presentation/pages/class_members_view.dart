@@ -262,15 +262,17 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: palette.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: palette.border),
-      ),
-      child: Row(
-        children: [
+    return GestureDetector(
+      onTap: () => context.push('/user-detail', extra: member),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: palette.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: palette.border),
+        ),
+        child: Row(
+          children: [
           Container(
             width: 44,
             height: 44,
@@ -337,6 +339,7 @@ class _MemberTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

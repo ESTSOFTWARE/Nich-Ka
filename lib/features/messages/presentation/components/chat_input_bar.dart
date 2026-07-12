@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/chat_member.dart';
+import 'sticker_picker.dart';
 
 part 'chat_input_bar_state.dart';
 
@@ -16,6 +17,7 @@ class ChatInputBar extends StatefulWidget {
   final void Function(String text) onChanged;
   final void Function(File file) onImagePicked;
   final void Function(File file)? onFilePicked;
+  final void Function(File file)? onStickerPicked;
 
   /// Miembros del grupo, para autocompletar menciones (@). Vacío en 1:1.
   final List<ChatMember> members;
@@ -30,6 +32,7 @@ class ChatInputBar extends StatefulWidget {
     required this.onChanged,
     required this.onImagePicked,
     this.onFilePicked,
+    this.onStickerPicked,
     this.editingContent,
     this.members = const [],
     this.myUserId = 0,
