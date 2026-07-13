@@ -62,6 +62,7 @@ class ChatMessage {
     String? priority,
     Map<String, List<int>>? reactions,
     String? status,
+    ReplyPreview? replyTo,
   }) {
     return ChatMessage(
       id: id,
@@ -80,7 +81,7 @@ class ChatMessage {
       pinned: pinned ?? this.pinned,
       priority: priority ?? this.priority,
       attachments: attachments,
-      replyTo: replyTo,
+      replyTo: replyTo ?? this.replyTo,
       reactions: reactions ?? this.reactions,
     );
   }

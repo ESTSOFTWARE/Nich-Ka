@@ -14,7 +14,11 @@ class FermentationListProvider extends ChangeNotifier {
   bool _isScrolled = false;
   bool get isScrolled => _isScrolled;
 
-  String get query => searchController.text.trim().toLowerCase();
+  String get query {
+    final raw = searchController.text.trim().toLowerCase();
+    final noTags = raw.replaceAll(RegExp(r'<[^>]*>'), '');
+    return noTags.replaceAll(RegExp(r'[<>&;="\x27]'), '');
+  }
 
   final GetFermentationBatchesUseCase _getBatches;
 

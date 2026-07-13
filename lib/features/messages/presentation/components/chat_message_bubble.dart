@@ -350,7 +350,8 @@ class ChatMessageBubble extends StatelessWidget {
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
-        if (message.replyTo != null) _buildReplyQuote(textColor),
+        if (message.replyTo != null)
+          _buildReplyQuote(textColor, inBubble: false),
         GestureDetector(
           onTap: () => _openImageViewer(context, sticker.url),
           child: SizedBox(
@@ -415,14 +416,17 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildReplyQuote(Color textColor) {
+  Widget _buildReplyQuote(Color textColor, {bool inBubble = true}) {
     final reply = message.replyTo!;
-    final quoteAccent = isMe
+    final quoteAccent = (isMe && inBubble)
         ? Colors.black.withValues(alpha: 0.45)
         : AppPalette.accent;
-    final quoteBg = isMe
+    final quoteBg = (isMe && inBubble)
         ? Colors.black.withValues(alpha: 0.1)
         : palette.rowSurface.withValues(alpha: 0.6);
+
+    final isReplySticker = reply.attachment?.isSticker == true;
+    final isReplyImage = reply.attachment?.isImage == true;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -433,30 +437,67 @@ class ChatMessageBubble extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              reply.senderName,
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isMe
-                    ? Colors.black.withValues(alpha: 0.7)
-                    : AppPalette.accent,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    reply.senderName,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: (isMe && inBubble)
+                          ? Colors.black.withValues(alpha: 0.7)
+                          : AppPalette.accent,
+                    ),
+                  ),
+                  if (!isReplySticker && !isReplyImage)
+                    Text(
+                      reply.content ??
+                          (reply.attachment != null ? '📎 Archivo' : ''),
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: (isMe && inBubble)
+                            ? Colors.black.withValues(alpha: 0.6)
+                            : palette.textSecondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  else
+                    Text(
+                      isReplySticker ? '🖼 Sticker' : '🖼 Imagen',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: (isMe && inBubble)
+                            ? Colors.black.withValues(alpha: 0.6)
+                            : palette.textSecondary,
+                      ),
+                    ),
+                ],
               ),
             ),
-            Text(
-              reply.content ?? (reply.attachment != null ? '📎 Archivo' : ''),
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: isMe
-                    ? Colors.black.withValues(alpha: 0.6)
-                    : palette.textSecondary,
+            if (isReplySticker || isReplyImage) ...[
+              const SizedBox(width: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.network(
+                  reply.attachment!.url,
+                  width: 40,
+                  height: 40,
+                  fit: isReplySticker ? BoxFit.contain : BoxFit.cover,
+                  errorBuilder: (_, _, _) => Icon(
+                    Icons.broken_image,
+                    size: 24,
+                    color: palette.textMuted,
+                  ),
+                ),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            ],
           ],
         ),
       ),
