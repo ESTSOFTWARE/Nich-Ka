@@ -63,6 +63,10 @@ class MessagesProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  // Presencia
+  final Set<int> _onlineUserIds = {};
+  Set<int> get onlineUserIds => Set.unmodifiable(_onlineUserIds);
+
   int get totalUnread => _conversations.fold(0, (s, c) => s + c.unreadCount);
   int get totalConversations => _conversations.length;
 
@@ -199,6 +203,29 @@ class MessagesProvider extends ChangeNotifier {
               _conversations = List.from(_conversations)..[idx] = conv;
               notifyListeners();
             }
+          }
+
+        case 'presence:init':
+          final ids = (data['onlineUserIds'] as List<dynamic>)
+              .map((e) => e as int)
+              .toSet();
+          _onlineUserIds
+            ..clear()
+            ..addAll(ids);
+          notifyListeners();
+
+        case 'user:online':
+          final uid = data['userId'] as int?;
+          if (uid != null) {
+            _onlineUserIds.add(uid);
+            notifyListeners();
+          }
+
+        case 'user:offline':
+          final uid = data['userId'] as int?;
+          if (uid != null) {
+            _onlineUserIds.remove(uid);
+            notifyListeners();
           }
       }
     } catch (_) {}

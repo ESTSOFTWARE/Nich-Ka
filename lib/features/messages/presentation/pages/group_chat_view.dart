@@ -97,6 +97,7 @@ class GroupChatView extends StatelessWidget {
                           palette,
                           provider.conversation,
                           provider.myUserId,
+                          isOnline: provider.isOtherUserOnline,
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -116,7 +117,11 @@ class GroupChatView extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                '${provider.conversation.members.length} miembros',
+                                provider.conversation.isGroup
+                                    ? '${provider.conversation.members.length} miembros'
+                                    : provider.isOtherUserOnline
+                                        ? 'En línea'
+                                        : 'Desconectado',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: palette.textSecondary,
@@ -681,9 +686,14 @@ class GroupChatView extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(AppPalette palette, ChatConversation conv, int myUserId) {
+  Widget _buildAvatar(
+    AppPalette palette,
+    ChatConversation conv,
+    int myUserId, {
+    bool isOnline = false,
+  }) {
     final avatarUrl = conv.displayAvatar(myUserId);
-    return Container(
+    final circle = Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
@@ -705,6 +715,26 @@ class GroupChatView extends StatelessWidget {
               )
             : _initials(palette, conv, myUserId),
       ),
+    );
+    if (!isOnline || conv.isGroup) return circle;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        circle,
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            width: 11,
+            height: 11,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4ADE80),
+              shape: BoxShape.circle,
+              border: Border.all(color: palette.glassBackground, width: 2),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
