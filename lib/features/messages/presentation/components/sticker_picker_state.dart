@@ -130,6 +130,7 @@ class _StickerPickerState extends State<StickerPicker>
 
   Widget _buildPackGrid(StickerPack pack) {
     return GridView.builder(
+      primary: false,
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
