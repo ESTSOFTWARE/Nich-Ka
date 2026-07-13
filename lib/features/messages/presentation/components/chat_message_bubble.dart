@@ -350,7 +350,8 @@ class ChatMessageBubble extends StatelessWidget {
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
-        if (message.replyTo != null) _buildReplyQuote(textColor, inBubble: false),
+        if (message.replyTo != null)
+          _buildReplyQuote(textColor, inBubble: false),
         GestureDetector(
           onTap: () => _openImageViewer(context, sticker.url),
           child: SizedBox(
@@ -417,8 +418,9 @@ class ChatMessageBubble extends StatelessWidget {
 
   Widget _buildReplyQuote(Color textColor, {bool inBubble = true}) {
     final reply = message.replyTo!;
-    final quoteAccent =
-        (isMe && inBubble) ? Colors.black.withValues(alpha: 0.45) : AppPalette.accent;
+    final quoteAccent = (isMe && inBubble)
+        ? Colors.black.withValues(alpha: 0.45)
+        : AppPalette.accent;
     final quoteBg = (isMe && inBubble)
         ? Colors.black.withValues(alpha: 0.1)
         : palette.rowSurface.withValues(alpha: 0.6);
