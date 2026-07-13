@@ -120,8 +120,8 @@ class GroupChatView extends StatelessWidget {
                                 provider.conversation.isGroup
                                     ? '${provider.conversation.members.length} miembros'
                                     : provider.isOtherUserOnline
-                                        ? 'En línea'
-                                        : 'Desconectado',
+                                    ? 'En línea'
+                                    : 'Desconectado',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: palette.textSecondary,
