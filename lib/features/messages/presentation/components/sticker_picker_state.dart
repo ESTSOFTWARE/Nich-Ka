@@ -34,7 +34,9 @@ class _StickerPickerState extends State<StickerPicker>
     final bytes = data.buffer.asUint8List();
     final ext = assetPath.split('.').last;
     final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/sticker_${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final file = File(
+      '${tempDir.path}/sticker_${DateTime.now().millisecondsSinceEpoch}.$ext',
+    );
     await file.writeAsBytes(bytes);
     return file;
   }
@@ -90,14 +92,8 @@ class _StickerPickerState extends State<StickerPicker>
           fontWeight: FontWeight.w500,
         ),
         tabs: [
-          ..._packs.map(
-            (pack) => Tab(
-              child: _buildTrayImage(pack.trayImage),
-            ),
-          ),
-          const Tab(
-            icon: Icon(Icons.add_rounded, size: 20),
-          ),
+          ..._packs.map((pack) => Tab(child: _buildTrayImage(pack.trayImage))),
+          const Tab(icon: Icon(Icons.add_rounded, size: 20)),
         ],
       ),
     );

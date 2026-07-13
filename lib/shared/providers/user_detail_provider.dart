@@ -18,7 +18,7 @@ class UserDetailProvider extends ChangeNotifier {
   UiState<UserProfileDto> get userState => _userState;
 
   UserDetailProvider(this.member)
-      : _dataSource = ProfileRemoteDataSource(HttpClient.instance) {
+    : _dataSource = ProfileRemoteDataSource(HttpClient.instance) {
     scrollController.addListener(_onScroll);
     _loadUser();
   }

@@ -346,7 +346,9 @@ class ChatMessageBubble extends StatelessWidget {
     final sticker = message.attachments.first;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isMe
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         if (message.replyTo != null) _buildReplyQuote(textColor),
         GestureDetector(
@@ -364,7 +366,11 @@ class ChatMessageBubble extends StatelessWidget {
                   color: palette.rowSurface,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.sticky_note_2, color: palette.textMuted, size: 48),
+                child: Icon(
+                  Icons.sticky_note_2,
+                  color: palette.textMuted,
+                  size: 48,
+                ),
               ),
             ),
           ),

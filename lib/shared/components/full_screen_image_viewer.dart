@@ -25,9 +25,8 @@ class FullScreenImageViewer extends StatelessWidget {
         maxScale: 5.0,
         child: SizedBox(
           width: size.width,
-          height: size.height -
-              kToolbarHeight -
-              MediaQuery.of(context).padding.top,
+          height:
+              size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
           child: Image.network(
             imageUrl,
             fit: BoxFit.contain,

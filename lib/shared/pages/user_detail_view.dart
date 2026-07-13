@@ -134,28 +134,28 @@ class UserDetailView extends StatelessWidget {
   ) {
     return switch (provider.userState) {
       UiLoading() => Center(
-          child: CircularProgressIndicator(color: ClassPalette.accent),
-        ),
+        child: CircularProgressIndicator(color: ClassPalette.accent),
+      ),
       UiError(:final message) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.error_outline, size: 48, color: palette.textMuted),
-                const SizedBox(height: 16),
-                Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: palette.textSecondary,
-                  ),
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, size: 48, color: palette.textMuted),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: palette.textSecondary,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
       UiSuccess(:final data) => _buildContent(context, provider, data, palette),
       _ => const SizedBox.shrink(),
     };
@@ -225,7 +225,9 @@ class UserDetailView extends StatelessWidget {
     final heroHeight = 180.0;
 
     return GestureDetector(
-      onTap: hasAvatar ? () => provider.openImageViewer(context, avatarUrl) : null,
+      onTap: hasAvatar
+          ? () => provider.openImageViewer(context, avatarUrl)
+          : null,
       child: Container(
         height: heroHeight,
         width: double.infinity,
@@ -304,13 +306,16 @@ class UserDetailView extends StatelessWidget {
               top: 14,
               right: 14,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                  ),
                 ),
                 child: Text(
                   'MIEMBRO',
@@ -359,8 +364,18 @@ class UserDetailView extends StatelessWidget {
       try {
         final date = DateTime.parse(dto.createdAt!);
         const months = [
-          'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-          'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
+          'ene',
+          'feb',
+          'mar',
+          'abr',
+          'may',
+          'jun',
+          'jul',
+          'ago',
+          'sep',
+          'oct',
+          'nov',
+          'dic',
         ];
         memberSince = '${date.day} ${months[date.month - 1]} ${date.year}';
       } catch (_) {
@@ -427,8 +442,9 @@ class UserDetailView extends StatelessWidget {
             icon: Icons.email_outlined,
             label: 'Correo',
             value: dto.email.isNotEmpty ? dto.email : 'Sin correo',
-            valueColor:
-                dto.email.isNotEmpty ? ClassPalette.accent : palette.textMuted,
+            valueColor: dto.email.isNotEmpty
+                ? ClassPalette.accent
+                : palette.textMuted,
           ),
           Divider(color: palette.border, height: 1),
           _buildInfoRow(
@@ -471,10 +487,7 @@ class UserDetailView extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             'Sin descripción',
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: palette.textMuted,
-            ),
+            style: GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
           ),
         ],
       ),

@@ -13,7 +13,9 @@ class StickerRemoteDataSource {
       return [];
     }
     final list = jsonDecode(response.body) as List<dynamic>;
-    return list.map((json) => _fromPackJson(json as Map<String, dynamic>)).toList();
+    return list
+        .map((json) => _fromPackJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   StickerPack _fromPackJson(Map<String, dynamic> json) {
