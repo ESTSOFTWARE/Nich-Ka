@@ -10,6 +10,7 @@ class LoginProvider extends ChangeNotifier {
   final LoginUseCase _loginWithEmail;
   final LoginWithGoogleUseCase _loginWithGoogle;
 
+  final formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 

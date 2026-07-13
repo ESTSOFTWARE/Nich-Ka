@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
+import '../../../../core/validation/validators.dart';
 import '../../../../shared/components/circle_icon_button.dart';
 import '../providers/profile_provider.dart';
 import '../theme/profile_palette.dart';
@@ -131,6 +132,7 @@ class ProfileView extends StatelessWidget {
   ) async {
     final nameCtrl = TextEditingController(text: user.firstName);
     final lastCtrl = TextEditingController(text: user.lastName);
+    final formKey = GlobalKey<FormState>();
     final saved = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) {
@@ -146,23 +148,38 @@ class ProfileView extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                style: GoogleFonts.poppins(color: Colors.white),
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: lastCtrl,
-                style: GoogleFonts.poppins(color: Colors.white),
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Apellido'),
-              ),
-            ],
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nameCtrl,
+                  style: GoogleFonts.poppins(color: Colors.white),
+                  textCapitalization: TextCapitalization.words,
+                  maxLength: 50,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    counterText: '',
+                  ),
+                  validator: Validators.personName,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: lastCtrl,
+                  style: GoogleFonts.poppins(color: Colors.white),
+                  textCapitalization: TextCapitalization.words,
+                  maxLength: 50,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: const InputDecoration(
+                    labelText: 'Apellido',
+                    counterText: '',
+                  ),
+                  validator: Validators.personName,
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -174,12 +191,10 @@ class ProfileView extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                final name = nameCtrl.text.trim();
-                final last = lastCtrl.text.trim();
-                if (name.isEmpty || last.isEmpty) return;
+                if (!(formKey.currentState?.validate() ?? false)) return;
                 final ok = await provider.updateProfile(
-                  name: name,
-                  lastName: last,
+                  name: nameCtrl.text.trim(),
+                  lastName: lastCtrl.text.trim(),
                 );
                 if (dialogCtx.mounted) Navigator.pop(dialogCtx, ok);
               },
