@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../class/domain/entities/class_member.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../providers/group_chat_provider.dart';
 

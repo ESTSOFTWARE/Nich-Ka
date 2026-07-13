@@ -18,6 +18,14 @@ class ProfileRemoteDataSource {
     );
   }
 
+  Future<UserProfileDto> getUserById(int userId) async {
+    final response = await _client.get('/users/$userId');
+    _assertSuccess(response, 'No se pudo obtener la información del usuario.');
+    return UserProfileDto.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
+  }
+
   Future<UserProfileDto> updateProfile({String? name, String? lastName}) async {
     final response = await _client.put('/users/${_client.userId}', {
       'name': ?name,

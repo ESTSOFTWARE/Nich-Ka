@@ -193,6 +193,22 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                         .map(
                           (m) => ListTile(
                             contentPadding: EdgeInsets.zero,
+                            onTap: () {
+                              Navigator.pop(context);
+                              final initials =
+                                  (m.name.isNotEmpty ? m.name[0] : '')
+                                      .toUpperCase();
+                              context.push(
+                                '/user-detail',
+                                extra: ClassMember(
+                                  id: m.id,
+                                  initials: initials,
+                                  color: AppPalette.accent,
+                                  name: m.name,
+                                  avatar: m.avatar,
+                                ),
+                              );
+                            },
                             leading: _avatar(m.name, m.avatar),
                             title: Text(
                               m.id == widget.myUserId

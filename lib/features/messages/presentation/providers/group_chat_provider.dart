@@ -15,6 +15,7 @@ import '../../data/repositories/chat_repository_impl.dart';
 import '../../domain/entities/chat_conversation.dart';
 import '../../domain/entities/chat_member.dart';
 import '../../domain/entities/chat_message.dart';
+import '../../domain/entities/message_attachment.dart';
 import '../../domain/entities/reply_preview.dart';
 import '../../domain/use_cases/delete_message_use_case.dart';
 import '../../domain/use_cases/edit_message_use_case.dart';
@@ -216,7 +217,6 @@ class GroupChatProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // ── Miembros ───────────────────────────────────────────────────────────────
   List<ChatMember> _contacts = [];
   List<ChatMember> get contacts => _contacts;
 
@@ -259,8 +259,6 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
     _jumpToBottomStable();
   }
-
-  // ── WebSocket ────────────────────────────────────────────────────────────────
 
   Future<void> _connectWs() async {
     if (_disposed) return;
@@ -426,8 +424,6 @@ class GroupChatProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // ── Patch helpers ────────────────────────────────────────────────────────────
-
   void _applyEdit(int id, String content, String? editedAtRaw) {
     final idx = _messages.indexWhere((m) => m.id == id);
     if (idx == -1) return;
@@ -502,8 +498,6 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Typing ───────────────────────────────────────────────────────────────────
-
   void onInputChanged(String value) {
     if (value.isEmpty && _amTyping) {
       _notifyTyping(false);
@@ -527,8 +521,6 @@ class GroupChatProvider extends ChangeNotifier {
       } catch (_) {}
     }
   }
-
-  // ── Actions ──────────────────────────────────────────────────────────────────
 
   void setReplyTarget(ChatMessage? msg) {
     _replyTarget = msg;
@@ -599,6 +591,32 @@ class GroupChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> sendSticker(File file) async {
+    _isUploading = true;
+    notifyListeners();
+    SoundService.instance.sent();
+    try {
+      final attachment = await _uploadFile(file);
+      final sent = await _sendMessage(
+        conversation.id,
+        attachments: [
+          MessageAttachment(
+            id: attachment.id,
+            type: 'sticker',
+            name: attachment.name,
+            url: attachment.url,
+            size: attachment.size,
+          ),
+        ],
+        replyToId: _replyTarget?.id,
+      );
+      clearActionTargets();
+      _addIfNew(sent);
+    } catch (_) {}
+    _isUploading = false;
+    notifyListeners();
+  }
+
   Future<void> react(int messageId, String emoji) async {
     try {
       final updated = await _toggleReaction(messageId, emoji);
@@ -660,8 +678,6 @@ class GroupChatProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
-
   void _addIfNew(ChatMessage msg) {
     if (_messages.any((m) => m.id == msg.id)) return;
     _messages.add(msg);
@@ -671,6 +687,7 @@ class GroupChatProvider extends ChangeNotifier {
 
   bool canEdit(ChatMessage msg) =>
       msg.senderId == myUserId &&
+      (msg.content != null && msg.content!.isNotEmpty) &&
       DateTime.now().difference(msg.createdAt).inMinutes < 20;
 
   bool get isCreator => conversation.createdBy == myUserId;

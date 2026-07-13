@@ -533,6 +533,7 @@ class GroupChatView extends StatelessWidget {
         onChanged: provider.onInputChanged,
         onImagePicked: provider.sendImage,
         onFilePicked: provider.sendFile,
+        onStickerPicked: provider.sendSticker,
       ),
     );
   }

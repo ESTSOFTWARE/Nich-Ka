@@ -15,6 +15,7 @@ class MessageAttachment {
 
   bool get isImage => type == 'image';
   bool get isVideo => type == 'video';
+  bool get isSticker => type == 'sticker';
 
   Map<String, dynamic> toJson() => {
     'id': id,
