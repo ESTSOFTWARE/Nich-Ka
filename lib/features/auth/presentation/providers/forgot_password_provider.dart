@@ -6,6 +6,7 @@ import '../states/ui_state.dart';
 class ForgotPasswordProvider extends ChangeNotifier {
   final SendForgotPasswordUseCase _sendForgotPassword;
 
+  final formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
 
   UiState<void> _sendState = const UiIdle();

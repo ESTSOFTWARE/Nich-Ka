@@ -12,6 +12,8 @@ class AuthTextField extends StatelessWidget {
   final VoidCallback? onToggleObscure;
   final TextEditingController controller;
   final TextInputType keyboardType;
+  final String? Function(String?)? validator;
+  final int? maxLength;
 
   const AuthTextField({
     super.key,
@@ -22,6 +24,8 @@ class AuthTextField extends StatelessWidget {
     this.isObscured = false,
     this.onToggleObscure,
     this.keyboardType = TextInputType.text,
+    this.validator,
+    this.maxLength,
   });
 
   @override
@@ -37,12 +41,16 @@ class AuthTextField extends StatelessWidget {
           controller: controller,
           obscureText: isPassword && isObscured,
           keyboardType: keyboardType,
+          validator: validator,
+          maxLength: maxLength,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           style: GoogleFonts.poppins(
             fontSize: 14,
             color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hintText,
+            counterText: '',
             hintStyle: GoogleFonts.poppins(color: AppColors.textMuted),
             filled: true,
             fillColor: AppColors.surface,

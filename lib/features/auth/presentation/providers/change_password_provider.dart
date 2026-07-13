@@ -6,6 +6,7 @@ import '../states/ui_state.dart';
 class ChangePasswordProvider extends ChangeNotifier {
   final ChangePasswordUseCase _changePassword;
 
+  final formKey = GlobalKey<FormState>();
   final TextEditingController currentController = TextEditingController();
   final TextEditingController newController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();

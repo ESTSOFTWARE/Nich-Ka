@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/validation/validators.dart';
 import '../providers/forgot_password_provider.dart';
 import '../states/ui_state.dart';
 import '../components/auth_text_field.dart';
@@ -24,78 +25,87 @@ class ForgotPasswordView extends StatelessWidget {
               horizontal: 24.0,
               vertical: 16.0,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset('assets/icons/logo.svg', height: 32),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Nich-Ká',
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -0.5,
+            child: Form(
+              key: provider.formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      SvgPicture.asset('assets/icons/logo.svg', height: 32),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Nich-Ká',
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 48),
-
-                Text(
-                  '¿Olvidaste tu contraseña?',
-                  style: GoogleFonts.poppins(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.5,
-                    height: 1.1,
+                    ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 40),
+                  const SizedBox(height: 48),
 
-                AuthTextField(
-                  label: 'Correo electrónico',
-                  hintText: 'tu@correo.com',
-                  controller: provider.emailController,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 24),
-
-                PrimaryAuthButton(
-                  text: 'Enviar código',
-                  isLoading: provider.sendState is UiLoading,
-                  onPressed: () async {
-                    await provider.sendCode();
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                Center(
-                  child: TextButton(
-                    onPressed: () => context.go('/login-email'),
-                    child: Text(
-                      '← Volver al inicio de sesión',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
-                      ),
+                  Text(
+                    '¿Olvidaste tu contraseña?',
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      letterSpacing: -0.5,
+                      height: 1.1,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Text(
+                    'Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  AuthTextField(
+                    label: 'Correo electrónico',
+                    hintText: 'tu@correo.com',
+                    controller: provider.emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    maxLength: 254,
+                    validator: Validators.email,
+                  ),
+                  const SizedBox(height: 24),
+
+                  PrimaryAuthButton(
+                    text: 'Enviar código',
+                    isLoading: provider.sendState is UiLoading,
+                    onPressed: () async {
+                      if (!(provider.formKey.currentState?.validate() ??
+                          false)) {
+                        return;
+                      }
+                      await provider.sendCode();
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  Center(
+                    child: TextButton(
+                      onPressed: () => context.go('/login-email'),
+                      child: Text(
+                        '← Volver al inicio de sesión',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
