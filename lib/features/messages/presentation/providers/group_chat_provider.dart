@@ -576,16 +576,17 @@ class GroupChatProvider extends ChangeNotifier {
   Future<void> sendFile(File file) async {
     _isUploading = true;
     notifyListeners();
-    SoundService.instance.sent(); // sonido al enviar
+    SoundService.instance.sent();
+    final replyTarget = _replyTarget;
     try {
       final attachment = await _uploadFile(file);
       final sent = await _sendMessage(
         conversation.id,
         attachments: [attachment],
-        replyToId: _replyTarget?.id,
+        replyToId: replyTarget?.id,
       );
       clearActionTargets();
-      _addIfNew(sent);
+      _addIfNew(_withReply(sent, replyTarget));
     } catch (_) {}
     _isUploading = false;
     notifyListeners();
@@ -595,6 +596,7 @@ class GroupChatProvider extends ChangeNotifier {
     _isUploading = true;
     notifyListeners();
     SoundService.instance.sent();
+    final replyTarget = _replyTarget;
     try {
       final attachment = await _uploadFile(file);
       final sent = await _sendMessage(
@@ -608,13 +610,18 @@ class GroupChatProvider extends ChangeNotifier {
             size: attachment.size,
           ),
         ],
-        replyToId: _replyTarget?.id,
+        replyToId: replyTarget?.id,
       );
       clearActionTargets();
-      _addIfNew(sent);
+      _addIfNew(_withReply(sent, replyTarget));
     } catch (_) {}
     _isUploading = false;
     notifyListeners();
+  }
+
+  ChatMessage _withReply(ChatMessage msg, ChatMessage? replyTarget) {
+    if (replyTarget == null || msg.replyTo != null) return msg;
+    return msg.copyWith(replyTo: buildReplyPreview(replyTarget));
   }
 
   Future<void> react(int messageId, String emoji) async {

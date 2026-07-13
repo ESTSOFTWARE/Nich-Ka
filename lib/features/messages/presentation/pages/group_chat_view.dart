@@ -13,6 +13,7 @@ import '../../domain/entities/chat_message.dart';
 import '../components/chat_input_bar.dart';
 import '../components/chat_message_bubble.dart';
 import '../components/message_actions_sheet.dart';
+import '../components/edit_bar.dart';
 import '../components/reply_bar.dart';
 import '../components/typing_indicator.dart';
 import '../providers/group_chat_provider.dart';
@@ -195,7 +196,12 @@ class GroupChatView extends StatelessWidget {
                   onCancel: provider.clearActionTargets,
                 ),
               // Edit bar
-              if (provider.editTarget != null) _buildEditBar(provider, palette),
+              if (provider.editTarget != null)
+                EditBar(
+                  message: provider.editTarget!,
+                  palette: palette,
+                  onCancel: provider.clearActionTargets,
+                ),
               // Input
               _buildBottomBar(context, provider, palette),
             ],
@@ -448,59 +454,6 @@ class GroupChatView extends StatelessWidget {
               onTap: () => provider.pinMessage(msg.id),
               child: Icon(Icons.close, size: 16, color: palette.textMuted),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEditBar(GroupChatProvider provider, AppPalette palette) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-      decoration: BoxDecoration(
-        color: palette.rowSurface,
-        border: Border(top: BorderSide(color: palette.border)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 3,
-            height: 36,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBBF24),
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Editando mensaje',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFFFBBF24),
-                  ),
-                ),
-                Text(
-                  provider.editTarget?.content ?? '',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: palette.textSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: provider.clearActionTargets,
-            icon: Icon(Icons.close, size: 18, color: palette.textMuted),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
         ],
       ),
     );
