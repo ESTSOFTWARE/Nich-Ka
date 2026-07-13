@@ -140,9 +140,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
   }
 
   /// Muestra un selector para elegir entre cámara y galería, y sube la foto.
-  Future<void> _pickImage() async {
+  Future<void> _pickAttachment() async {
     _focusNode.unfocus();
-    final source = await showModalBottomSheet<ImageSource>(
+    final choice = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: widget.palette.surface,
       shape: const RoundedRectangleBorder(
@@ -162,7 +162,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 'Tomar foto',
                 style: GoogleFonts.poppins(color: widget.palette.textPrimary),
               ),
-              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              onTap: () => Navigator.pop(ctx, 'camera'),
             ),
             ListTile(
               leading: Icon(
@@ -173,42 +173,57 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 'Elegir de la galería',
                 style: GoogleFonts.poppins(color: widget.palette.textPrimary),
               ),
-              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              onTap: () => Navigator.pop(ctx, 'gallery'),
             ),
+            if (widget.onFilePicked != null)
+              ListTile(
+                leading: Icon(
+                  Icons.attach_file_outlined,
+                  color: widget.palette.textSecondary,
+                ),
+                title: Text(
+                  'Adjuntar archivo',
+                  style: GoogleFonts.poppins(color: widget.palette.textPrimary),
+                ),
+                onTap: () => Navigator.pop(ctx, 'file'),
+              ),
             const SizedBox(height: 8),
           ],
         ),
       ),
     );
-    if (source == null) return;
-    final picked = await _picker.pickImage(source: source, imageQuality: 85);
-    if (picked != null) widget.onImagePicked(File(picked.path));
-  }
-
-  Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'pdf',
-        'doc',
-        'docx',
-        'xls',
-        'xlsx',
-        'ppt',
-        'pptx',
-        'txt',
-        'csv',
-        'zip',
-        'rar',
-        '7z',
-        'mp4',
-        'mov',
-        'avi',
-        'mkv',
-      ],
-    );
-    if (result != null && result.files.single.path != null) {
-      widget.onFilePicked?.call(File(result.files.single.path!));
+    if (choice == null) return;
+    if (choice == 'file') {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [
+          'pdf',
+          'doc',
+          'docx',
+          'xls',
+          'xlsx',
+          'ppt',
+          'pptx',
+          'txt',
+          'csv',
+          'zip',
+          'rar',
+          '7z',
+          'mp4',
+          'mov',
+          'avi',
+          'mkv',
+        ],
+      );
+      if (result != null && result.files.single.path != null) {
+        widget.onFilePicked?.call(File(result.files.single.path!));
+      }
+    } else {
+      final source = choice == 'camera'
+          ? ImageSource.camera
+          : ImageSource.gallery;
+      final picked = await _picker.pickImage(source: source, imageQuality: 85);
+      if (picked != null) widget.onImagePicked(File(picked.path));
     }
   }
 
@@ -416,31 +431,17 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 ),
               ),
               const SizedBox(width: 4),
-              // Imagen (cámara o galería)
+              // Adjuntar (imagen + archivo en un sheet)
               IconButton(
-                onPressed: _pickImage,
+                onPressed: _pickAttachment,
                 icon: Icon(
-                  Icons.image_outlined,
+                  Icons.attach_file_outlined,
                   color: widget.palette.textMuted,
                   size: 22,
                 ),
                 padding: const EdgeInsets.all(4),
                 constraints: const BoxConstraints(),
               ),
-              // Archivo
-              if (widget.onFilePicked != null) ...[
-                const SizedBox(width: 2),
-                IconButton(
-                  onPressed: _pickFile,
-                  icon: Icon(
-                    Icons.attach_file_outlined,
-                    color: widget.palette.textMuted,
-                    size: 22,
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  constraints: const BoxConstraints(),
-                ),
-              ],
               const SizedBox(width: 4),
               GestureDetector(
                 onTap: _hasText ? _send : null,
@@ -515,19 +516,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
           ),
         ),
         // Sticker picker panel
-        if (widget.onStickerPicked != null)
-          Offstage(
-            offstage: !_stickerOpen,
-            child: StickerPicker(
-              palette: widget.palette,
-              onStickerSelected: (file) {
-                widget.onStickerPicked?.call(file);
-                setState(() {
-                  _stickerOpen = false;
-                });
-                _focusNode.requestFocus();
-              },
-            ),
+        if (_stickerOpen && widget.onStickerPicked != null)
+          StickerPicker(
+            palette: widget.palette,
+            onStickerSelected: (file) {
+              widget.onStickerPicked?.call(file);
+              setState(() => _stickerOpen = false);
+              _focusNode.requestFocus();
+            },
           ),
       ],
     );

@@ -103,6 +103,10 @@ class GroupChatProvider extends ChangeNotifier {
   bool _hasLeft = false;
   bool get hasLeft => _hasLeft;
 
+  // Presencia (solo relevante en chats 1:1)
+  bool _isOtherUserOnline = false;
+  bool get isOtherUserOnline => _isOtherUserOnline;
+
   // WebSocket
   WebSocketChannel? _channel;
   StreamSubscription<dynamic>? _wsSub;
@@ -419,6 +423,48 @@ class GroupChatProvider extends ChangeNotifier {
               _typingUsers.add(TypingUser(userId, userName, avatar: avatar));
             }
             notifyListeners();
+          }
+
+        case 'presence:init':
+          if (!conversation.isGroup) {
+            final ids = (data['onlineUserIds'] as List<dynamic>)
+                .map((e) => e as int)
+                .toSet();
+            final otherId = conversation.members
+                .where((m) => m.id != myUserId)
+                .map((m) => m.id)
+                .firstOrNull;
+            final online = otherId != null && ids.contains(otherId);
+            if (online != _isOtherUserOnline) {
+              _isOtherUserOnline = online;
+              notifyListeners();
+            }
+          }
+
+        case 'user:online':
+          if (!conversation.isGroup) {
+            final uid = data['userId'] as int?;
+            final otherId = conversation.members
+                .where((m) => m.id != myUserId)
+                .map((m) => m.id)
+                .firstOrNull;
+            if (uid != null && uid == otherId && !_isOtherUserOnline) {
+              _isOtherUserOnline = true;
+              notifyListeners();
+            }
+          }
+
+        case 'user:offline':
+          if (!conversation.isGroup) {
+            final uid = data['userId'] as int?;
+            final otherId = conversation.members
+                .where((m) => m.id != myUserId)
+                .map((m) => m.id)
+                .firstOrNull;
+            if (uid != null && uid == otherId && _isOtherUserOnline) {
+              _isOtherUserOnline = false;
+              notifyListeners();
+            }
           }
       }
     } catch (_) {}

@@ -8,6 +8,7 @@ class ConversationCard extends StatelessWidget {
   final ChatConversation conversation;
   final int myUserId;
   final AppPalette palette;
+  final bool isOnline;
   final VoidCallback? onTap;
 
   const ConversationCard({
@@ -15,6 +16,7 @@ class ConversationCard extends StatelessWidget {
     required this.conversation,
     required this.myUserId,
     required this.palette,
+    this.isOnline = false,
     this.onTap,
   });
 
@@ -114,6 +116,20 @@ class ConversationCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
+              ),
+            ),
+          ),
+        if (isOnline && !conversation.isGroup)
+          Positioned(
+            bottom: 1,
+            right: 1,
+            child: Container(
+              width: 13,
+              height: 13,
+              decoration: BoxDecoration(
+                color: const Color(0xFF4ADE80),
+                shape: BoxShape.circle,
+                border: Border.all(color: palette.surface, width: 2),
               ),
             ),
           ),
