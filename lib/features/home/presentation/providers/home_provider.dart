@@ -299,7 +299,13 @@ class HomeProvider extends ChangeNotifier {
       decimals: 0,
     );
     final ph = _metric('PH', 'ph', '', AppPalette.metricCyan, decimals: 2);
-    final rpm = _metric('RPM MOTOR', 'rpm', 'rpm', AppPalette.accent, decimals: 0);
+    final rpm = _metric(
+      'RPM MOTOR',
+      'rpm',
+      'rpm',
+      AppPalette.accent,
+      decimals: 0,
+    );
 
     if (s == null) {
       return ActiveFermentation(

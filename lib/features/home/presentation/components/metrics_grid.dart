@@ -65,10 +65,7 @@ class MetricsGrid extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: MetricTile(
-                metric: fermentation.rpm,
-                palette: palette,
-              ),
+              child: MetricTile(metric: fermentation.rpm, palette: palette),
             ),
           ],
         ),

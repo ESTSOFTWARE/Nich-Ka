@@ -165,9 +165,9 @@ class HomeView extends StatelessWidget {
                               palette: palette,
                               onTap: item.sessionId != null
                                   ? () => context.push(
-                                        '/report-detail',
-                                        extra: item.sessionId,
-                                      )
+                                      '/report-detail',
+                                      extra: item.sessionId,
+                                    )
                                   : null,
                             ),
                           ),
@@ -221,10 +221,16 @@ class _PredictButton extends StatelessWidget {
                 ),
               )
             else
-              const Icon(Icons.auto_awesome, size: 16, color: AppPalette.accent),
+              const Icon(
+                Icons.auto_awesome,
+                size: 16,
+                color: AppPalette.accent,
+              ),
             const SizedBox(width: 8),
             Text(
-              isLoading ? 'Solicitando predicción…' : 'Solicitar predicción de eficiencia',
+              isLoading
+                  ? 'Solicitando predicción…'
+                  : 'Solicitar predicción de eficiencia',
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

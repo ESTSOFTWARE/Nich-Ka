@@ -36,7 +36,8 @@ class PushService {
       const InitializationSettings(android: androidInit),
       onDidReceiveNotificationResponse: (resp) {
         final payload = resp.payload;
-        if (payload != null && (resp.actionId == 'open_file' || payload.startsWith('/'))) {
+        if (payload != null &&
+            (resp.actionId == 'open_file' || payload.startsWith('/'))) {
           OpenFilex.open(payload);
         } else {
           _handlePayload(payload);
