@@ -22,6 +22,8 @@ String titleForType(String type) {
       return 'Recomendación IA';
     case 'anomaly':
       return 'Anomalía detectada';
+    case 'efficiency':
+      return 'Predicción de eficiencia';
     case 'general':
       return 'Notificación';
     default:

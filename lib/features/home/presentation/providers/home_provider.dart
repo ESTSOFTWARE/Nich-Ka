@@ -179,7 +179,11 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void _onNotification(NotificationEventDto event) {
-    if (event.type != 'recommendation') return;
+    if (event.type != 'recommendation' &&
+        event.type != 'anomaly' &&
+        event.type != 'efficiency') {
+      return;
+    }
     final sessionId = _session?.id;
     if (sessionId != null &&
         event.sessionId != null &&
