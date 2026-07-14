@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart' hide ChangeNotifierProvider;
+import 'package:provider/provider.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/navigation/entry_route.dart';
 import '../../../../core/router/app_router.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/validation/validators.dart';
-import '../providers/login_provider.dart';
+import '../notifiers/login_notifier.dart';
 import '../states/ui_state.dart';
 import '../components/auth_text_field.dart';
 import '../components/auth_field_label.dart';
@@ -18,178 +18,179 @@ import '../components/primary_auth_button.dart';
 import '../components/social_login_button.dart';
 import '../components/spotlight_background.dart';
 
-class LoginEmailView extends StatelessWidget {
+class LoginEmailView extends ConsumerStatefulWidget {
   const LoginEmailView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<LoginProvider>(
-      create: () => LoginProvider(),
-      builder: (context, provider) {
-        return SpotlightBackground(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: Form(
-              key: provider.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Nich-Ká',
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      SvgPicture.asset('assets/icons/logo.svg', height: 40),
-                    ],
-                  ),
-                  const SizedBox(height: 60),
+  ConsumerState<LoginEmailView> createState() => _LoginEmailViewState();
+}
 
+class _LoginEmailViewState extends ConsumerState<LoginEmailView> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _navigateAfterLogin() async {
+    final token = ref.read(loginProvider).token;
+    if (token != null && mounted) {
+      context.read<AuthProvider>().setUser(token);
+    }
+    final code = pendingJoinCode;
+    if (code != null) {
+      pendingJoinCode = null;
+      if (mounted) context.go('/join?code=$code');
+    } else {
+      final route = await resolveEntryRoute();
+      if (mounted) context.go(route);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loginState = ref.watch(loginProvider);
+
+    return SpotlightBackground(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(
-                    '¡Bienvenido de nuevo!',
+                    'Nich-Ká',
                     style: GoogleFonts.poppins(
-                      fontSize: 28,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Monitorea y optimiza la fermentación de tu café con inteligencia artificial en tiempo real.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-
-                  AuthTextField(
-                    label: 'Correo electrónico',
-                    hintText: 'tu@ejemplo.com',
-                    controller: provider.emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    maxLength: 254,
-                    validator: Validators.email,
-                  ),
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const AuthFieldLabel(text: 'Contraseña'),
-                      GestureDetector(
-                        onTap: () => context.push('/forgot-password'),
-                        child: Text(
-                          '¿Olvidaste tu contraseña?',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  AuthTextField(
-                    label: '',
-                    hintText: '••••••••',
-                    controller: provider.passwordController,
-                    isPassword: true,
-                    isObscured: provider.isPasswordObscured,
-                    onToggleObscure: provider.togglePasswordVisibility,
-                    validator: Validators.loginPassword,
-                  ),
-
-                  const SizedBox(height: 48),
-
-                  if (provider.loginState is UiError)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        (provider.loginState as UiError).message,
-                        style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: Colors.redAccent,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                  PrimaryAuthButton(
-                    text: 'Iniciar Sesión',
-                    iconPath: 'assets/icons/login.svg',
-                    filled: false,
-                    isLoading: provider.loginState is UiLoading,
-                    onPressed: () async {
-                      if (!(provider.formKey.currentState?.validate() ??
-                          false)) {
-                        return;
-                      }
-                      final ok = await provider.loginWithEmail();
-                      if (ok && context.mounted) {
-                        if (provider.lastToken != null) {
-                          context.read<AuthProvider>().setUser(
-                            provider.lastToken!,
-                          );
-                        }
-                        final code = pendingJoinCode;
-                        if (code != null) {
-                          pendingJoinCode = null;
-                          context.go('/join?code=$code');
-                        } else {
-                          // Si hay fermentación activa entra al /overview; si no, al home.
-                          final route = await resolveEntryRoute();
-                          if (context.mounted) context.go(route);
-                        }
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  SocialLoginButton(
-                    text: 'Iniciar con Google',
-                    iconPath: 'assets/icons/google.svg',
-                    onPressed: () async {
-                      final ok = await provider.loginWithGoogle();
-                      if (ok && context.mounted) {
-                        if (provider.lastToken != null) {
-                          context.read<AuthProvider>().setUser(
-                            provider.lastToken!,
-                          );
-                        }
-                        final code = pendingJoinCode;
-                        if (code != null) {
-                          pendingJoinCode = null;
-                          context.go('/join?code=$code');
-                        } else {
-                          final route = await resolveEntryRoute();
-                          if (context.mounted) context.go(route);
-                        }
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 32),
-                  const Divider(color: AppColors.border, height: 1),
-                  const SizedBox(height: 28),
-
-                  const LegalFooter(),
+                  SvgPicture.asset('assets/icons/logo.svg', height: 40),
                 ],
               ),
-            ),
+              const SizedBox(height: 60),
+
+              Text(
+                '¡Bienvenido de nuevo!',
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Monitorea y optimiza la fermentación de tu café con inteligencia artificial en tiempo real.',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 48),
+
+              AuthTextField(
+                label: 'Correo electrónico',
+                hintText: 'tu@ejemplo.com',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 254,
+                validator: Validators.email,
+              ),
+              const SizedBox(height: 24),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const AuthFieldLabel(text: 'Contraseña'),
+                  GestureDetector(
+                    onTap: () => context.push('/forgot-password'),
+                    child: Text(
+                      '¿Olvidaste tu contraseña?',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              AuthTextField(
+                label: '',
+                hintText: '••••••••',
+                controller: _passwordController,
+                isPassword: true,
+                isObscured: loginState.isPasswordObscured,
+                onToggleObscure: () =>
+                    ref.read(loginProvider.notifier).togglePasswordVisibility(),
+                validator: Validators.loginPassword,
+              ),
+
+              const SizedBox(height: 48),
+
+              if (loginState.status is UiError)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    (loginState.status as UiError).message,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: Colors.redAccent,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+              PrimaryAuthButton(
+                text: 'Iniciar Sesión',
+                iconPath: 'assets/icons/login.svg',
+                filled: false,
+                isLoading: loginState.status is UiLoading,
+                onPressed: () async {
+                  if (!(_formKey.currentState?.validate() ?? false)) return;
+                  final ok = await ref
+                      .read(loginProvider.notifier)
+                      .loginWithEmail(
+                        _emailController.text.trim(),
+                        _passwordController.text.trim(),
+                      );
+                  if (ok) await _navigateAfterLogin();
+                },
+              ),
+              const SizedBox(height: 24),
+
+              SocialLoginButton(
+                text: 'Iniciar con Google',
+                iconPath: 'assets/icons/google.svg',
+                onPressed: () async {
+                  final ok = await ref
+                      .read(loginProvider.notifier)
+                      .loginWithGoogle();
+                  if (ok) await _navigateAfterLogin();
+                },
+              ),
+
+              const SizedBox(height: 32),
+              const Divider(color: AppColors.border, height: 1),
+              const SizedBox(height: 28),
+
+              const LegalFooter(),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
