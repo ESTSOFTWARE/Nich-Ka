@@ -183,8 +183,9 @@ class HomeProvider extends ChangeNotifier {
     final sessionId = _session?.id;
     if (sessionId != null &&
         event.sessionId != null &&
-        event.sessionId != sessionId)
+        event.sessionId != sessionId) {
       return;
+    }
     recommendation = AiRecommendation(
       body: event.message,
       actionLabel: 'Ver análisis',
