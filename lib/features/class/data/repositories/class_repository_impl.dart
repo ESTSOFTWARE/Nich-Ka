@@ -1,5 +1,6 @@
 import '../../../../core/network/http_client.dart';
 import '../../domain/entities/class_detail.dart';
+import '../../domain/entities/class_fermentation.dart';
 import '../../domain/repositories/class_repository.dart';
 import '../datasource/remote/class_remote_datasource.dart';
 
@@ -14,4 +15,8 @@ class ClassRepositoryImpl implements ClassRepository {
 
   @override
   Future<void> joinClass(String code) => _remote.joinClass(code);
+
+  @override
+  Future<List<ClassFermentation>> getFermentations(int groupId) =>
+      _remote.getGroupSessions(groupId);
 }
