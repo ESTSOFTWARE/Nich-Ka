@@ -10,7 +10,7 @@ class ReportsDetailMapper {
   const ReportsDetailMapper._();
 
   static ReportDetail toReportDetail({
-    required FermentationReportResponseDto report,
+    required FermentationReportResponseDto? report,
     required FermentationSessionResponseDto session,
     required List<ReportHistoryResponseDto> history,
   }) {
@@ -18,6 +18,31 @@ class ReportsDetailMapper {
       session.actualStart ?? session.scheduledStart,
       session.actualEnd ?? session.scheduledEnd,
     );
+
+    if (report == null) {
+      return ReportDetail(
+        reportNumber: '—',
+        fermentationCode: 'F-${session.id.toString().padLeft(3, '0')}',
+        batchName: '',
+        date: _formatDate(session.actualStart ?? session.scheduledStart),
+        efficiency: 0.0,
+        ethanolDetected: 0.0,
+        ethanolTheoretical: 0.0,
+        duration: duration,
+        nlpAnalysis: const NlpAnalysis(
+          title: 'Fermentación en curso',
+          summary:
+              'El reporte estará disponible cuando finalice la fermentación.',
+          interpretation: '',
+          observations: '',
+        ),
+        sensorMetrics: const [],
+        generatedAt: '—',
+        downloads: 0,
+        views: 0,
+      );
+    }
+
     final date = _formatDate(
       report.generatedAt ?? session.actualStart ?? session.scheduledStart,
     );

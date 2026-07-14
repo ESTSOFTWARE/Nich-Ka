@@ -185,7 +185,7 @@ class ClassDetailView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${provider.detail.fermentations.length}',
+                          '${provider.fermentations.length}',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -205,11 +205,11 @@ class ClassDetailView extends StatelessWidget {
                         shrinkWrap: true,
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: provider.detail.fermentations.length,
+                        itemCount: provider.fermentations.length,
                         separatorBuilder: (_, _) =>
                             Divider(color: palette.border, height: 1),
                         itemBuilder: (_, i) => ClassFermentationItem(
-                          fermentation: provider.detail.fermentations[i],
+                          fermentation: provider.fermentations[i],
                           palette: palette,
                         ),
                       ),

@@ -4,7 +4,7 @@ import '../../features/fermentation/data/repositories/active_fermentation_reposi
 import '../../features/fermentation/domain/use_cases/get_active_fermentation_use_case.dart';
 
 /// Decide a dónde entrar tras iniciar sesión:
-///   - hay fermentación activa  → '/overview'
+///   - hay fermentación activa  → '/home'
 ///   - no hay                   → '/' (home)
 /// Ante cualquier error cae a '/' para no bloquear el ingreso.
 Future<String> resolveEntryRoute() async {
@@ -14,7 +14,7 @@ Future<String> resolveEntryRoute() async {
         ActiveFermentationDatasource(HttpClient.instance),
       ),
     ).call();
-    return active != null ? '/overview' : '/';
+    return active != null ? '/home' : '/';
   } catch (_) {
     return '/';
   }

@@ -18,6 +18,10 @@ String titleForType(String type) {
       return 'Usuario registrado';
     case 'experiment_complete':
       return 'Experimento completado';
+    case 'recommendation':
+      return 'Recomendación IA';
+    case 'anomaly':
+      return 'Anomalía detectada';
     case 'general':
       return 'Notificación';
     default:

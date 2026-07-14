@@ -68,6 +68,9 @@ class ReportsMapper {
         return ReportStatus.completado;
       case 'interrupted':
         return ReportStatus.interrumpida;
+      case 'running':
+      case 'active':
+        return ReportStatus.enCurso;
       default:
         return ReportStatus.nuevo;
     }
