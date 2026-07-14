@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
 import 'core/push/push_service.dart';
 
@@ -21,6 +22,11 @@ Future<void> main() async {
   }
 
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const App()),
+    ProviderScope(
+      child: DevicePreview(
+        enabled: !kReleaseMode,
+        builder: (context) => const App(),
+      ),
+    ),
   );
 }
