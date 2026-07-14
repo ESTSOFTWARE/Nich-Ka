@@ -16,6 +16,8 @@ NotificationType notificationTypeFromString(String type) {
       return NotificationType.recommendation;
     case 'anomaly':
       return NotificationType.alert;
+    case 'efficiency':
+      return NotificationType.analysis;
     case 'new_announcement':
     case 'member_added':
     case 'user_registered':
