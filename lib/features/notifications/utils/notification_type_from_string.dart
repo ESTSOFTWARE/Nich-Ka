@@ -12,6 +12,10 @@ NotificationType notificationTypeFromString(String type) {
       return NotificationType.alert;
     case 'sensor_failure':
       return NotificationType.sensor;
+    case 'recommendation':
+      return NotificationType.recommendation;
+    case 'anomaly':
+      return NotificationType.alert;
     case 'new_announcement':
     case 'member_added':
     case 'user_registered':
