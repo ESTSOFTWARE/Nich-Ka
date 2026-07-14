@@ -15,10 +15,8 @@ class ClassDetailProvider extends ChangeNotifier {
   List<ClassFermentation> _fermentations = [];
   List<ClassFermentation> get fermentations => _fermentations;
 
-  ClassDetailProvider(
-    this.detail, {
-    ClassRemoteDataSource? remote,
-  }) : _remote = remote ?? ClassRemoteDataSource(HttpClient.instance) {
+  ClassDetailProvider(this.detail, {ClassRemoteDataSource? remote})
+    : _remote = remote ?? ClassRemoteDataSource(HttpClient.instance) {
     scrollController.addListener(_onScroll);
     _loadFermentations();
   }

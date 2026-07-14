@@ -56,8 +56,18 @@ class ClassRemoteDataSource {
     try {
       final dt = DateTime.parse(iso);
       const months = [
-        'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-        'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
+        'ene',
+        'feb',
+        'mar',
+        'abr',
+        'may',
+        'jun',
+        'jul',
+        'ago',
+        'sep',
+        'oct',
+        'nov',
+        'dic',
       ];
       return '${dt.day} ${months[dt.month - 1]}';
     } catch (_) {

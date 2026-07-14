@@ -66,8 +66,7 @@ class HomeProvider extends ChangeNotifier {
            SensorsRealtimeRepositoryImpl(
              SensorsRealtimeDataSource(HttpClient.instance),
            ),
-       _reportsDs =
-           reportsDs ?? ReportsRemoteDataSource(HttpClient.instance) {
+       _reportsDs = reportsDs ?? ReportsRemoteDataSource(HttpClient.instance) {
     _watchSensors = WatchSensorsUseCase(_sensorsRepo);
     scrollController.addListener(_onScroll);
     _init();
@@ -85,7 +84,9 @@ class HomeProvider extends ChangeNotifier {
     if (_session != null) {
       _sub = _watchSensors(_session!.circuitId).listen(_applyReading);
     }
-    _notifSub = NotificationWebSocketService.instance.events.listen(_onNotification);
+    _notifSub = NotificationWebSocketService.instance.events.listen(
+      _onNotification,
+    );
     _ticker = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
 
     _loadFermentations();
@@ -94,10 +95,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _loadFermentations() async {
     try {
       final pairs = await _reportsDs.getSessionsWithReports();
-      _fermentations = pairs
-          .take(10)
-          .map((p) => _sessionToItem(p.$1))
-          .toList();
+      _fermentations = pairs.take(10).map((p) => _sessionToItem(p.$1)).toList();
       notifyListeners();
     } catch (_) {}
   }
@@ -116,7 +114,8 @@ class HomeProvider extends ChangeNotifier {
         ? DateTime.tryParse(s.actualStart!) ?? DateTime.now()
         : DateTime.tryParse(s.scheduledStart) ?? DateTime.now();
     final end =
-        DateTime.tryParse(s.scheduledEnd) ?? start.add(const Duration(hours: 48));
+        DateTime.tryParse(s.scheduledEnd) ??
+        start.add(const Duration(hours: 48));
     final now = DateTime.now();
 
     final totalSecs = end.difference(start).inSeconds.clamp(1, 1 << 53);
@@ -182,8 +181,14 @@ class HomeProvider extends ChangeNotifier {
   void _onNotification(NotificationEventDto event) {
     if (event.type != 'recommendation') return;
     final sessionId = _session?.id;
-    if (sessionId != null && event.sessionId != null && event.sessionId != sessionId) return;
-    recommendation = AiRecommendation(body: event.message, actionLabel: 'Ver análisis');
+    if (sessionId != null &&
+        event.sessionId != null &&
+        event.sessionId != sessionId)
+      return;
+    recommendation = AiRecommendation(
+      body: event.message,
+      actionLabel: 'Ver análisis',
+    );
     notifyListeners();
   }
 

@@ -23,10 +23,9 @@ class ReportsRemoteDataSource {
         map['session'] as Map<String, dynamic>,
       );
       final reportJson = map['report'] as Map<String, dynamic>?;
-      final report =
-          reportJson != null
-              ? FermentationReportResponseDto.fromJson(reportJson)
-              : null;
+      final report = reportJson != null
+          ? FermentationReportResponseDto.fromJson(reportJson)
+          : null;
       return (session, report);
     }).toList();
   }
