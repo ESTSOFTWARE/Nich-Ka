@@ -5,6 +5,10 @@ import '../../../../features/fermentation/data/datasource/remote/active_fermenta
 import '../../../../features/fermentation/data/repositories/active_fermentation_repository_impl.dart';
 import '../../../../features/fermentation/domain/entities/active_fermentation_session.dart';
 import '../../../../features/fermentation/domain/use_cases/get_active_fermentation_use_case.dart';
+import '../../../../features/notifications/data/datasource/remote/model/dto/notification_event_dto.dart';
+import '../../../../features/notifications/data/services/notification_websocket_service.dart';
+import '../../../../features/reports/data/datasource/remote/reports_remote_datasource.dart';
+import '../../../../features/reports/data/datasource/remote/model/dto/response/fermentation_session_response_dto.dart';
 import '../../../../features/sensors/data/datasource/remote/sensors_realtime_datasource.dart';
 import '../../../../features/sensors/data/repositories/sensors_realtime_repository_impl.dart';
 import '../../../../features/sensors/domain/entities/sensor_realtime_reading.dart';
@@ -26,8 +30,10 @@ class HomeProvider extends ChangeNotifier {
 
   final GetActiveFermentationUseCase _getActive;
   final SensorsRealtimeRepository _sensorsRepo;
+  final ReportsRemoteDataSource _reportsDs;
   late final WatchSensorsUseCase _watchSensors;
   StreamSubscription? _sub;
+  StreamSubscription? _notifSub;
   Timer? _ticker;
 
   bool _loading = true;
@@ -37,6 +43,9 @@ class HomeProvider extends ChangeNotifier {
   ActiveFermentationSession? get session => _session;
   bool get hasActive => _session != null;
 
+  List<FermentationItem> _fermentations = [];
+  List<FermentationItem> get fermentations => _fermentations;
+
   // Últimos valores en vivo por tipo de sensor (del WebSocket).
   final Map<String, double> _live = {};
   final List<double> _alcoholHistory = [];
@@ -44,6 +53,7 @@ class HomeProvider extends ChangeNotifier {
   HomeProvider({
     GetActiveFermentationUseCase? getActive,
     SensorsRealtimeRepository? sensorsRepo,
+    ReportsRemoteDataSource? reportsDs,
   }) : _getActive =
            getActive ??
            GetActiveFermentationUseCase(
@@ -55,7 +65,8 @@ class HomeProvider extends ChangeNotifier {
            sensorsRepo ??
            SensorsRealtimeRepositoryImpl(
              SensorsRealtimeDataSource(HttpClient.instance),
-           ) {
+           ),
+       _reportsDs = reportsDs ?? ReportsRemoteDataSource(HttpClient.instance) {
     _watchSensors = WatchSensorsUseCase(_sensorsRepo);
     scrollController.addListener(_onScroll);
     _init();
@@ -73,8 +84,67 @@ class HomeProvider extends ChangeNotifier {
     if (_session != null) {
       _sub = _watchSensors(_session!.circuitId).listen(_applyReading);
     }
-    // Re-consulta la sesión activa para detectar cuando termina y refrescar tiempo.
+    _notifSub = NotificationWebSocketService.instance.events.listen(
+      _onNotification,
+    );
     _ticker = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
+
+    _loadFermentations();
+  }
+
+  Future<void> _loadFermentations() async {
+    try {
+      final pairs = await _reportsDs.getSessionsWithReports();
+      _fermentations = pairs.take(10).map((p) => _sessionToItem(p.$1)).toList();
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  static const _ringColors = [
+    Color(0xFF75D079), // verde
+    Color(0xFF60A5FA), // azul
+    Color(0xFFF0A646), // naranja
+    Color(0xFFEC4899), // rosa
+    Color(0xFF14B8A6), // teal
+    Color(0xFFA855F7), // morado
+  ];
+
+  FermentationItem _sessionToItem(FermentationSessionResponseDto s) {
+    final start = s.actualStart != null
+        ? DateTime.tryParse(s.actualStart!) ?? DateTime.now()
+        : DateTime.tryParse(s.scheduledStart) ?? DateTime.now();
+    final end =
+        DateTime.tryParse(s.scheduledEnd) ??
+        start.add(const Duration(hours: 48));
+    final now = DateTime.now();
+
+    final totalSecs = end.difference(start).inSeconds.clamp(1, 1 << 53);
+    final elapsedSecs = now.difference(start).inSeconds.clamp(0, totalSecs);
+    final progress = elapsedSecs / totalSecs;
+    final dayElapsed = now.difference(start).inDays + 1;
+    final dayTotal = end.difference(start).inDays.clamp(1, 365);
+
+    final ringColor = _ringColors[s.formulaId % _ringColors.length];
+
+    final (statusLabel, statusColor) = switch (s.status) {
+      'running' || 'active' => ('En curso', const Color(0xFF75D079)),
+      'completed' => ('Completada', const Color(0xFF60A5FA)),
+      'interrupted' => ('Interrumpida', const Color(0xFFF0A646)),
+      _ => (s.status, const Color(0xFF8A8A8E)),
+    };
+
+    return FermentationItem(
+      id: 'F-${s.id.toString().padLeft(3, '0')}',
+      name: 'Circuito ${s.circuitId}',
+      process: statusLabel,
+      farm: s.groupId != null ? 'Grupo ${s.groupId}' : '',
+      statusLabel: statusLabel,
+      statusColor: statusColor,
+      timeInfo: 'Día $dayElapsed / $dayTotal',
+      ringProgress: progress.clamp(0.0, 1.0),
+      ringColor: ringColor,
+      sessionId: s.id,
+    );
   }
 
   Future<void> _refresh() async {
@@ -105,6 +175,21 @@ class HomeProvider extends ChangeNotifier {
       _alcoholHistory.add(r.value);
       if (_alcoholHistory.length > 24) _alcoholHistory.removeAt(0);
     }
+    notifyListeners();
+  }
+
+  void _onNotification(NotificationEventDto event) {
+    if (event.type != 'recommendation') return;
+    final sessionId = _session?.id;
+    if (sessionId != null &&
+        event.sessionId != null &&
+        event.sessionId != sessionId) {
+      return;
+    }
+    recommendation = AiRecommendation(
+      body: event.message,
+      actionLabel: 'Ver análisis',
+    );
     notifyListeners();
   }
 
@@ -211,13 +296,10 @@ class HomeProvider extends ChangeNotifier {
     );
   }
 
-  final AiRecommendation recommendation = const AiRecommendation(
+  AiRecommendation recommendation = const AiRecommendation(
     body: 'Mantén la temperatura estable para una fermentación uniforme.',
     actionLabel: 'Ver análisis',
   );
-
-  // Sin datos mock: la lista de "otras fermentaciones" se llena aparte si se requiere.
-  final List<FermentationItem> fermentations = const [];
 
   String get greeting {
     final hour = DateTime.now().hour;
@@ -239,6 +321,7 @@ class HomeProvider extends ChangeNotifier {
   @override
   void dispose() {
     _sub?.cancel();
+    _notifSub?.cancel();
     _ticker?.cancel();
     _sensorsRepo.dispose();
     scrollController.removeListener(_onScroll);

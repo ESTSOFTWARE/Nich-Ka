@@ -1,4 +1,4 @@
-enum ReportStatus { nuevo, completado, interrumpida }
+enum ReportStatus { nuevo, completado, interrumpida, enCurso }
 
 class ReportItem {
   final String id;
@@ -31,4 +31,5 @@ class ReportItem {
   bool get isInterrupted => status == ReportStatus.interrumpida;
   bool get isNew => status == ReportStatus.nuevo;
   bool get isCompleted => status == ReportStatus.completado;
+  bool get isEnCurso => status == ReportStatus.enCurso;
 }

@@ -58,6 +58,28 @@ class ReportCard extends StatelessWidget {
   }
 
   Widget _buildStatusBadge() {
+    if (report.isEnCurso) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        decoration: BoxDecoration(
+          color: const Color(0xFF75D079).withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: const Color(0xFF75D079).withValues(alpha: 0.4),
+          ),
+        ),
+        child: Text(
+          'EN CURSO',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF75D079),
+            letterSpacing: 0.5,
+          ),
+        ),
+      );
+    }
+
     if (report.isInterrupted) {
       return Text(
         'Interrumpida',
@@ -166,7 +188,7 @@ class ReportCard extends StatelessWidget {
             style: GoogleFonts.poppins(fontSize: 12, color: palette.textMuted),
           ),
         ],
-        if (report.isNew) ...[
+        if (report.isNew && report.efficiency != null) ...[
           const Spacer(),
           Text(
             '${report.efficiency!.toStringAsFixed(1)}% eficiencia',

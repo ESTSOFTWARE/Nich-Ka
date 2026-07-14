@@ -17,15 +17,16 @@ class ReportsRepositoryImpl implements ReportsRepository {
 
   @override
   Future<List<ReportItem>> getReports(ReportPeriodFilter filter) async {
-    final sessions = await _dataSource.getSessions();
+    final pairs = await _dataSource.getSessionsWithReports();
 
-    final reports = <ReportItem>[];
-    for (final session in sessions) {
-      final report = await _dataSource.getReport(session.id);
-      reports.add(
-        ReportsMapper.sessionToReportItem(session: session, report: report),
-      );
-    }
+    final reports = pairs
+        .map(
+          (pair) => ReportsMapper.sessionToReportItem(
+            session: pair.$1,
+            report: pair.$2,
+          ),
+        )
+        .toList();
 
     return ReportsMapper.filterByPeriod(reports, filter);
   }
@@ -45,7 +46,7 @@ class ReportsRepositoryImpl implements ReportsRepository {
     ]);
 
     return ReportsDetailMapper.toReportDetail(
-      report: results[1] as FermentationReportResponseDto,
+      report: results[1] as FermentationReportResponseDto?,
       session: results[0] as FermentationSessionResponseDto,
       history: results[2] as List<ReportHistoryResponseDto>,
     );

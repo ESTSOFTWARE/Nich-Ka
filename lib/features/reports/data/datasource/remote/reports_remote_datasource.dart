@@ -10,6 +10,26 @@ class ReportsRemoteDataSource {
 
   const ReportsRemoteDataSource(this._client);
 
+  /// Una sola petición que devuelve sesiones + reporte (o null) juntos.
+  /// El backend resuelve el join en BD; evita el N+1 del enfoque anterior.
+  Future<List<(FermentationSessionResponseDto, FermentationReportResponseDto?)>>
+  getSessionsWithReports() async {
+    final response = await _client.get('/fermentation/sessions-with-reports');
+    _assertSuccess(response, 'No se pudieron obtener las sesiones.');
+    final list = jsonDecode(response.body) as List<dynamic>;
+    return list.map((e) {
+      final map = e as Map<String, dynamic>;
+      final session = FermentationSessionResponseDto.fromJson(
+        map['session'] as Map<String, dynamic>,
+      );
+      final reportJson = map['report'] as Map<String, dynamic>?;
+      final report = reportJson != null
+          ? FermentationReportResponseDto.fromJson(reportJson)
+          : null;
+      return (session, report);
+    }).toList();
+  }
+
   Future<List<FermentationSessionResponseDto>> getSessions() async {
     final response = await _client.get('/fermentation/sessions');
     _assertSuccess(response, 'No se pudieron obtener las sesiones.');
@@ -25,12 +45,17 @@ class ReportsRemoteDataSource {
 
   Future<FermentationSessionResponseDto> getSession(int sessionId) async {
     final sessions = await getSessions();
-    return sessions.firstWhere((s) => s.id == sessionId);
+    final match = sessions.cast<FermentationSessionResponseDto?>().firstWhere(
+      (s) => s!.id == sessionId,
+      orElse: () => null,
+    );
+    if (match == null) throw Exception('Sesión $sessionId no encontrada.');
+    return match;
   }
 
   Future<FermentationReportResponseDto?> getReport(int sessionId) async {
     final response = await _client.get('/fermentation/$sessionId/report');
-    if (response.statusCode == 404) return null;
+    if (response.statusCode >= 400) return null;
     _assertSuccess(response, 'No se pudo obtener el reporte.');
     return FermentationReportResponseDto.fromJson(
       jsonDecode(response.body) as Map<String, dynamic>,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../components/app_drawer_item.dart';
+import 'go_home.dart';
 
 void onDrawerNav(BuildContext context, AppDrawerItem item) {
   switch (item) {
     case AppDrawerItem.inicio:
-      context.go('/home');
+      goHome(context);
     case AppDrawerItem.fermentaciones:
       context.push('/fermentations');
     case AppDrawerItem.asistente:
