@@ -27,5 +27,11 @@
 - [ ] Sin comentarios en el código
 - [ ] Tests pasan (`flutter test`)
 
+## Seguridad
+
+- [ ] La validación del cliente está también respaldada en el servidor
+- [ ] No se exponen secretos ni datos sensibles en el código/logs
+- [ ] Las entradas se sanitizan/escapan antes de usarse o mostrarse
+
 ## Contexto adicional
 <!-- Links a issues, Figma, Notion, etc. Borra si no aplica. -->
