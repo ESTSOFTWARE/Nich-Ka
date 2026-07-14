@@ -29,7 +29,7 @@ class MetricsGrid extends StatelessWidget {
             ),
             Expanded(
               child: MetricTile(
-                metric: fermentation.ph,
+                metric: fermentation.alcohol,
                 palette: palette,
                 bottomBorder: true,
               ),
@@ -40,7 +40,7 @@ class MetricsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: MetricTile(
-                metric: fermentation.density,
+                metric: fermentation.conductivity,
                 palette: palette,
                 rightBorder: true,
                 bottomBorder: true,
@@ -48,14 +48,27 @@ class MetricsGrid extends StatelessWidget {
             ),
             Expanded(
               child: MetricTile(
-                metric: fermentation.alcohol,
+                metric: fermentation.turbidity,
                 palette: palette,
                 bottomBorder: true,
               ),
             ),
           ],
         ),
-        MetricTile(metric: fermentation.conductivity, palette: palette),
+        Row(
+          children: [
+            Expanded(
+              child: MetricTile(
+                metric: fermentation.ph,
+                palette: palette,
+                rightBorder: true,
+              ),
+            ),
+            Expanded(
+              child: MetricTile(metric: fermentation.rpm, palette: palette),
+            ),
+          ],
+        ),
       ],
     );
   }

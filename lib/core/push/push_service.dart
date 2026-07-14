@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:open_filex/open_filex.dart';
 import '../../features/messages/presentation/open_chat_from_push.dart';
 import '../audio/active_chat.dart';
 import '../network/http_client.dart';
@@ -33,8 +34,15 @@ class PushService {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     await _local.initialize(
       const InitializationSettings(android: androidInit),
-      // Tap en la notificación local (app en primer plano).
-      onDidReceiveNotificationResponse: (resp) => _handlePayload(resp.payload),
+      onDidReceiveNotificationResponse: (resp) {
+        final payload = resp.payload;
+        if (payload != null &&
+            (resp.actionId == 'open_file' || payload.startsWith('/'))) {
+          OpenFilex.open(payload);
+        } else {
+          _handlePayload(payload);
+        }
+      },
     );
     await _local
         .resolvePlatformSpecificImplementation<
@@ -115,6 +123,27 @@ class PushService {
         ),
       ),
       payload: jsonEncode(msg.data),
+    );
+  }
+
+  Future<void> showFileSaved(String fileName, String filePath) async {
+    if (!_localReady) return;
+    await _local.show(
+      filePath.hashCode,
+      'Guardado con éxito',
+      fileName,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channel.id,
+          _channel.name,
+          channelDescription: _channel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          actions: const [AndroidNotificationAction('open_file', 'Abrir')],
+        ),
+      ),
+      payload: filePath,
     );
   }
 

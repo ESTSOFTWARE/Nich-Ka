@@ -39,6 +39,12 @@ class HomeProvider extends ChangeNotifier {
   bool _loading = true;
   bool get isLoading => _loading;
 
+  bool _isPredicting = false;
+  bool get isPredicting => _isPredicting;
+
+  bool _predicted50 = false;
+  bool _predicted80 = false;
+
   ActiveFermentationSession? _session;
   ActiveFermentationSession? get session => _session;
   bool get hasActive => _session != null;
@@ -90,6 +96,36 @@ class HomeProvider extends ChangeNotifier {
     _ticker = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
 
     _loadFermentations();
+    _checkPredictionThresholds();
+  }
+
+  Future<void> requestPrediction() async {
+    final session = _session;
+    if (session == null || _isPredicting) return;
+    _isPredicting = true;
+    notifyListeners();
+    try {
+      await HttpClient.instance.post(
+        '/fermentation/${session.id}/predict-now',
+        {},
+      );
+    } catch (_) {}
+    _isPredicting = false;
+    notifyListeners();
+  }
+
+  void _checkPredictionThresholds() {
+    final session = _session;
+    if (session == null) return;
+    final progress = session.progress;
+    if (!_predicted50 && progress >= 50) {
+      _predicted50 = true;
+      requestPrediction();
+    }
+    if (!_predicted80 && progress >= 80) {
+      _predicted80 = true;
+      requestPrediction();
+    }
   }
 
   Future<void> _loadFermentations() async {
@@ -163,6 +199,7 @@ class HomeProvider extends ChangeNotifier {
           _sub = _watchSensors(active.circuitId).listen(_applyReading);
         }
       }
+      _checkPredictionThresholds();
       notifyListeners();
     } catch (_) {
       /* reintenta luego */
@@ -247,20 +284,27 @@ class HomeProvider extends ChangeNotifier {
       '°C',
       AppPalette.metricOrange,
     );
-    final ph = _metric('PH', 'ph', '', AppPalette.metricCyan, decimals: 2);
-    final density = _metric(
-      'DENSIDAD',
-      'density',
-      'g/mL',
-      AppPalette.accent,
-      decimals: 3,
-    );
     final alcohol = _metric('ALCOHOL', 'alcohol', '%v/v', AppPalette.metricRed);
     final conductivity = _metric(
       'CONDUCTIVIDAD',
       'conductivity',
       'mS/cm',
       AppPalette.metricCyan,
+    );
+    final turbidity = _metric(
+      'TURBIDEZ',
+      'turbidity',
+      'NTU',
+      AppPalette.metricPurple,
+      decimals: 0,
+    );
+    final ph = _metric('PH', 'ph', '', AppPalette.metricCyan, decimals: 2);
+    final rpm = _metric(
+      'RPM MOTOR',
+      'rpm',
+      'rpm',
+      AppPalette.accent,
+      decimals: 0,
     );
 
     if (s == null) {
@@ -275,16 +319,17 @@ class HomeProvider extends ChangeNotifier {
         progressPercent: 0,
         chartPoints: const [],
         temperature: temperature,
-        ph: ph,
-        density: density,
         alcohol: alcohol,
         conductivity: conductivity,
+        turbidity: turbidity,
+        ph: ph,
+        rpm: rpm,
       );
     }
 
     return ActiveFermentation(
       id: 'F-${s.id}',
-      variety: s.loteLabel, // "Lote #12"
+      variety: s.loteLabel,
       process: s.isRunning ? 'En fermentación' : s.status,
       farm: s.groupId != null ? 'Grupo ${s.groupId}' : '',
       tank: 'Circuito #${s.circuitId}',
@@ -293,10 +338,11 @@ class HomeProvider extends ChangeNotifier {
       progressPercent: s.progress,
       chartPoints: _liveChart,
       temperature: temperature,
-      ph: ph,
-      density: density,
       alcohol: alcohol,
       conductivity: conductivity,
+      turbidity: turbidity,
+      ph: ph,
+      rpm: rpm,
     );
   }
 

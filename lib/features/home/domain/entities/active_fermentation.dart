@@ -12,10 +12,11 @@ class ActiveFermentation {
   final double progressPercent;
   final List<ChartPoint> chartPoints;
   final FermentationMetric temperature;
-  final FermentationMetric ph;
-  final FermentationMetric density;
   final FermentationMetric alcohol;
   final FermentationMetric conductivity;
+  final FermentationMetric turbidity;
+  final FermentationMetric ph;
+  final FermentationMetric rpm;
 
   const ActiveFermentation({
     required this.id,
@@ -28,10 +29,11 @@ class ActiveFermentation {
     required this.progressPercent,
     required this.chartPoints,
     required this.temperature,
-    required this.ph,
-    required this.density,
     required this.alcohol,
     required this.conductivity,
+    required this.turbidity,
+    required this.ph,
+    required this.rpm,
   });
 
   String get title => '$variety · $process';

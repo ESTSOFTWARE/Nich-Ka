@@ -40,7 +40,7 @@ class ClassRemoteDataSource {
             id: 'F-${sessionId.toString().padLeft(3, '0')}',
             variety: 'Sesión #$sessionId',
             process: _formatShortDate(start),
-            isActive: status == 'active',
+            isActive: status == 'running' || status == 'active',
           );
         })
         .toList();

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../core/network/http_client.dart';
+import '../../../../core/push/push_service.dart';
 import '../../data/datasource/remote/reports_remote_datasource.dart';
 import '../../data/repositories/reports_repository_impl.dart';
 import '../../domain/entities/report_detail.dart';
@@ -84,11 +86,13 @@ class ReportDetailProvider extends ChangeNotifier {
 
     try {
       final bytes = await _downloadPdf(sessionId!);
-      final dir = Directory.systemTemp;
-      final file = File('${dir.path}/reporte_fermentacion_$sessionId.pdf');
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName = 'reporte_fermentacion_$sessionId.pdf';
+      final file = File('${dir.path}/$fileName');
       await file.writeAsBytes(bytes);
       _isDownloading = false;
       _downloadCompleted = true;
+      await PushService.instance.showFileSaved(fileName, file.path);
     } catch (e) {
       _isDownloading = false;
       _downloadError = e.toString().replaceFirst('Exception: ', '');
