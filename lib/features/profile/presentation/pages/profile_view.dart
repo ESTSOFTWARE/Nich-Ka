@@ -48,9 +48,15 @@ class ProfileView extends StatelessWidget {
               SafeArea(
                 child: switch (state) {
                   UiLoading() => _buildLoading(palette),
-                  UiError e   => _buildError(palette, e, provider),
-                  UiSuccess s => _buildContent(context, provider, s.data, isDark, palette),
-                  _           => const SizedBox.shrink(),
+                  UiError e => _buildError(palette, e, provider),
+                  UiSuccess s => _buildContent(
+                    context,
+                    provider,
+                    s.data,
+                    isDark,
+                    palette,
+                  ),
+                  _ => const SizedBox.shrink(),
                 },
               ),
             ],
@@ -66,7 +72,11 @@ class ProfileView extends StatelessWidget {
     ),
   );
 
-  Widget _buildError(ProfilePalette palette, UiError<dynamic> error, ProfileProvider provider) {
+  Widget _buildError(
+    ProfilePalette palette,
+    UiError<dynamic> error,
+    ProfileProvider provider,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -75,19 +85,35 @@ class ProfileView extends StatelessWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: palette.textMuted),
             const SizedBox(height: 16),
-            Text(error.message, textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 14, color: palette.textSecondary)),
+            Text(
+              error.message,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textSecondary,
+              ),
+            ),
             const SizedBox(height: 24),
             OutlinedButton(
               onPressed: provider.loadProfile,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: ProfilePalette.accent),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              child: Text('Reintentar',
-                style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600,
-                    color: ProfilePalette.accent)),
+              child: Text(
+                'Reintentar',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: ProfilePalette.accent,
+                ),
+              ),
             ),
           ],
         ),
@@ -119,12 +145,19 @@ class ProfileView extends StatelessWidget {
                 iconColor: editing ? palette.textMuted : palette.textPrimary,
                 onTap: editing
                     ? () {}
-                    : () => context.canPop() ? context.pop() : context.go('/login-email'),
+                    : () => context.canPop()
+                          ? context.pop()
+                          : context.go('/login-email'),
               ),
               const SizedBox(width: 14),
-              Text('Mi perfil',
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w500,
-                    color: palette.textPrimary)),
+              Text(
+                'Mi perfil',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: palette.textPrimary,
+                ),
+              ),
               const Spacer(),
               if (!editing)
                 _Chip(
@@ -152,8 +185,10 @@ class ProfileView extends StatelessWidget {
                           final ok = await provider.saveEditing();
                           if (ok && context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Perfil actualizado'),
-                                  behavior: SnackBarBehavior.floating),
+                              const SnackBar(
+                                content: Text('Perfil actualizado'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
                             );
                           }
                         },
@@ -173,7 +208,9 @@ class ProfileView extends StatelessWidget {
                 ProfileHeaderCard(
                   user: user,
                   palette: palette,
-                  onChangePhoto: provider.isUploading ? null : provider.pickAndUploadPhoto,
+                  onChangePhoto: provider.isUploading
+                      ? null
+                      : provider.pickAndUploadPhoto,
                   isUploading: provider.isUploading,
                 ),
                 const SizedBox(height: 28),
@@ -202,7 +239,8 @@ class ProfileView extends StatelessWidget {
                               controller: provider.phoneCtrl,
                               dialCode: provider.dialCode,
                               palette: palette,
-                              onDialCodeTap: () => _pickDialCode(context, provider),
+                              onDialCodeTap: () =>
+                                  _pickDialCode(context, provider),
                             ),
                             _divider(palette),
                             _InlineDescRow(
@@ -211,13 +249,26 @@ class ProfileView extends StatelessWidget {
                             ),
                           ]
                         : [
-                            ProfileInfoRow(label: 'Nombre',    value: user.firstName, palette: palette),
-                            ProfileInfoRow(label: 'Apellido',  value: user.lastName,  palette: palette),
-                            ProfileInfoRow(label: 'Correo',    value: user.email,     palette: palette),
+                            ProfileInfoRow(
+                              label: 'Nombre',
+                              value: user.firstName,
+                              palette: palette,
+                            ),
+                            ProfileInfoRow(
+                              label: 'Apellido',
+                              value: user.lastName,
+                              palette: palette,
+                            ),
+                            ProfileInfoRow(
+                              label: 'Correo',
+                              value: user.email,
+                              palette: palette,
+                            ),
                             ProfileInfoRow(
                               label: 'Teléfono',
                               value: (user.phoneNumber?.isNotEmpty ?? false)
-                                  ? '${user.dialCode ?? ''} ${user.phoneNumber!}'.trim()
+                                  ? '${user.dialCode ?? ''} ${user.phoneNumber!}'
+                                        .trim()
                                   : 'Sin teléfono',
                               palette: palette,
                             ),
@@ -262,8 +313,13 @@ class ProfileView extends StatelessWidget {
                       palette: palette,
                       trailing: Text(
                         provider.isGoogleLinked ? 'Conectado' : 'Vincular',
-                        style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500,
-                            color: provider.isGoogleLinked ? ProfilePalette.accent : palette.textSecondary),
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: provider.isGoogleLinked
+                              ? ProfilePalette.accent
+                              : palette.textSecondary,
+                        ),
                       ),
                     ),
                   ),
@@ -275,7 +331,11 @@ class ProfileView extends StatelessWidget {
                       title: 'Cambiar contraseña',
                       palette: palette,
                       onTap: () => context.push('/change-password'),
-                      trailing: Icon(Icons.chevron_right, color: palette.textMuted, size: 22),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: palette.textMuted,
+                        size: 22,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -286,13 +346,24 @@ class ProfileView extends StatelessWidget {
                         Uri.parse('https://www.nich-ka.space/delete-account'),
                         mode: LaunchMode.externalApplication,
                       ),
-                      icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                      label: Text('Eliminar cuenta',
-                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500,
-                            color: Colors.red)),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: Colors.red,
+                      ),
+                      label: Text(
+                        'Eliminar cuenta',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.red,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.red),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
@@ -326,7 +397,10 @@ class ProfileView extends StatelessWidget {
               trailing: c == provider.dialCode
                   ? Icon(Icons.check, color: ProfilePalette.accent)
                   : null,
-              onTap: () { provider.setDialCode(c); Navigator.pop(context); },
+              onTap: () {
+                provider.setDialCode(c);
+                Navigator.pop(context);
+              },
             ),
           ),
           const SizedBox(height: 8),
@@ -372,7 +446,11 @@ class _Chip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 13, color: disabled ? color.withValues(alpha: 0.3) : color),
+              Icon(
+                icon,
+                size: 13,
+                color: disabled ? color.withValues(alpha: 0.3) : color,
+              ),
               const SizedBox(width: 5),
             ],
             Text(
@@ -412,7 +490,10 @@ class _InlineRow extends StatelessWidget {
             width: 90,
             child: Text(
               label,
-              style: GoogleFonts.poppins(fontSize: 14, color: palette.textSecondary),
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textSecondary,
+              ),
             ),
           ),
           Expanded(
@@ -430,7 +511,10 @@ class _InlineRow extends StatelessWidget {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: ProfilePalette.accent, width: 1.5),
+                  borderSide: BorderSide(
+                    color: ProfilePalette.accent,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -465,7 +549,10 @@ class _InlinePhoneRow extends StatelessWidget {
             width: 90,
             child: Text(
               'Teléfono',
-              style: GoogleFonts.poppins(fontSize: 14, color: palette.textSecondary),
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textSecondary,
+              ),
             ),
           ),
           GestureDetector(
@@ -507,7 +594,10 @@ class _InlinePhoneRow extends StatelessWidget {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: ProfilePalette.accent, width: 1.5),
+                  borderSide: BorderSide(
+                    color: ProfilePalette.accent,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -523,10 +613,7 @@ class _InlineDescRow extends StatelessWidget {
   final TextEditingController controller;
   final ProfilePalette palette;
 
-  const _InlineDescRow({
-    required this.controller,
-    required this.palette,
-  });
+  const _InlineDescRow({required this.controller, required this.palette});
 
   @override
   Widget build(BuildContext context) {
@@ -537,7 +624,10 @@ class _InlineDescRow extends StatelessWidget {
         children: [
           Text(
             'Descripción',
-            style: GoogleFonts.poppins(fontSize: 14, color: palette.textSecondary),
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: palette.textSecondary,
+            ),
           ),
           const SizedBox(height: 6),
           TextField(
@@ -552,13 +642,22 @@ class _InlineDescRow extends StatelessWidget {
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Cuéntanos un poco sobre ti…',
-              hintStyle: GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
-              counterStyle: GoogleFonts.poppins(fontSize: 10, color: palette.textMuted),
+              hintStyle: GoogleFonts.poppins(
+                fontSize: 14,
+                color: palette.textMuted,
+              ),
+              counterStyle: GoogleFonts.poppins(
+                fontSize: 10,
+                color: palette.textMuted,
+              ),
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: ProfilePalette.accent, width: 1.5),
+                borderSide: BorderSide(
+                  color: ProfilePalette.accent,
+                  width: 1.5,
+                ),
               ),
             ),
           ),

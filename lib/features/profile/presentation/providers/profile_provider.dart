@@ -31,24 +31,27 @@ class ProfileProvider extends ChangeNotifier {
   bool _editingInfo = false;
   bool get editingInfo => _editingInfo;
 
-  final nameCtrl        = TextEditingController();
-  final lastNameCtrl    = TextEditingController();
-  final phoneCtrl       = TextEditingController();
+  final nameCtrl = TextEditingController();
+  final lastNameCtrl = TextEditingController();
+  final phoneCtrl = TextEditingController();
   final descriptionCtrl = TextEditingController();
   String _dialCode = '+52';
   String get dialCode => _dialCode;
 
-  void setDialCode(String v) { _dialCode = v; notifyListeners(); }
+  void setDialCode(String v) {
+    _dialCode = v;
+    notifyListeners();
+  }
 
   void startEditing() {
     final u = user;
     if (u == null) return;
-    nameCtrl.text        = u.firstName;
-    lastNameCtrl.text    = u.lastName;
-    phoneCtrl.text       = u.phoneNumber ?? '';
+    nameCtrl.text = u.firstName;
+    lastNameCtrl.text = u.lastName;
+    phoneCtrl.text = u.phoneNumber ?? '';
     descriptionCtrl.text = u.description ?? '';
-    _dialCode            = u.dialCode ?? '+52';
-    _editingInfo         = true;
+    _dialCode = u.dialCode ?? '+52';
+    _editingInfo = true;
     notifyListeners();
   }
 
@@ -115,11 +118,15 @@ class ProfileProvider extends ChangeNotifier {
         ProfileRemoteDataSource(HttpClient.instance),
       );
       final updated = await repo.updateProfile(
-        name:        nameCtrl.text.trim(),
-        lastName:    lastNameCtrl.text.trim(),
-        dialCode:    _dialCode,
-        phoneNumber: phoneCtrl.text.trim().isEmpty ? null : phoneCtrl.text.trim(),
-        description: descriptionCtrl.text.trim().isEmpty ? null : descriptionCtrl.text.trim(),
+        name: nameCtrl.text.trim(),
+        lastName: lastNameCtrl.text.trim(),
+        dialCode: _dialCode,
+        phoneNumber: phoneCtrl.text.trim().isEmpty
+            ? null
+            : phoneCtrl.text.trim(),
+        description: descriptionCtrl.text.trim().isEmpty
+            ? null
+            : descriptionCtrl.text.trim(),
       );
       CurrentUserAvatar.instance.value = updated.profileImage;
       _setState(UiSuccess(updated));
@@ -154,14 +161,14 @@ class ProfileProvider extends ChangeNotifier {
         _setState(
           UiSuccess(
             ProfileUser(
-              firstName:   current.firstName,
-              lastName:    current.lastName,
-              email:       current.email,
-              role:        current.role,
-              circuit:     current.circuit,
+              firstName: current.firstName,
+              lastName: current.lastName,
+              email: current.email,
+              role: current.role,
+              circuit: current.circuit,
               memberSince: current.memberSince,
               profileImage: url,
-              dialCode:    current.dialCode,
+              dialCode: current.dialCode,
               phoneNumber: current.phoneNumber,
               description: current.description,
             ),
