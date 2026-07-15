@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/network/http_client.dart';
 import '../../../../features/fermentation/data/datasource/remote/active_fermentation_datasource.dart';
 import '../../../../features/fermentation/data/repositories/active_fermentation_repository_impl.dart';
@@ -41,9 +42,6 @@ class HomeProvider extends ChangeNotifier {
 
   bool _isPredicting = false;
   bool get isPredicting => _isPredicting;
-
-  bool _predicted50 = false;
-  bool _predicted80 = false;
 
   ActiveFermentationSession? _session;
   ActiveFermentationSession? get session => _session;
@@ -99,6 +97,19 @@ class HomeProvider extends ChangeNotifier {
     _checkPredictionThresholds();
   }
 
+  String _prefKey(int sessionId, int threshold) =>
+      'ml_predicted_${threshold}_$sessionId';
+
+  Future<bool> _hasPredicted(int sessionId, int threshold) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_prefKey(sessionId, threshold)) ?? false;
+  }
+
+  Future<void> _markPredicted(int sessionId, int threshold) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefKey(sessionId, threshold), true);
+  }
+
   Future<void> requestPrediction() async {
     final session = _session;
     if (session == null || _isPredicting) return;
@@ -114,16 +125,17 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _checkPredictionThresholds() {
+  Future<void> _checkPredictionThresholds() async {
     final session = _session;
     if (session == null) return;
     final progress = session.progress;
-    if (!_predicted50 && progress >= 50) {
-      _predicted50 = true;
+    final id = session.id;
+    if (progress >= 50 && !await _hasPredicted(id, 50)) {
+      await _markPredicted(id, 50);
       requestPrediction();
     }
-    if (!_predicted80 && progress >= 80) {
-      _predicted80 = true;
+    if (progress >= 80 && !await _hasPredicted(id, 80)) {
+      await _markPredicted(id, 80);
       requestPrediction();
     }
   }
