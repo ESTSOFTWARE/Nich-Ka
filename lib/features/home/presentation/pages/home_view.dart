@@ -16,6 +16,7 @@ import '../components/active_fermentation_card.dart';
 import '../components/ai_recommendation_card.dart';
 import '../components/fermentation_list_item.dart';
 import '../components/home_glow.dart';
+import '../components/predict_button.dart';
 import '../notifiers/home_notifier.dart';
 import '../../../../shared/theme/app_palette.dart';
 
@@ -146,7 +147,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       objectiveFormatted: notifier.objectiveFormatted,
                     ),
                     const SizedBox(height: 10),
-                    _PredictButton(
+                    PredictButton(
                       isLoading: state.isPredicting,
                       onTap: () =>
                           ref.read(homeProvider.notifier).requestPrediction(),
@@ -217,56 +218,3 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 }
 
-class _PredictButton extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback onTap;
-
-  const _PredictButton({required this.isLoading, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: AppPalette.accent.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppPalette.accent.withValues(alpha: 0.35)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppPalette.accent,
-                ),
-              )
-            else
-              const Icon(
-                Icons.auto_awesome,
-                size: 16,
-                color: AppPalette.accent,
-              ),
-            const SizedBox(width: 8),
-            Text(
-              isLoading
-                  ? 'Solicitando predicción…'
-                  : 'Solicitar predicción de eficiencia',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppPalette.accent,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
