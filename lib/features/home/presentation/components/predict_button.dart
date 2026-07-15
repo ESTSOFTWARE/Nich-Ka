@@ -6,7 +6,11 @@ class PredictButton extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onTap;
 
-  const PredictButton({super.key, required this.isLoading, required this.onTap});
+  const PredictButton({
+    super.key,
+    required this.isLoading,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +31,22 @@ class PredictButton extends StatelessWidget {
               const SizedBox(
                 width: 14,
                 height: 14,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppPalette.accent),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppPalette.accent,
+                ),
               )
             else
-              const Icon(Icons.auto_awesome, size: 16, color: AppPalette.accent),
+              const Icon(
+                Icons.auto_awesome,
+                size: 16,
+                color: AppPalette.accent,
+              ),
             const SizedBox(width: 8),
             Text(
-              isLoading ? 'Solicitando predicción…' : 'Solicitar predicción de eficiencia',
+              isLoading
+                  ? 'Solicitando predicción…'
+                  : 'Solicitar predicción de eficiencia',
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
