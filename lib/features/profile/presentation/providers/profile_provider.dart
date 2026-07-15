@@ -27,6 +27,38 @@ class ProfileProvider extends ChangeNotifier {
   String? _uploadError;
   String? get uploadError => _uploadError;
 
+  // ── Edición inline ────────────────────────────────────────────
+  bool _editingInfo = false;
+  bool get editingInfo => _editingInfo;
+
+  final nameCtrl        = TextEditingController();
+  final lastNameCtrl    = TextEditingController();
+  final phoneCtrl       = TextEditingController();
+  final descriptionCtrl = TextEditingController();
+  String _dialCode = '+52';
+  String get dialCode => _dialCode;
+
+  void setDialCode(String v) { _dialCode = v; notifyListeners(); }
+
+  void startEditing() {
+    final u = user;
+    if (u == null) return;
+    nameCtrl.text        = u.firstName;
+    lastNameCtrl.text    = u.lastName;
+    phoneCtrl.text       = u.phoneNumber ?? '';
+    descriptionCtrl.text = u.description ?? '';
+    _dialCode            = u.dialCode ?? '+52';
+    _editingInfo         = true;
+    notifyListeners();
+  }
+
+  void cancelEditing() {
+    _editingInfo = false;
+    _uploadError = null;
+    notifyListeners();
+  }
+  // ─────────────────────────────────────────────────────────────
+
   ProfileUser? get user => switch (_state) {
     UiSuccess<ProfileUser> s => s.data,
     _ => null,
@@ -66,19 +98,15 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> loadProfile() async {
     _setState(const UiLoading());
     try {
-      final user = await _getProfile();
-      CurrentUserAvatar.instance.value = user.profileImage;
-      _setState(UiSuccess(user));
+      final u = await _getProfile();
+      CurrentUserAvatar.instance.value = u.profileImage;
+      _setState(UiSuccess(u));
     } catch (e) {
       _setState(UiError(e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
-  /// Actualiza nombre y apellido del perfil. Devuelve true si guardó bien.
-  Future<bool> updateProfile({
-    required String name,
-    required String lastName,
-  }) async {
+  Future<bool> saveEditing() async {
     _isSaving = true;
     _uploadError = null;
     notifyListeners();
@@ -86,9 +114,16 @@ class ProfileProvider extends ChangeNotifier {
       final repo = ProfileRepositoryImpl(
         ProfileRemoteDataSource(HttpClient.instance),
       );
-      final updated = await repo.updateProfile(name: name, lastName: lastName);
+      final updated = await repo.updateProfile(
+        name:        nameCtrl.text.trim(),
+        lastName:    lastNameCtrl.text.trim(),
+        dialCode:    _dialCode,
+        phoneNumber: phoneCtrl.text.trim().isEmpty ? null : phoneCtrl.text.trim(),
+        description: descriptionCtrl.text.trim().isEmpty ? null : descriptionCtrl.text.trim(),
+      );
       CurrentUserAvatar.instance.value = updated.profileImage;
       _setState(UiSuccess(updated));
+      _editingInfo = false;
       return true;
     } catch (e) {
       _uploadError = e.toString().replaceFirst('Exception: ', '');
@@ -119,13 +154,16 @@ class ProfileProvider extends ChangeNotifier {
         _setState(
           UiSuccess(
             ProfileUser(
-              firstName: current.firstName,
-              lastName: current.lastName,
-              email: current.email,
-              role: current.role,
-              circuit: current.circuit,
+              firstName:   current.firstName,
+              lastName:    current.lastName,
+              email:       current.email,
+              role:        current.role,
+              circuit:     current.circuit,
               memberSince: current.memberSince,
               profileImage: url,
+              dialCode:    current.dialCode,
+              phoneNumber: current.phoneNumber,
+              description: current.description,
             ),
           ),
         );
@@ -137,5 +175,14 @@ class ProfileProvider extends ChangeNotifier {
       _isUploading = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    nameCtrl.dispose();
+    lastNameCtrl.dispose();
+    phoneCtrl.dispose();
+    descriptionCtrl.dispose();
+    super.dispose();
   }
 }

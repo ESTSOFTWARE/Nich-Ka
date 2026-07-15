@@ -11,6 +11,7 @@ class UserProfileDto {
   final String? profileImage;
   final String? phoneNumber;
   final String? dialCode;
+  final String? description;
   final String? username;
   final String? createdAt;
   final bool tourCompleted;
@@ -28,6 +29,7 @@ class UserProfileDto {
     this.profileImage,
     this.phoneNumber,
     this.dialCode,
+    this.description,
     this.username,
     this.createdAt,
     this.tourCompleted = false,
@@ -48,6 +50,7 @@ class UserProfileDto {
     profileImage: json['profile_image'] as String?,
     phoneNumber: json['phone_number'] as String?,
     dialCode: json['dial_code'] as String?,
+    description: json['description'] as String?,
     username: json['username'] as String?,
     createdAt: json['created_at'] as String?,
     tourCompleted: json['tour_completed'] as bool? ?? false,

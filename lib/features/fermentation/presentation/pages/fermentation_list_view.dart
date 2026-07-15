@@ -22,7 +22,17 @@ class FermentationListView extends StatelessWidget {
       builder: (context, provider) {
         final isDark = AppThemeScope.of(context).isDark;
         final palette = AppPalette.of(isDark);
-        return Scaffold(
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
+          child: Scaffold(
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
@@ -143,7 +153,8 @@ class FermentationListView extends StatelessWidget {
               ),
             ],
           ),
-        );
+        ),  // Scaffold
+        );  // PopScope
       },
     );
   }

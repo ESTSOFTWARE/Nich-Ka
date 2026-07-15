@@ -7,6 +7,7 @@ import 'package:open_filex/open_filex.dart';
 import '../../features/messages/presentation/open_chat_from_push.dart';
 import '../audio/active_chat.dart';
 import '../network/http_client.dart';
+import '../router/app_router.dart';
 
 /// Notificaciones push (FCM). Pide permiso, registra el token en el backend
 /// y muestra la notificación cuando la app está en primer plano.
@@ -76,6 +77,10 @@ class PushService {
   /// del push.
   void _navigate(Map<String, dynamic> data) {
     final type = data['type'];
+    if (type == 'fermentation_started') {
+      appRouter.push('/fermentations');
+      return;
+    }
     if (type != 'chat_message' && type != 'chat_mention') return;
     final convId = int.tryParse('${data['conversation_id']}');
     if (convId == null) return;
