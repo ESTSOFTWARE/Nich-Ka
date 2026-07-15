@@ -20,8 +20,20 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _dataSource.uploadProfileImage(file);
 
   @override
-  Future<ProfileUser> updateProfile({String? name, String? lastName}) async {
-    final dto = await _dataSource.updateProfile(name: name, lastName: lastName);
+  Future<ProfileUser> updateProfile({
+    String? name,
+    String? lastName,
+    String? dialCode,
+    String? phoneNumber,
+    String? description,
+  }) async {
+    final dto = await _dataSource.updateProfile(
+      name: name,
+      lastName: lastName,
+      dialCode: dialCode,
+      phoneNumber: phoneNumber,
+      description: description,
+    );
     return ProfileMapper.fromUserProfileDto(dto);
   }
 }

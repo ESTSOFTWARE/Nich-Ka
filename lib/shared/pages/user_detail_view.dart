@@ -451,10 +451,10 @@ class UserDetailView extends StatelessWidget {
             palette: palette,
             icon: Icons.phone_outlined,
             label: 'Teléfono',
-            value: dto.phoneNumber != null && dto.phoneNumber!.isNotEmpty
-                ? dto.phoneNumber!
+            value: (dto.phoneNumber?.isNotEmpty ?? false)
+                ? '${dto.dialCode ?? ''} ${dto.phoneNumber!}'.trim()
                 : 'Sin teléfono',
-            valueColor: dto.phoneNumber != null && dto.phoneNumber!.isNotEmpty
+            valueColor: (dto.phoneNumber?.isNotEmpty ?? false)
                 ? palette.textPrimary
                 : palette.textMuted,
           ),
@@ -464,6 +464,11 @@ class UserDetailView extends StatelessWidget {
   }
 
   Widget _buildDescriptionCard(ClassPalette palette, UserProfileDto dto) {
+    final text = (dto.description?.isNotEmpty ?? false)
+        ? dto.description!
+        : 'Sin descripción';
+    final hasDesc = dto.description?.isNotEmpty ?? false;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -486,8 +491,11 @@ class UserDetailView extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Sin descripción',
-            style: GoogleFonts.poppins(fontSize: 14, color: palette.textMuted),
+            text,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: hasDesc ? palette.textPrimary : palette.textMuted,
+            ),
           ),
         ],
       ),

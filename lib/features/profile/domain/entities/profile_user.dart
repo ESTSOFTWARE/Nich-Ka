@@ -6,6 +6,9 @@ class ProfileUser {
   final String circuit;
   final String memberSince;
   final String? profileImage;
+  final String? dialCode;
+  final String? phoneNumber;
+  final String? description;
 
   const ProfileUser({
     required this.firstName,
@@ -15,6 +18,9 @@ class ProfileUser {
     required this.circuit,
     required this.memberSince,
     this.profileImage,
+    this.dialCode,
+    this.phoneNumber,
+    this.description,
   });
 
   String get fullName => '$firstName $lastName';
