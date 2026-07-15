@@ -91,7 +91,12 @@ class HomeProvider extends ChangeNotifier {
     _notifSub = NotificationWebSocketService.instance.events.listen(
       _onNotification,
     );
-    _ticker = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
+    // Refresca la UI cada 2 s con el progreso calculado localmente (sin red).
+    _ticker = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (_session == null) return;
+      notifyListeners();
+      _checkPredictionThresholds();
+    });
 
     _loadFermentations();
     _checkPredictionThresholds();
@@ -193,29 +198,6 @@ class HomeProvider extends ChangeNotifier {
       ringColor: ringColor,
       sessionId: s.id,
     );
-  }
-
-  Future<void> _refresh() async {
-    try {
-      final active = await _getActive();
-      if (active == null) {
-        if (_session != null) {
-          _session = null;
-          await _sub?.cancel();
-          _sub = null;
-        }
-      } else {
-        final wasNull = _session == null;
-        _session = active;
-        if (wasNull) {
-          _sub = _watchSensors(active.circuitId).listen(_applyReading);
-        }
-      }
-      _checkPredictionThresholds();
-      notifyListeners();
-    } catch (_) {
-      /* reintenta luego */
-    }
   }
 
   void _applyReading(SensorRealtimeReading r) {

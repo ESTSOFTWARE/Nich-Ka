@@ -114,9 +114,13 @@ class HomeStudentView extends StatelessWidget {
                           (e) => HomeFeatureItem(
                             feature: e.value,
                             palette: palette,
-                            onTap: e.key == 0
-                                ? () => context.push('/sensors')
-                                : null,
+                            onTap: switch (e.key) {
+                              0 => () => context.push('/sensors'),
+                              1 => () => context.push('/fermentations'),
+                              2 => () => context.push('/assistant'),
+                              3 => () => context.push('/reports'),
+                              _ => null,
+                            },
                           ),
                         ),
                       ],

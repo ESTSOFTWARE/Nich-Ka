@@ -23,6 +23,9 @@ class ProfileMapper {
       circuit: '',
       memberSince: memberSince,
       profileImage: dto.profileImage,
+      dialCode: dto.dialCode,
+      phoneNumber: dto.phoneNumber,
+      description: dto.description,
     );
   }
 

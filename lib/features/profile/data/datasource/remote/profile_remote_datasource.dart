@@ -26,10 +26,19 @@ class ProfileRemoteDataSource {
     );
   }
 
-  Future<UserProfileDto> updateProfile({String? name, String? lastName}) async {
+  Future<UserProfileDto> updateProfile({
+    String? name,
+    String? lastName,
+    String? dialCode,
+    String? phoneNumber,
+    String? description,
+  }) async {
     final response = await _client.put('/users/${_client.userId}', {
       'name': ?name,
       'last_name': ?lastName,
+      'dial_code': ?dialCode,
+      'phone_number': ?phoneNumber,
+      'description': ?description,
     });
     _assertSuccess(response, 'No se pudo actualizar el perfil.');
     // El PUT devuelve el usuario en formato admin; releemos /users/me para
