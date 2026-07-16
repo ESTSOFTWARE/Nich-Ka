@@ -131,6 +131,28 @@ class PushService {
     );
   }
 
+  Future<void> showLocalNotification({
+    required String title,
+    required String body,
+  }) async {
+    if (!_localReady) return;
+    await _local.show(
+      title.hashCode ^ body.hashCode,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channel.id,
+          _channel.name,
+          channelDescription: _channel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+      ),
+    );
+  }
+
   Future<void> showFileSaved(String fileName, String filePath) async {
     if (!_localReady) return;
     await _local.show(

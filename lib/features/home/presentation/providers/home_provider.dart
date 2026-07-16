@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/network/http_client.dart';
+import '../../../../core/push/push_service.dart';
 import '../../../../features/fermentation/data/datasource/remote/active_fermentation_datasource.dart';
 import '../../../../features/fermentation/data/repositories/active_fermentation_repository_impl.dart';
 import '../../../../features/fermentation/domain/entities/active_fermentation_session.dart';
@@ -115,19 +117,35 @@ class HomeProvider extends ChangeNotifier {
     await prefs.setBool(_prefKey(sessionId, threshold), true);
   }
 
-  Future<void> requestPrediction() async {
+  Future<String?> requestPrediction({bool showPush = false}) async {
     final session = _session;
-    if (session == null || _isPredicting) return;
+    if (session == null || _isPredicting) return null;
     _isPredicting = true;
     notifyListeners();
+    String? message;
     try {
-      await HttpClient.instance.post(
+      final resp = await HttpClient.instance.post(
         '/fermentation/${session.id}/predict-now',
         {},
       );
+      final data = jsonDecode(resp.body) as Map<String, dynamic>;
+      message = data['message'] as String?;
+      if (message != null && message.isNotEmpty) {
+        recommendation = AiRecommendation(
+          body: message,
+          actionLabel: 'Ver análisis',
+        );
+        if (showPush) {
+          await PushService.instance.showLocalNotification(
+            title: '🍵 Predicción de eficiencia',
+            body: message,
+          );
+        }
+      }
     } catch (_) {}
     _isPredicting = false;
     notifyListeners();
+    return message;
   }
 
   Future<void> _checkPredictionThresholds() async {
@@ -137,11 +155,11 @@ class HomeProvider extends ChangeNotifier {
     final id = session.id;
     if (progress >= 50 && !await _hasPredicted(id, 50)) {
       await _markPredicted(id, 50);
-      requestPrediction();
+      requestPrediction(showPush: true);
     }
     if (progress >= 80 && !await _hasPredicted(id, 80)) {
       await _markPredicted(id, 80);
-      requestPrediction();
+      requestPrediction(showPush: true);
     }
   }
 
