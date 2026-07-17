@@ -52,7 +52,9 @@ class NotificationWebSocketService {
   Future<void> _open() async {
     if (_closed) return;
 
-    final token = _token ?? HttpClient.instance.accessToken;
+    // Token fresco primero: el cacheado en connect() expira y las reconexiones
+    // con token viejo fallan con 4401 en bucle (la campanita deja de recibir).
+    final token = HttpClient.instance.accessToken ?? _token;
     final base = HttpClient.wsBaseUrl;
     final uri = Uri.parse(
       '$base/ws/notifications/$_userId${token != null ? '?token=$token' : ''}',
