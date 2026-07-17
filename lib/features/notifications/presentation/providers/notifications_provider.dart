@@ -64,12 +64,14 @@ class NotificationsProvider extends ChangeNotifier {
 
     _stateSub = _watchState().listen(_onConnectionState);
     _connect(userId: userId);
+    // Configurar listener ANTES del fetch: si llega una notificación mientras
+    // el HTTP está en vuelo (p.ej. fermentation_started justo al abrir la app),
+    // el broadcast stream ya tiene listener y no se pierde el evento.
+    _sub = _listen().listen(_onNotificationReceived);
 
     final items = await _fetch();
     _items = items.reversed.toList();
     notifyListeners();
-
-    _sub = _listen().listen(_onNotificationReceived);
   }
 
   /// Corta todo (al cerrar sesión).
