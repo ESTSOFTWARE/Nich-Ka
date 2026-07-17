@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../../../core/utils/server_date.dart';
@@ -102,13 +103,27 @@ class ChatMessageBubble extends StatelessWidget {
                 if (!isMe && isFirst && groupChat)
                   Padding(
                     padding: const EdgeInsets.only(left: 2, bottom: 3),
-                    child: Text(
-                      message.senderName,
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: _colorForSender(message.senderName),
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          message.senderName,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: _colorForSender(message.senderName),
+                          ),
+                        ),
+                        if (message.senderRole == 'admin') ...[
+                          const SizedBox(width: 4),
+                          SvgPicture.asset(
+                            'assets/icons/verified.svg',
+                            width: 13,
+                            height: 13,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
 

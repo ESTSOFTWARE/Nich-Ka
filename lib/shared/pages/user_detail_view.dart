@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/presentation/app_theme_scope.dart';
@@ -195,14 +196,29 @@ class UserDetailView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            displayName,
-            style: GoogleFonts.poppins(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: palette.textPrimary,
-              height: 1.15,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  displayName,
+                  style: GoogleFonts.poppins(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: palette.textPrimary,
+                    height: 1.15,
+                  ),
+                ),
+              ),
+              if (dto.role == 'admin') ...[
+                const SizedBox(width: 8),
+                SvgPicture.asset(
+                  'assets/icons/verified.svg',
+                  width: 24,
+                  height: 24,
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: 8),
           _buildDescriptionCard(palette, dto),
