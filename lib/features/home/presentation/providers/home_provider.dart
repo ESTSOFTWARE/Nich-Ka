@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/network/http_client.dart';
-import '../../../../core/push/push_service.dart';
 import '../../../../features/fermentation/data/datasource/remote/active_fermentation_datasource.dart';
 import '../../../../features/fermentation/data/repositories/active_fermentation_repository_impl.dart';
 import '../../../../features/fermentation/domain/entities/active_fermentation_session.dart';
@@ -117,7 +116,9 @@ class HomeProvider extends ChangeNotifier {
     await prefs.setBool(_prefKey(sessionId, threshold), true);
   }
 
-  Future<String?> requestPrediction({bool showPush = false}) async {
+  // El push de la predicción llega vía FCM desde el backend; aquí solo se
+  // pinta el mensaje en la card de recomendación.
+  Future<String?> requestPrediction() async {
     final session = _session;
     if (session == null || _isPredicting) return null;
     _isPredicting = true;
@@ -135,12 +136,6 @@ class HomeProvider extends ChangeNotifier {
           body: message,
           actionLabel: 'Ver análisis',
         );
-        if (showPush) {
-          await PushService.instance.showLocalNotification(
-            title: '🍵 Predicción de eficiencia',
-            body: message,
-          );
-        }
       }
     } catch (_) {}
     _isPredicting = false;
@@ -155,11 +150,11 @@ class HomeProvider extends ChangeNotifier {
     final id = session.id;
     if (progress >= 50 && !await _hasPredicted(id, 50)) {
       await _markPredicted(id, 50);
-      requestPrediction(showPush: true);
+      requestPrediction();
     }
     if (progress >= 80 && !await _hasPredicted(id, 80)) {
       await _markPredicted(id, 80);
-      requestPrediction(showPush: true);
+      requestPrediction();
     }
   }
 
