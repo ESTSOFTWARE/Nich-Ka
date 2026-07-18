@@ -10,7 +10,6 @@ import '../../../../core/providers/auth_provider.dart';
 
 part 'splash_gate_view_state.dart';
 
-/// Pantalla inicial: si hay sesión guardada, pide huella y entra sin re-login.
 class SplashGateView extends StatefulWidget {
   const SplashGateView({super.key});
 

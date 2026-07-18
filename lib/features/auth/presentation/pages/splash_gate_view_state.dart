@@ -8,13 +8,11 @@ class _SplashGateViewState extends State<SplashGateView> {
   }
 
   Future<void> _decide() async {
-    // ¿Hay una sesión guardada de un login anterior?
     if (!await SessionManager.instance.hasSession()) {
       _goLogin();
       return;
     }
 
-    // Si el equipo tiene huella/rostro, pídelo. Si no, entra directo.
     if (await BiometricService.isAvailable()) {
       final ok = await BiometricService.authenticate();
       if (!ok) {
@@ -23,7 +21,6 @@ class _SplashGateViewState extends State<SplashGateView> {
       }
     }
 
-    // Renueva el access token con el refresh guardado.
     final token = await SessionManager.instance.restore();
     if (token == null || !mounted) {
       _goLogin();
