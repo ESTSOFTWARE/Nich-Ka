@@ -11,6 +11,10 @@ import '../../domain/use_cases/get_report_detail_use_case.dart';
 import '../states/ui_state.dart';
 
 class ReportDetailProvider extends ChangeNotifier {
+  final ScrollController scrollController = ScrollController();
+  bool _isScrolled = false;
+  bool get isScrolled => _isScrolled;
+
   final GetReportDetailUseCase _getDetail;
   final DownloadReportPdfUseCase _downloadPdf;
 
@@ -46,7 +50,23 @@ class ReportDetailProvider extends ChangeNotifier {
                ReportsRemoteDataSource(HttpClient.instance),
              ),
            ) {
+    scrollController.addListener(_onScroll);
     _loadDetail();
+  }
+
+  void _onScroll() {
+    final scrolled = scrollController.offset > 4;
+    if (scrolled != _isScrolled) {
+      _isScrolled = scrolled;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadDetail() async {

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -38,128 +39,149 @@ class ReportDetailView extends StatelessWidget {
           _ => null,
         };
 
+        final toolbarHeight = successData != null ? 64.0 : kToolbarHeight;
+
         return Scaffold(
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            systemOverlayStyle: isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            automaticallyImplyLeading: false,
-            centerTitle: false,
-            toolbarHeight: successData != null ? 64 : kToolbarHeight,
-            leadingWidth: 56,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: GestureDetector(
-                onTap: () =>
-                    context.canPop() ? context.pop() : context.go('/reports'),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: palette.border),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(toolbarHeight),
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: provider.isScrolled ? 20 : 0,
+                  sigmaY: provider.isScrolled ? 20 : 0,
+                ),
+                child: AppBar(
+                  backgroundColor: provider.isScrolled
+                      ? homePalette.glassBackground
+                      : Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  systemOverlayStyle: isDark
+                      ? SystemUiOverlayStyle.light
+                      : SystemUiOverlayStyle.dark,
+                  automaticallyImplyLeading: false,
+                  centerTitle: false,
+                  toolbarHeight: toolbarHeight,
+                  leadingWidth: 56,
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: GestureDetector(
+                      onTap: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/reports'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: palette.border),
+                        ),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: palette.textPrimary,
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Icon(
-                    Icons.chevron_left,
-                    color: palette.textPrimary,
-                    size: 22,
-                  ),
+                  title: successData != null
+                      ? _buildHeaderTitle(successData, palette)
+                      : Text(
+                          'Detalle de Reporte',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: palette.textPrimary,
+                          ),
+                        ),
+                  actions: [
+                    if (successData != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: GestureDetector(
+                          onTap: provider.isDownloading
+                              ? null
+                              : () => provider.downloadReportPdf(),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ReportsPalette.accent.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: ReportsPalette.accent.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                            ),
+                            child: provider.isDownloading
+                                ? SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: ReportsPalette.accent,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.file_download_outlined,
+                                        size: 16,
+                                        color: ReportsPalette.accent,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'PDF',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: ReportsPalette.accent,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      )
+                    else
+                      Center(
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.only(right: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.more_horiz,
+                            color: palette.textPrimary,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
-            title: successData != null
-                ? _buildHeaderTitle(successData, palette)
-                : Text(
-                    'Detalle de Reporte',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: palette.textPrimary,
-                    ),
-                  ),
-            actions: [
-              if (successData != null)
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: GestureDetector(
-                    onTap: provider.isDownloading
-                        ? null
-                        : () => provider.downloadReportPdf(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ReportsPalette.accent.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: ReportsPalette.accent.withValues(alpha: 0.4),
-                        ),
-                      ),
-                      child: provider.isDownloading
-                          ? SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ReportsPalette.accent,
-                              ),
-                            )
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.file_download_outlined,
-                                  size: 16,
-                                  color: ReportsPalette.accent,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'PDF',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: ReportsPalette.accent,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                )
-              else
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    margin: const EdgeInsets.only(right: 16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: palette.border),
-                    ),
-                    child: Icon(
-                      Icons.more_horiz,
-                      color: palette.textPrimary,
-                      size: 20,
-                    ),
-                  ),
-                ),
-            ],
           ),
           body: Stack(
             children: [
               HomeGlow(palette: homePalette),
               switch (provider.state) {
                 UiLoading<ReportDetail>() => SingleChildScrollView(
+                  controller: provider.scrollController,
                   padding: EdgeInsets.fromLTRB(
                     16,
                     MediaQuery.of(context).padding.top + kToolbarHeight + 8,
@@ -177,6 +199,7 @@ class ReportDetailView extends StatelessWidget {
                 ),
                 UiSuccess<ReportDetail>(:final data) => _buildContent(
                   context,
+                  provider,
                   data,
                   palette,
                   homePalette,
@@ -244,11 +267,13 @@ class ReportDetailView extends StatelessWidget {
 
   Widget _buildContent(
     BuildContext context,
+    ReportDetailProvider provider,
     ReportDetail detail,
     ReportsPalette palette,
     AppPalette homePalette,
   ) {
     return SingleChildScrollView(
+      controller: provider.scrollController,
       padding: EdgeInsets.fromLTRB(
         16,
         MediaQuery.of(context).padding.top + kToolbarHeight + 24,

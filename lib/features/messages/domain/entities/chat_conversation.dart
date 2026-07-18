@@ -40,6 +40,15 @@ class ChatConversation {
     return other.name;
   }
 
+  /// El otro miembro en un chat 1 a 1 (null en grupos o si no hay datos).
+  ChatMember? otherMember(int myId) {
+    if (isGroup) return null;
+    for (final m in members) {
+      if (m.id != myId) return m;
+    }
+    return null;
+  }
+
   String? displayAvatar(int myId) {
     if (isGroup) return avatar;
     final other = members.firstWhere(

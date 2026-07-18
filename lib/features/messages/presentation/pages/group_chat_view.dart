@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../class/domain/entities/class_member.dart';
 import '../components/group_members_sheet.dart';
 import '../components/reactions_viewer_sheet.dart';
 import '../../domain/entities/chat_conversation.dart';
@@ -90,7 +91,7 @@ class GroupChatView extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: provider.conversation.isGroup
                         ? () => _showMembers(context, provider, palette)
-                        : null,
+                        : () => _openOtherUserDetail(context, provider),
                     child: Row(
                       children: [
                         _buildAvatar(
@@ -682,6 +683,24 @@ class GroupChatView extends StatelessWidget {
         provider: provider,
         palette: palette,
         myUserId: provider.myUserId,
+      ),
+    );
+  }
+
+  /// Chat 1 a 1: tocar el header abre el detalle de perfil del otro usuario,
+  /// igual que tocar un miembro en el sheet de un grupo.
+  void _openOtherUserDetail(BuildContext context, GroupChatProvider provider) {
+    final other = provider.conversation.otherMember(provider.myUserId);
+    if (other == null) return;
+    final initials = (other.name.isNotEmpty ? other.name[0] : '').toUpperCase();
+    context.push(
+      '/user-detail',
+      extra: ClassMember(
+        id: other.id,
+        initials: initials,
+        color: AppPalette.accent,
+        name: other.name,
+        avatar: other.avatar,
       ),
     );
   }
