@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/network/http_client.dart';
+import '../../../../core/push/push_service.dart';
 import '../../../../features/fermentation/data/datasource/remote/active_fermentation_datasource.dart';
 import '../../../../features/fermentation/data/repositories/active_fermentation_repository_impl.dart';
 import '../../../../features/fermentation/domain/entities/active_fermentation_session.dart';
@@ -51,7 +52,6 @@ class HomeProvider extends ChangeNotifier {
   List<FermentationItem> _fermentations = [];
   List<FermentationItem> get fermentations => _fermentations;
 
-  // Últimos valores en vivo por tipo de sensor (del WebSocket).
   final Map<String, double> _live = {};
   final List<double> _alcoholHistory = [];
 
@@ -92,7 +92,6 @@ class HomeProvider extends ChangeNotifier {
     _notifSub = NotificationWebSocketService.instance.events.listen(
       _onNotification,
     );
-    // Refresca la UI cada 2 s con el progreso calculado localmente (sin red).
     _ticker = Timer.periodic(const Duration(seconds: 2), (_) {
       if (_session == null) return;
       notifyListeners();
@@ -116,8 +115,6 @@ class HomeProvider extends ChangeNotifier {
     await prefs.setBool(_prefKey(sessionId, threshold), true);
   }
 
-  // El push de la predicción llega vía FCM desde el backend; aquí solo se
-  // pinta el mensaje en la card de recomendación.
   Future<String?> requestPrediction() async {
     final session = _session;
     if (session == null || _isPredicting) return null;
@@ -135,6 +132,12 @@ class HomeProvider extends ChangeNotifier {
         recommendation = AiRecommendation(
           body: message,
           actionLabel: 'Ver análisis',
+          title: 'PREDICCIÓN DE EFICIENCIA',
+          isPrediction: true,
+        );
+        await PushService.instance.showLocalNotification(
+          title: '🔮 Predicción de eficiencia',
+          body: message,
         );
       }
     } catch (_) {}
@@ -237,6 +240,10 @@ class HomeProvider extends ChangeNotifier {
     recommendation = AiRecommendation(
       body: event.message,
       actionLabel: 'Ver análisis',
+      title: event.type == 'efficiency'
+          ? 'PREDICCIÓN DE EFICIENCIA'
+          : 'RECOMENDACIÓN IA',
+      isPrediction: event.type == 'efficiency',
     );
     notifyListeners();
   }

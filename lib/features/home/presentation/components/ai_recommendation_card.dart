@@ -18,6 +18,10 @@ class AiRecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = recommendation.isPrediction
+        ? AppPalette.metricPurple
+        : AppPalette.accent;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -34,7 +38,7 @@ class AiRecommendationCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppPalette.accent.withValues(alpha: 0.15),
+                  color: accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -42,20 +46,17 @@ class AiRecommendationCard extends StatelessWidget {
                     'assets/icons/ia.svg',
                     width: 18,
                     height: 18,
-                    colorFilter: const ColorFilter.mode(
-                      AppPalette.accent,
-                      BlendMode.srcIn,
-                    ),
+                    colorFilter: ColorFilter.mode(accent, BlendMode.srcIn),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
               Text(
-                'RECOMENDACIÓN IA',
+                recommendation.title,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: AppPalette.accent,
+                  color: accent,
                   letterSpacing: 0.8,
                 ),
               ),
