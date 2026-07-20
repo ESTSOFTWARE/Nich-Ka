@@ -1,5 +1,7 @@
 String titleForType(String type) {
   switch (type) {
+    case 'fermentation_started':
+      return 'Nueva fermentación';
     case 'fermentation_complete':
       return 'Fermentación completada';
     case 'fermentation_interrupted':

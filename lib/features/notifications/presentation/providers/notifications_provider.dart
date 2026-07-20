@@ -69,8 +69,8 @@ class NotificationsProvider extends ChangeNotifier {
     // el broadcast stream ya tiene listener y no se pierde el evento.
     _sub = _listen().listen(_onNotificationReceived);
 
-    final items = await _fetch();
-    _items = items.reversed.toList();
+    // El datasource ya entrega las más recientes primero.
+    _items = await _fetch();
     notifyListeners();
   }
 

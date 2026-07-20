@@ -177,6 +177,8 @@ class MessagesProvider extends ChangeNotifier {
                   lastMessage: msg,
                   unreadCount: seen ? conv.unreadCount : conv.unreadCount + 1,
                 );
+              // El chat con el mensaje nuevo sube al principio de la lista.
+              _sortConversations();
               notifyListeners();
             }
             // Sonido: mensaje nuevo en otra conversación (si no es mío y no estoy dentro de ella;
@@ -233,12 +235,23 @@ class MessagesProvider extends ChangeNotifier {
 
   // ── Conversations ────────────────────────────────────────────────────────────
 
+  /// Chat con actividad más reciente primero (último mensaje, o creación si
+  /// aún no tiene mensajes).
+  void _sortConversations() {
+    _conversations.sort((a, b) {
+      final da = a.lastMessage?.createdAt ?? a.createdAt;
+      final db = b.lastMessage?.createdAt ?? b.createdAt;
+      return db.compareTo(da);
+    });
+  }
+
   Future<void> _load() async {
     _state = MessagesUiState.loading;
     _error = null;
     notifyListeners();
     try {
       _conversations = await _getConversations();
+      _sortConversations();
       _state = _conversations.isEmpty
           ? MessagesUiState.empty
           : MessagesUiState.success;

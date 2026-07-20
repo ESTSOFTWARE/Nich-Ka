@@ -27,6 +27,15 @@ class _SplashGateViewState extends State<SplashGateView> {
       return;
     }
 
+    // Solo estudiantes entran a la app móvil (admin/profesor usan la web).
+    // Una sesión guardada con otro rol se descarta.
+    if (token.role != 'estudiante') {
+      HttpClient.instance.clearTokens();
+      await SessionManager.instance.clear();
+      _goLogin();
+      return;
+    }
+
     context.read<AuthProvider>().setUser(token);
     final route = await resolveEntryRoute();
     if (mounted) context.go(route);
