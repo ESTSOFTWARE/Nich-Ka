@@ -1,0 +1,3 @@
+class CalculatorDependencies {
+  CalculatorDependencies._();
+}
