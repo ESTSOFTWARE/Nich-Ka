@@ -12,9 +12,12 @@ class ReportsRemoteDataSource {
 
   /// Una sola petición que devuelve sesiones + reporte (o null) juntos.
   /// El backend resuelve el join en BD; evita el N+1 del enfoque anterior.
+  /// limit=50: sin él el backend serializa el historial completo y la vista tarda.
   Future<List<(FermentationSessionResponseDto, FermentationReportResponseDto?)>>
   getSessionsWithReports() async {
-    final response = await _client.get('/fermentation/sessions-with-reports');
+    final response = await _client.get(
+      '/fermentation/sessions-with-reports?limit=50',
+    );
     _assertSuccess(response, 'No se pudieron obtener las sesiones.');
     final list = jsonDecode(response.body) as List<dynamic>;
     return list.map((e) {

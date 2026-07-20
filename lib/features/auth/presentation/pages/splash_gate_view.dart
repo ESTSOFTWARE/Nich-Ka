@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/auth/biometric_service.dart';
 import '../../../../core/auth/session_manager.dart';
 import '../../../../core/navigation/entry_route.dart';
+import '../../../../core/network/http_client.dart';
 import '../../../../core/providers/auth_provider.dart';
 
 part 'splash_gate_view_state.dart';

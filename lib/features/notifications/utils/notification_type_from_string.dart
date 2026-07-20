@@ -2,6 +2,8 @@ import '../domain/entities/notification_type.dart';
 
 NotificationType notificationTypeFromString(String type) {
   switch (type) {
+    case 'fermentation_started':
+      return NotificationType.fermentation;
     case 'fermentation_complete':
       return NotificationType.completed;
     case 'experiment_complete':
@@ -9,21 +11,21 @@ NotificationType notificationTypeFromString(String type) {
     case 'fermentation_interrupted':
     case 'high_temperature':
     case 'member_removed':
+    case 'anomaly':
       return NotificationType.alert;
     case 'sensor_failure':
       return NotificationType.sensor;
     case 'recommendation':
       return NotificationType.recommendation;
-    case 'anomaly':
-      return NotificationType.alert;
     case 'efficiency':
-      return NotificationType.analysis;
-    case 'new_announcement':
+      return NotificationType.prediction;
     case 'member_added':
+      return NotificationType.group;
+    case 'new_announcement':
+      return NotificationType.announcement;
     case 'user_registered':
-    case 'general':
-      return NotificationType.recommendation;
+      return NotificationType.user;
     default:
-      return NotificationType.recommendation;
+      return NotificationType.general;
   }
 }

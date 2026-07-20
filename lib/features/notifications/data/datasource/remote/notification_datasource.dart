@@ -37,10 +37,13 @@ class NotificationDatasource {
       return [];
     }
     final list = jsonDecode(response.body) as List<dynamic>;
-    return list
+    final models = list
         .map((e) => NotificationDto.fromJson(e as Map<String, dynamic>))
         .map(NotificationMapper.fromDto)
         .toList();
+    // Más recientes primero, sin asumir el orden en que responde el backend.
+    models.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return models;
   }
 
   Future<bool> markAsRead(int notificationId) async {
