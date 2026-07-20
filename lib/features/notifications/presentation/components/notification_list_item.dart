@@ -36,22 +36,13 @@ class NotificationListItem extends StatelessWidget {
       Icons.science_outlined,
       const Color(0xFF14B8A6),
     ),
-    NotificationType.group => (
-      Icons.group_outlined,
-      const Color(0xFF34D399),
-    ),
+    NotificationType.group => (Icons.group_outlined, const Color(0xFF34D399)),
     NotificationType.announcement => (
       Icons.campaign_outlined,
       const Color(0xFFFBBF24),
     ),
-    NotificationType.user => (
-      Icons.person_outline,
-      const Color(0xFFA78BFA),
-    ),
-    NotificationType.prediction => (
-      Icons.insights,
-      AppPalette.metricPurple,
-    ),
+    NotificationType.user => (Icons.person_outline, const Color(0xFFA78BFA)),
+    NotificationType.prediction => (Icons.insights, AppPalette.metricPurple),
     NotificationType.general => (
       Icons.notifications_none,
       const Color(0xFF8A8A8E),
