@@ -1,0 +1,30 @@
+graph TB
+    subgraph App["Nich-Ká App"]
+        HC["HttpClient Singleton"]
+        WS_N["NotificationWebSocket"]
+        WS_C["ChatWebSocket"]
+        WS_S["SensorsWebSocket"]
+        Groq["GroqApiService"]
+        FCM["PushService"]
+    end
+
+    subgraph Backend["Backend Nich-Ká"]
+        REST["REST API /api"]
+        WS_N2["WS /ws/notifications"]
+        WS_C2["WS /ws/chat"]
+        WS_S2["WS /ws/sensors"]
+    end
+
+    subgraph External["Servicios Externos"]
+        GROQ["Groq AI API"]
+        FB["Firebase Cloud Messaging"]
+        GOOG["Google Sign-In"]
+    end
+
+    HC -->|HTTP REST| REST
+    WS_N -->|WebSocket| WS_N2
+    WS_C -->|WebSocket| WS_C2
+    WS_S -->|WebSocket| WS_S2
+    Groq -->|HTTP REST| GROQ
+    FCM -->|FCM| FB
+    HC -.->|OAuth| GOOG

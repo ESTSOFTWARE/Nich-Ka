@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Loading : loadData()
+    Loading --> Success : Datos recibidos
+    Loading --> Error : Excepción
+    Success --> Loading : refresh()
+    Error --> Loading : retry()
+    Success --> Idle : reset()
+    Error --> Idle : reset()
+
+    state Success {
+        [*] --> DataReady
+    }
+
+    state Error {
+        [*] --> ErrorMessage
+    }

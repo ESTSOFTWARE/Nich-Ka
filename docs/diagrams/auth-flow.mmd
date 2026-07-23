@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant U as Usuario
+    participant App as Nich-Ká App
+    participant API as Backend API
+    participant Google as Google OAuth
+
+    U->>App: Login (email/password o Google)
+    
+    alt Email/Password
+        App->>API: POST /auth/login
+        API-->>App: {access_token, refresh_token, user}
+    else Google
+        App->>Google: Google Sign-In
+        Google-->>App: idToken
+        App->>API: POST /auth/google/mobile {idToken}
+        API-->>App: {access_token, refresh_token, user}
+    end
+
+    App->>App: saveTokens(access, refresh, userId)
+    App->>App: SessionManager.save(token, refresh)
+    App->>App: AuthProvider.setUser(token)
+    App->>API: POST /notifications/device-token (FCM token)
+
+    Note over App,API: Renovación automática
+    App->>API: POST /auth/refresh/mobile {refresh_token}
+    API-->>App: {access_token}
+    App->>App: setAccessToken(newToken)
