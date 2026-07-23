@@ -9,6 +9,8 @@ class ClassTeacherCard extends StatelessWidget {
   final Color avatarColor;
   final ClassPalette palette;
   final String? avatar;
+  final VoidCallback? onTapProfile;
+  final VoidCallback? onTapEmail;
 
   const ClassTeacherCard({
     super.key,
@@ -18,6 +20,8 @@ class ClassTeacherCard extends StatelessWidget {
     required this.avatarColor,
     required this.palette,
     this.avatar,
+    this.onTapProfile,
+    this.onTapEmail,
   });
 
   Widget _initials() => Text(
@@ -53,61 +57,75 @@ class ClassTeacherCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: avatarColor,
-                  shape: BoxShape.circle,
-                ),
-                child: (avatar != null && avatar!.isNotEmpty)
-                    ? Image.network(
-                        avatar!,
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onTapProfile,
+                  child: Row(
+                    children: [
+                      Container(
                         width: 44,
                         height: 44,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stack) => _initials(),
-                      )
-                    : _initials(),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: palette.textPrimary,
+                        alignment: Alignment.center,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: avatarColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: (avatar != null && avatar!.isNotEmpty)
+                            ? Image.network(
+                                avatar!,
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stack) =>
+                                    _initials(),
+                              )
+                            : _initials(),
                       ),
-                    ),
-                    Text(
-                      email,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: palette.textSecondary,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: palette.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              email,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: palette.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                width: 36,
-                height: 36,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: palette.border),
-                ),
-                child: Icon(
-                  Icons.mail_outline,
-                  size: 17,
-                  color: palette.textSecondary,
+              GestureDetector(
+                onTap: onTapEmail,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: palette.border),
+                  ),
+                  child: Icon(
+                    Icons.mail_outline,
+                    size: 17,
+                    color: palette.textSecondary,
+                  ),
                 ),
               ),
             ],

@@ -16,6 +16,8 @@ import '../components/home_empty_card.dart';
 import '../components/home_feature_item.dart';
 import '../components/home_glow.dart';
 import '../providers/home_student_provider.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class HomeStudentView extends StatelessWidget {
   const HomeStudentView({super.key});
@@ -49,6 +51,7 @@ class HomeStudentView extends StatelessWidget {
               ),
               appBar: MainAppBar(
                 palette: palette,
+                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
                 isScrolled: provider.isScrolled,
                 onMenuTap: () =>
                     provider.scaffoldKey.currentState?.openDrawer(),
@@ -57,73 +60,77 @@ class HomeStudentView extends StatelessWidget {
               body: Stack(
                 children: [
                   HomeGlow(palette: palette),
-                  SingleChildScrollView(
-                    controller: provider.scrollController,
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                      16,
-                      32,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    'Hola ${drawerProvider.user?.firstName ?? ''}, ',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w400,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                  ResponsiveCenter(
+                    child: SingleChildScrollView(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        MediaQuery.of(context).padding.top +
+                            appBarHeight(context) +
+                            8,
+                        16,
+                        32,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      'Hola ${drawerProvider.user?.firstName ?? ''}, ',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w400,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: provider.greeting,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                                TextSpan(
+                                  text: provider.greeting,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        HomeEmptyCard(
-                          palette: palette,
-                          onJoinClass: () => context.push('/class'),
-                        ),
-                        const SizedBox(height: 28),
-                        Text(
-                          'QUÉ PODRÁS HACER',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: palette.textMuted,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        ...provider.features.asMap().entries.map(
-                          (e) => HomeFeatureItem(
-                            feature: e.value,
+                          const SizedBox(height: 20),
+                          HomeEmptyCard(
                             palette: palette,
-                            onTap: switch (e.key) {
-                              0 => () => context.push('/sensors'),
-                              1 => () => context.push('/fermentations'),
-                              2 => () => context.push('/assistant'),
-                              3 => () => context.push('/reports'),
-                              _ => null,
-                            },
+                            onJoinClass: () => context.push('/class'),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 28),
+                          Text(
+                            'QUÉ PODRÁS HACER',
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: palette.textMuted,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          ...provider.features.asMap().entries.map(
+                            (e) => HomeFeatureItem(
+                              feature: e.value,
+                              palette: palette,
+                              onTap: switch (e.key) {
+                                0 => () => context.push('/sensors'),
+                                1 => () => context.push('/fermentations'),
+                                2 => () => context.push('/assistant'),
+                                3 => () => context.push('/reports'),
+                                _ => null,
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

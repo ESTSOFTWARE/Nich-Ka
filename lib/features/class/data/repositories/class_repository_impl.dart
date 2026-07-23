@@ -13,5 +13,5 @@ class ClassRepositoryImpl implements ClassRepository {
   Future<List<ClassDetail>> getClasses() => _remote.getClasses();
 
   @override
-  Future<void> joinClass(String code) => _remote.joinClass(code);
+  Future<ClassDetail> joinClass(String code) => _remote.joinClass(code);
 }

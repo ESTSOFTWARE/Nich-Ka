@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/presentation/responsive.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/sensor_reading.dart';
+import '../utils/sensor_description.dart';
 import 'sensor_sparkline_painter.dart';
 
 class SensorCard extends StatelessWidget {
@@ -121,6 +123,19 @@ class SensorCard extends StatelessWidget {
                 ),
               ),
             ),
+            // Descripción del sensor: solo en tablet, donde la card es alta y
+            // sobra espacio bajo la gráfica.
+            if (isTablet(context)) ...[
+              const SizedBox(height: 12),
+              Text(
+                sensorDescription(reading.id),
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  height: 1.45,
+                  color: palette.textSecondary,
+                ),
+              ),
+            ],
           ],
         ),
       ),

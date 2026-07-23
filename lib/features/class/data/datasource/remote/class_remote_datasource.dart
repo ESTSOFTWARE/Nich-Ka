@@ -38,6 +38,7 @@ class ClassRemoteDataSource {
           final start = (m['scheduled_start'] ?? '').toString();
           return ClassFermentation(
             id: 'F-${sessionId.toString().padLeft(3, '0')}',
+            sessionId: sessionId,
             variety: 'Sesión #$sessionId',
             process: _formatShortDate(start),
             isActive: status == 'running' || status == 'active',
@@ -46,10 +47,17 @@ class ClassRemoteDataSource {
         .toList();
   }
 
-  Future<void> joinClass(String code) async {
+  /// Devuelve la clase a la que se unió (el backend responde el grupo
+  /// completo) para poder navegar directo a su detalle.
+  Future<ClassDetail> joinClass(String code) async {
     final dto = JoinClassRequestDto(code: code.trim().toUpperCase());
     final response = await _client.post('/groups/join', dto.toJson());
     _assertSuccess(response, 'No se pudo unir a la clase.');
+    return ClassMapper.toDetail(
+      GroupResponseDto.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      ),
+    );
   }
 
   String _formatShortDate(String iso) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/presentation/responsive.dart';
 import '../theme/reports_palette.dart';
 import 'efficiency_ring_painter.dart';
 
@@ -22,6 +23,9 @@ class EfficiencyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = (efficiency / 100).clamp(0.0, 1.0);
+    // En tablet el texto crece con textScaler; el anillo debe crecer parejo
+    // para que el "100.0%" no se salga del círculo.
+    final ringSize = isTablet(context) ? 108.0 : 72.0;
 
     final baseStyle = GoogleFonts.poppins(
       fontSize: 12,
@@ -44,8 +48,8 @@ class EfficiencyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 72,
-            height: 72,
+            width: ringSize,
+            height: ringSize,
             child: CustomPaint(
               painter: EfficiencyRingPainter(
                 progress: progress,

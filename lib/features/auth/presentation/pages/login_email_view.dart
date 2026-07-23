@@ -10,6 +10,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/validation/validators.dart';
 import '../notifiers/login_notifier.dart';
+import '../notifiers/login_state.dart';
 import '../states/ui_state.dart';
 import '../components/auth_text_field.dart';
 import '../components/auth_field_label.dart';
@@ -17,6 +18,7 @@ import '../components/legal_footer.dart';
 import '../components/primary_auth_button.dart';
 import '../components/social_login_button.dart';
 import '../components/spotlight_background.dart';
+import '../../../../core/presentation/responsive.dart';
 
 part 'login_email_view_state.dart';
 

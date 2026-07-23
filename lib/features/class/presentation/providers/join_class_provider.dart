@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../data/repositories/class_repository_impl.dart';
+import '../../domain/entities/class_detail.dart';
 import '../../domain/use_cases/join_class_use_case.dart';
 import '../states/ui_state.dart';
 
@@ -20,6 +21,10 @@ class JoinClassProvider extends ChangeNotifier {
 
   UiState<void> _joinState = const UiIdle();
   UiState<void> get joinState => _joinState;
+
+  /// La clase a la que se acaba de unir (para navegar a su detalle).
+  ClassDetail? _joinedClass;
+  ClassDetail? get joinedClass => _joinedClass;
 
   JoinClassProvider({JoinClassUseCase? joinClass, String? initialCode})
     : _joinClass = joinClass ?? JoinClassUseCase(ClassRepositoryImpl()) {
@@ -65,7 +70,7 @@ class JoinClassProvider extends ChangeNotifier {
 
     _setState(const UiLoading());
     try {
-      await _joinClass(value);
+      _joinedClass = await _joinClass(value);
       _setState(const UiSuccess(null));
       return true;
     } catch (e) {

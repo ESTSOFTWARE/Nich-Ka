@@ -8,6 +8,7 @@ import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../../domain/entities/class_member.dart';
 import '../theme/class_palette.dart';
+import '../../../../core/presentation/responsive_center.dart';
 
 part 'class_members_view_state.dart';
 part 'class_member_tile.dart';

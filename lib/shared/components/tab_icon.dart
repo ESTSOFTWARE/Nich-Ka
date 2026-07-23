@@ -7,12 +7,14 @@ class TabIcon extends StatelessWidget {
   final AppTab tab;
   final bool isSelected;
   final AppPalette palette;
+  final double size;
 
   const TabIcon({
     super.key,
     required this.tab,
     required this.isSelected,
     required this.palette,
+    this.size = 22,
   });
 
   @override
@@ -20,8 +22,8 @@ class TabIcon extends StatelessWidget {
     final color = isSelected ? palette.navActive : palette.navInactive;
     return SvgPicture.asset(
       _iconPath(tab),
-      width: 22,
-      height: 22,
+      width: size,
+      height: size,
       colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
     );
   }

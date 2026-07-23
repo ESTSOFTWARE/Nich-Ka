@@ -2,5 +2,5 @@ import '../entities/class_detail.dart';
 
 abstract class ClassRepository {
   Future<List<ClassDetail>> getClasses();
-  Future<void> joinClass(String code);
+  Future<ClassDetail> joinClass(String code);
 }

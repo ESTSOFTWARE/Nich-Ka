@@ -12,6 +12,7 @@ import '../components/messages_error_state.dart';
 import '../components/messages_search_bar.dart';
 import '../components/new_conversation_sheet.dart';
 import '../providers/messages_provider.dart';
+import '../../../../core/presentation/responsive_center.dart';
 
 class MessagesView extends StatelessWidget {
   const MessagesView({super.key});
@@ -57,32 +58,34 @@ class MessagesView extends StatelessWidget {
                 color: AppPalette.accent,
                 backgroundColor: palette.surface,
                 onRefresh: provider.refresh,
-                child: CustomScrollView(
-                  controller: provider.scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        MediaQuery.of(context).padding.top + 64 + 12,
-                        16,
-                        0,
-                      ),
-                      sliver: SliverToBoxAdapter(
-                        child: MessagesSearchBar(
-                          controller: provider.searchController,
-                          onChanged: provider.setSearch,
-                          palette: palette,
+                child: ResponsiveCenter(
+                  child: CustomScrollView(
+                    controller: provider.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          MediaQuery.of(context).padding.top + 64 + 12,
+                          16,
+                          0,
+                        ),
+                        sliver: SliverToBoxAdapter(
+                          child: MessagesSearchBar(
+                            controller: provider.searchController,
+                            onChanged: provider.setSearch,
+                            palette: palette,
+                          ),
                         ),
                       ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
-                      sliver: SliverToBoxAdapter(
-                        child: _buildContent(context, provider, palette),
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+                        sliver: SliverToBoxAdapter(
+                          child: _buildContent(context, provider, palette),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

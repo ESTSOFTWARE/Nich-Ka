@@ -17,6 +17,8 @@ import '../components/empty_classes_state.dart';
 import '../providers/class_list_provider.dart';
 import '../states/ui_state.dart';
 import '../theme/class_palette.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class ClassListView extends StatelessWidget {
   const ClassListView({super.key});
@@ -40,78 +42,89 @@ class ClassListView extends StatelessWidget {
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(64),
+            preferredSize: Size.fromHeight(
+              (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+            ),
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: provider.isScrolled ? 20 : 0,
                   sigmaY: provider.isScrolled ? 20 : 0,
                 ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? homePalette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  systemOverlayStyle: isDark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-                  automaticallyImplyLeading: false,
-                  toolbarHeight: 64,
-                  leadingWidth: 56,
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: GestureDetector(
-                      onTap: () => context.canPop()
-                          ? context.pop()
-                          : context.go('/home'),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: palette.textPrimary,
-                          size: 22,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(
+                      isTablet(context) ? kTabletTextScale : 1,
+                    ),
+                  ),
+                  child: AppBar(
+                    backgroundColor: provider.isScrolled
+                        ? homePalette.glassBackground
+                        : Colors.transparent,
+                    elevation: 0,
+                    scrolledUnderElevation: 0,
+                    systemOverlayStyle: isDark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark,
+                    automaticallyImplyLeading: false,
+                    centerTitle: false,
+                    toolbarHeight:
+                        (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+                    leadingWidth: 56,
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: GestureDetector(
+                        onTap: () => context.canPop()
+                            ? context.pop()
+                            : context.go('/home'),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: palette.textPrimary,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  title: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Mis clases',
-                        style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: palette.textPrimary,
+                    title: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Mis clases',
+                          style: GoogleFonts.poppins(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: palette.textPrimary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: palette.textSecondary,
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: palette.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: _buildJoinButton(
+                          () => context.push('/class'),
+                          palette,
                         ),
                       ),
                     ],
                   ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: _buildJoinButton(
-                        () => context.push('/class'),
-                        palette,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -123,16 +136,18 @@ class ClassListView extends StatelessWidget {
                 color: ClassPalette.accent,
                 backgroundColor: palette.surface,
                 onRefresh: provider.refresh,
-                child: SingleChildScrollView(
-                  controller: provider.scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    MediaQuery.of(context).padding.top + 64 + 16,
-                    16,
-                    24,
+                child: ResponsiveCenter(
+                  child: SingleChildScrollView(
+                    controller: provider.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      MediaQuery.of(context).padding.top + 64 + 16,
+                      16,
+                      24,
+                    ),
+                    child: _buildContent(context, provider, palette),
                   ),
-                  child: _buildContent(context, provider, palette),
                 ),
               ),
             ],

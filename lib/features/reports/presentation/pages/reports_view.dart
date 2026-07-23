@@ -17,6 +17,8 @@ import '../../domain/entities/reports_summary.dart';
 import '../providers/reports_provider.dart';
 import '../states/ui_state.dart';
 import '../theme/reports_palette.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class ReportsView extends StatelessWidget {
   const ReportsView({super.key});
@@ -37,28 +39,37 @@ class ReportsView extends StatelessWidget {
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
+            preferredSize: Size.fromHeight(
+              (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+            ),
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: provider.isScrolled ? 20 : 0,
                   sigmaY: provider.isScrolled ? 20 : 0,
                 ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? homePalette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  automaticallyImplyLeading: false,
-                  titleSpacing: 16,
-                  title: Row(
-                    children: [
-                      _buildBackButton(context, palette),
-                      const SizedBox(width: 12),
-                      Expanded(child: _buildTitle(provider, palette)),
-                      _buildFilterButton(palette),
-                    ],
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(
+                      isTablet(context) ? kTabletTextScale : 1,
+                    ),
+                  ),
+                  child: AppBar(
+                    backgroundColor: provider.isScrolled
+                        ? homePalette.glassBackground
+                        : Colors.transparent,
+                    elevation: 0,
+                    scrolledUnderElevation: 0,
+                    automaticallyImplyLeading: false,
+                    titleSpacing: 16,
+                    title: Row(
+                      children: [
+                        _buildBackButton(context, palette),
+                        const SizedBox(width: 12),
+                        Expanded(child: _buildTitle(provider, palette)),
+                        _buildFilterButton(palette),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -71,28 +82,32 @@ class ReportsView extends StatelessWidget {
                 color: ReportsPalette.accent,
                 backgroundColor: palette.surface,
                 onRefresh: provider.refresh,
-                child: SingleChildScrollView(
-                  controller: provider.scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    MediaQuery.of(context).padding.top + kToolbarHeight + 16,
-                    16,
-                    24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ReportsFilterBar(
-                        selected: provider.selectedFilter,
-                        palette: palette,
-                        onSelected: provider.selectFilter,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildSummary(provider, palette),
-                      const SizedBox(height: 16),
-                      _buildList(context, provider, palette),
-                    ],
+                child: ResponsiveCenter(
+                  child: SingleChildScrollView(
+                    controller: provider.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      MediaQuery.of(context).padding.top +
+                          (kToolbarHeight + 16) *
+                              (isTablet(context) ? kTabletHeaderScale : 1.0),
+                      16,
+                      24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ReportsFilterBar(
+                          selected: provider.selectedFilter,
+                          palette: palette,
+                          onSelected: provider.selectFilter,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildSummary(provider, palette),
+                        const SizedBox(height: 16),
+                        _buildList(context, provider, palette),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -226,10 +241,9 @@ class ReportsView extends StatelessWidget {
         Text(
           'Reportes',
           style: GoogleFonts.poppins(
-            fontSize: 24,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
             color: palette.textPrimary,
-            letterSpacing: -0.5,
             height: 1.1,
           ),
         ),

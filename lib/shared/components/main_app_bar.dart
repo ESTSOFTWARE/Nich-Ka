@@ -13,16 +13,21 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
 
+  /// Multiplicador de tamaño. La vista pasa el suyo (mayor en tablet) para que
+  /// preferredSize —que no tiene contexto— coincida con lo que se renderiza.
+  final double scale;
+
   const MainAppBar({
     super.key,
     required this.palette,
     this.isScrolled = false,
     this.onMenuTap,
     this.onNotificationTap,
+    this.scale = 1,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight * scale);
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +43,23 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
               : Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
+          toolbarHeight: kToolbarHeight * scale,
           systemOverlayStyle: palette.isDark
               ? SystemUiOverlayStyle.light
               : SystemUiOverlayStyle.dark,
           centerTitle: false,
           titleSpacing: 0,
-          leadingWidth: 48,
+          leadingWidth: 48 * scale,
           leading: GestureDetector(
             onTap: onMenuTap,
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Icon(Icons.menu, color: palette.textPrimary, size: 22),
+              padding: EdgeInsets.all(12 * scale),
+              child: Icon(
+                Icons.menu,
+                color: palette.textPrimary,
+                size: 22 * scale,
+              ),
             ),
           ),
           title: Column(
@@ -59,7 +69,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 'Nich-Ka',
                 style: GoogleFonts.poppins(
-                  fontSize: 15,
+                  fontSize: 15 * scale,
                   fontWeight: FontWeight.w600,
                   color: palette.textPrimary,
                   height: 1.1,
@@ -68,7 +78,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 'ESTUDIANTE',
                 style: GoogleFonts.poppins(
-                  fontSize: 10,
+                  fontSize: 10 * scale,
                   fontWeight: FontWeight.w600,
                   color: AppPalette.accent,
                   letterSpacing: 0.8,
@@ -79,7 +89,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 16),
+              padding: EdgeInsets.only(right: 16 * scale),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -87,11 +97,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                     onTap: onNotificationTap,
                     behavior: HitTestBehavior.opaque,
                     child: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(12 * scale),
                       child: SvgPicture.asset(
                         'assets/icons/notify.svg',
-                        width: 22,
-                        height: 22,
+                        width: 22 * scale,
+                        height: 22 * scale,
                         colorFilter: ColorFilter.mode(
                           palette.textPrimary,
                           BlendMode.srcIn,
@@ -101,11 +111,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   if (context.watch<NotificationsProvider>().unreadCount > 0)
                     Positioned(
-                      top: 10,
-                      right: 10,
+                      top: 10 * scale,
+                      right: 10 * scale,
                       child: Container(
-                        width: 7,
-                        height: 7,
+                        width: 7 * scale,
+                        height: 7 * scale,
                         decoration: const BoxDecoration(
                           color: AppPalette.accent,
                           shape: BoxShape.circle,
