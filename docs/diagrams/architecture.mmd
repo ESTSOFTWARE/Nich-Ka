@@ -1,0 +1,41 @@
+graph TB
+    subgraph Presentation["Capa Presentación"]
+        Views["Views / Pages"]
+        ViewModels["Providers / ViewModels"]
+        Widgets["Widgets"]
+    end
+
+    subgraph Application["Capa Aplicación"]
+        UseCases["Use Cases"]
+    end
+
+    subgraph Domain["Capa Dominio"]
+        Entities["Entities"]
+        RepoInterfaces["Repository Interfaces"]
+    end
+
+    subgraph Infrastructure["Capa Infraestructura"]
+        DataSources["DataSources"]
+        RepoImpls["Repository Implementations"]
+        DTOs["DTOs / Mappers"]
+    end
+
+    subgraph External["Servicios Externos"]
+        API["Backend REST API<br/>api.nich-ka.space"]
+        WS["WebSocket<br/>api.nich-ka.space"]
+        Groq["Groq AI API<br/>Llama 3.1"]
+        Firebase["Firebase / FCM"]
+        Storage["Secure Storage"]
+    end
+
+    Views --> ViewModels
+    ViewModels --> UseCases
+    UseCases --> RepoInterfaces
+    RepoInterfaces -.-> RepoImpls
+    RepoImpls --> DataSources
+    DTOs -.-> DataSources
+    DataSources --> API
+    DataSources --> WS
+    DataSources --> Groq
+    DataSources --> Firebase
+    DataSources --> Storage

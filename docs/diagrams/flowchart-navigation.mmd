@@ -1,0 +1,34 @@
+flowchart TD
+    Start([App Inicia]) --> Gate[/gate<br/>SplashGateView]
+    Gate -->|Sin sesión| Login[/login<br/>LoginView]
+    Gate -->|Con sesión + biometría OK| Auth[AuthProvider.setUser]
+    Gate -->|Con sesión sin biometría| Login
+
+    Login --> LoginEmail[/login-email<br/>LoginEmailView]
+    Login --> Google[Login con Google]
+    Login --> Forgot[/forgot-password]
+
+    Auth -->|Rol != estudiante| Login
+    Auth -->|Rol = estudiante| EntryRoute{resolveEntryRoute}
+
+    EntryRoute -->|Fermentación activa| Home[/home<br/>HomeView]
+    EntryRoute -->|Sin fermentación| HomeStudent[/ <br/>HomeStudentView]
+
+    Home --> BottomNav[Bottom Nav Bar]
+    HomeStudent --> BottomNav
+
+    BottomNav -->|Inicio| Home
+    BottomNav -->|Lotes| Fermentations[/fermentations]
+    BottomNav -->|Sensores| Sensors[/sensors]
+    BottomNav -->|Asistente| Chat[/chat]
+
+    Home --> Drawer[App Drawer]
+    Drawer --> Fermentations
+    Drawer --> Sensors
+    Drawer --> Chat
+    Drawer --> Messages[/messages]
+    Drawer --> Reports[/reports]
+    Drawer --> Calculator[/calculator]
+    Drawer --> Simulator[/simulator]
+    Drawer --> Classes[/classes]
+    Drawer --> Profile[/profile]
