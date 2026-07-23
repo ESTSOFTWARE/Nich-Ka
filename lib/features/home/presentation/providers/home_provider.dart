@@ -149,13 +149,16 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _checkPredictionThresholds() async {
     final session = _session;
     if (session == null) return;
+    // session.progress es 0.0–1.0 (fracción). Los umbrales 50% y 80% son
+    // 0.5 y 0.8; comparar contra 50/80 nunca se cumplía y la predicción
+    // automática jamás se disparaba.
     final progress = session.progress;
     final id = session.id;
-    if (progress >= 50 && !await _hasPredicted(id, 50)) {
+    if (progress >= 0.5 && !await _hasPredicted(id, 50)) {
       await _markPredicted(id, 50);
       requestPrediction();
     }
-    if (progress >= 80 && !await _hasPredicted(id, 80)) {
+    if (progress >= 0.8 && !await _hasPredicted(id, 80)) {
       await _markPredicted(id, 80);
       requestPrediction();
     }
