@@ -1,9 +1,6 @@
-class StickerItem {
-  final String assetPath;
-  final List<String> emojis;
+import 'sticker_item.dart';
 
-  const StickerItem({required this.assetPath, this.emojis = const []});
-}
+export 'sticker_item.dart';
 
 class StickerPack {
   final String identifier;

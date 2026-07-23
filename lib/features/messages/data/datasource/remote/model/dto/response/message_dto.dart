@@ -1,29 +1,8 @@
 import '../../../../../../../../core/utils/server_date.dart';
 import 'attachment_dto.dart';
+import 'reply_preview_dto.dart';
 
-class ReplyPreviewDto {
-  final int id;
-  final String? content;
-  final String senderName;
-  final AttachmentDto? attachment;
-
-  const ReplyPreviewDto({
-    required this.id,
-    required this.senderName,
-    this.content,
-    this.attachment,
-  });
-
-  factory ReplyPreviewDto.fromJson(Map<String, dynamic> json) =>
-      ReplyPreviewDto(
-        id: json['id'] as int,
-        senderName: json['senderName'] as String,
-        content: json['content'] as String?,
-        attachment: json['attachment'] != null
-            ? AttachmentDto.fromJson(json['attachment'] as Map<String, dynamic>)
-            : null,
-      );
-}
+export 'reply_preview_dto.dart';
 
 class MessageDto {
   final int id;

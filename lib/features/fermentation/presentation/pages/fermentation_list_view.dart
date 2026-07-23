@@ -11,6 +11,8 @@ import '../components/fermentation_filter_bar.dart';
 import '../components/fermentation_search_bar.dart';
 import '../providers/fermentation_list_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class FermentationListView extends StatelessWidget {
   const FermentationListView({super.key});
@@ -36,68 +38,78 @@ class FermentationListView extends StatelessWidget {
             backgroundColor: palette.background,
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
+              preferredSize: Size.fromHeight(
+                (kToolbarHeight) *
+                    (isTablet(context) ? kTabletHeaderScale : 1.0),
+              ),
               child: ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(
                     sigmaX: provider.isScrolled ? 20 : 0,
                     sigmaY: provider.isScrolled ? 20 : 0,
                   ),
-                  child: AppBar(
-                    backgroundColor: provider.isScrolled
-                        ? palette.glassBackground
-                        : Colors.transparent,
-                    elevation: 0,
-                    scrolledUnderElevation: 0,
-                    systemOverlayStyle: isDark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark,
-                    automaticallyImplyLeading: false,
-                    centerTitle: false,
-                    leadingWidth: 56,
-                    leading: Center(
-                      child: GestureDetector(
-                        onTap: () => context.canPop()
-                            ? context.pop()
-                            : context.go('/home'),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          margin: const EdgeInsets.only(left: 16),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: palette.border),
-                          ),
-                          child: Icon(
-                            Icons.chevron_left,
-                            color: palette.textPrimary,
-                            size: 22,
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler: TextScaler.linear(
+                        isTablet(context) ? kTabletTextScale : 1,
+                      ),
+                    ),
+                    child: AppBar(
+                      backgroundColor: provider.isScrolled
+                          ? palette.glassBackground
+                          : Colors.transparent,
+                      elevation: 0,
+                      scrolledUnderElevation: 0,
+                      systemOverlayStyle: isDark
+                          ? SystemUiOverlayStyle.light
+                          : SystemUiOverlayStyle.dark,
+                      automaticallyImplyLeading: false,
+                      centerTitle: false,
+                      leadingWidth: 56,
+                      leading: Center(
+                        child: GestureDetector(
+                          onTap: () => context.canPop()
+                              ? context.pop()
+                              : context.go('/home'),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            margin: const EdgeInsets.only(left: 16),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: palette.border),
+                            ),
+                            child: Icon(
+                              Icons.chevron_left,
+                              color: palette.textPrimary,
+                              size: 22,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Lotes',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: palette.textPrimary,
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Lotes',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: palette.textPrimary,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '${provider.total} fermentaciones registradas',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: palette.textSecondary,
+                          Text(
+                            '${provider.total} fermentaciones registradas',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: palette.textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      actions: const [],
                     ),
-                    actions: const [],
                   ),
                 ),
               ),
@@ -110,7 +122,9 @@ class FermentationListView extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         16,
-                        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                        MediaQuery.of(context).padding.top +
+                            (kToolbarHeight + 8) *
+                                (isTablet(context) ? kTabletHeaderScale : 1.0),
                         16,
                         0,
                       ),
@@ -131,22 +145,25 @@ class FermentationListView extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: ListView.separated(
-                        controller: provider.scrollController,
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                        itemCount: provider.items.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final item = provider.items[index];
-                          return FermentationListItem(
-                            item: item,
-                            palette: palette,
-                            onTap: () => context.push(
-                              '/report-detail',
-                              extra: item.sessionId,
-                            ),
-                          );
-                        },
+                      child: ResponsiveCenter(
+                        child: ListView.separated(
+                          controller: provider.scrollController,
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                          itemCount: provider.items.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final item = provider.items[index];
+                            return FermentationListItem(
+                              item: item,
+                              palette: palette,
+                              onTap: () => context.push(
+                                '/report-detail',
+                                extra: item.sessionId,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

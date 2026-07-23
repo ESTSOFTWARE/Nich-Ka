@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/presentation/responsive.dart';
 import '../theme/app_palette.dart';
 
 class DrawerBottomAction extends StatelessWidget {
@@ -25,7 +26,11 @@ class DrawerBottomAction extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: palette.textSecondary),
+            Icon(
+              icon,
+              size: isTablet(context) ? 28 : 20,
+              color: palette.textSecondary,
+            ),
             const SizedBox(width: 14),
             Text(
               label,

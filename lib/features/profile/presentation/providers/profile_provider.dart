@@ -117,13 +117,15 @@ class ProfileProvider extends ChangeNotifier {
       final repo = ProfileRepositoryImpl(
         ProfileRemoteDataSource(HttpClient.instance),
       );
+      // El backend exige dial_code y phone_number JUNTOS o ambos omitidos:
+      // mandar solo el dial (sin teléfono) hacía fallar todo el update,
+      // incluida la descripción.
+      final phone = phoneCtrl.text.trim();
       final updated = await repo.updateProfile(
         name: nameCtrl.text.trim(),
         lastName: lastNameCtrl.text.trim(),
-        dialCode: _dialCode,
-        phoneNumber: phoneCtrl.text.trim().isEmpty
-            ? null
-            : phoneCtrl.text.trim(),
+        dialCode: phone.isEmpty ? null : _dialCode,
+        phoneNumber: phone.isEmpty ? null : phone,
         description: descriptionCtrl.text.trim().isEmpty
             ? null
             : descriptionCtrl.text.trim(),

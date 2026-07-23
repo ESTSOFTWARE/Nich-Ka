@@ -16,6 +16,7 @@ import '../components/assistant_empty_state.dart';
 import '../components/home_glow.dart';
 import '../providers/assistant_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class AssistantEmptyView extends StatelessWidget {
   const AssistantEmptyView({super.key});
@@ -49,6 +50,7 @@ class AssistantEmptyView extends StatelessWidget {
               ),
               appBar: MainAppBar(
                 palette: palette,
+                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
                 isScrolled: provider.isScrolled,
                 onMenuTap: () =>
                     provider.scaffoldKey.currentState?.openDrawer(),
@@ -60,7 +62,9 @@ class AssistantEmptyView extends StatelessWidget {
                     controller: provider.scrollController,
                     padding: EdgeInsets.fromLTRB(
                       16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                      MediaQuery.of(context).padding.top +
+                          appBarHeight(context) +
+                          8,
                       16,
                       24,
                     ),

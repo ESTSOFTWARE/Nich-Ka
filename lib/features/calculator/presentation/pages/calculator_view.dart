@@ -10,6 +10,7 @@ import '../components/efficiency_result_card.dart';
 import '../components/formula_card.dart';
 import '../providers/calculator_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
+import '../../../../core/presentation/responsive_center.dart';
 
 class CalculatorView extends StatelessWidget {
   const CalculatorView({super.key});
@@ -79,44 +80,46 @@ class CalculatorView extends StatelessWidget {
           body: Stack(
             children: [
               HomeGlow(palette: palette),
-              SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                  16,
-                  32,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FormulaCard(palette: palette),
-                    const SizedBox(height: 20),
-                    CalculatorInputField(
-                      label: 'Azúcar inicial',
-                      controller: provider.sugarController,
-                      unit: 'g/L',
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 16),
-                    CalculatorInputField(
-                      label: 'Etanol detectado',
-                      controller: provider.ethanolController,
-                      unit: '%v/v',
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 16),
-                    CalculatorInputField(
-                      label: 'Factor de conversión',
-                      controller: provider.factorController,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 24),
-                    EfficiencyResultCard(
-                      efficiency: provider.efficiency,
-                      substitutedFormula: provider.substitutedFormula,
-                      palette: palette,
-                    ),
-                  ],
+              ResponsiveCenter(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+                    16,
+                    32,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FormulaCard(palette: palette),
+                      const SizedBox(height: 20),
+                      CalculatorInputField(
+                        label: 'Azúcar inicial',
+                        controller: provider.sugarController,
+                        unit: 'g/L',
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 16),
+                      CalculatorInputField(
+                        label: 'Etanol detectado',
+                        controller: provider.ethanolController,
+                        unit: '%v/v',
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 16),
+                      CalculatorInputField(
+                        label: 'Factor de conversión',
+                        controller: provider.factorController,
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 24),
+                      EfficiencyResultCard(
+                        efficiency: provider.efficiency,
+                        substitutedFormula: provider.substitutedFormula,
+                        palette: palette,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

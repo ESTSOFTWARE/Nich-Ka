@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
 import '../../../../core/presentation/change_notifier_provider.dart';
+import '../../../../core/presentation/responsive.dart';
 import '../../../../shared/components/app_drawer.dart';
 import '../../../../shared/components/app_drawer_item.dart';
 import '../../../../shared/components/app_tab.dart';
@@ -17,9 +18,126 @@ import '../components/fermentation_list_item.dart';
 import '../components/home_glow.dart';
 import '../providers/home_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/presentation/tablet_text_scale.dart';
+
+part 'home_view_predict_button.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
+
+  Widget _greeting(
+    HomeProvider provider,
+    AppPalette palette,
+    String firstName,
+  ) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: firstName.isEmpty ? 'Hola, ' : 'Hola $firstName, ',
+            style: GoogleFonts.poppins(
+              fontSize: 26,
+              fontWeight: FontWeight.w400,
+              color: palette.textPrimary,
+              height: 1.2,
+            ),
+          ),
+          TextSpan(
+            text: provider.greeting,
+            style: GoogleFonts.poppins(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: palette.textPrimary,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Card de fermentación activa + botón de predicción + card IA.
+  Widget _activeColumn(
+    BuildContext context,
+    HomeProvider provider,
+    AppPalette palette,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ActiveFermentationCard(
+          fermentation: provider.activeFermentation,
+          palette: palette,
+          elapsedFormatted: provider.elapsedFormatted,
+          objectiveFormatted: provider.objectiveFormatted,
+        ),
+        const SizedBox(height: 10),
+        _PredictButton(
+          isLoading: provider.isPredicting,
+          onTap: provider.requestPrediction,
+        ),
+        const SizedBox(height: 10),
+        AiRecommendationCard(
+          recommendation: provider.recommendation,
+          palette: palette,
+        ),
+      ],
+    );
+  }
+
+  /// Encabezado "Tus fermentaciones" + lista.
+  Widget _fermentationsColumn(
+    BuildContext context,
+    HomeProvider provider,
+    AppPalette palette,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Tus fermentaciones',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: palette.textPrimary,
+              ),
+            ),
+            TextButton(
+              onPressed: () => context.push('/fermentations'),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Ver todo →',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: palette.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        ...provider.fermentations.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: FermentationListItem(
+              item: item,
+              palette: palette,
+              onTap: item.sessionId != null
+                  ? () => context.push('/report-detail', extra: item.sessionId)
+                  : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,118 +182,68 @@ class HomeView extends StatelessWidget {
               ),
               appBar: MainAppBar(
                 palette: palette,
+                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
                 isScrolled: provider.isScrolled,
                 onMenuTap: () =>
                     provider.scaffoldKey.currentState?.openDrawer(),
                 onNotificationTap: () => context.push('/notifications'),
               ),
-              body: Stack(
-                children: [
-                  HomeGlow(palette: palette),
-                  SingleChildScrollView(
-                    controller: provider.scrollController,
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                      16,
-                      24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: firstName.isEmpty
-                                    ? 'Hola, '
-                                    : 'Hola $firstName, ',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w400,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+              body: TabletTextScale(
+                child: Stack(
+                  children: [
+                    HomeGlow(palette: palette),
+                    SingleChildScrollView(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        isTablet(context) ? 24 : 16,
+                        MediaQuery.of(context).padding.top +
+                            appBarHeight(context) +
+                            8,
+                        isTablet(context) ? 24 : 16,
+                        24,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          _greeting(provider, palette, firstName),
+                          const SizedBox(height: 20),
+                          if (isTablet(context) && isLandscape(context))
+                            // Tablet horizontal: fermentación activa a la
+                            // izquierda, lista a la derecha. En vertical se
+                            // apila igual que en el teléfono.
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: _activeColumn(
+                                    context,
+                                    provider,
+                                    palette,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: provider.greeting,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  flex: 4,
+                                  child: _fermentationsColumn(
+                                    context,
+                                    provider,
+                                    palette,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ActiveFermentationCard(
-                          fermentation: provider.activeFermentation,
-                          palette: palette,
-                          elapsedFormatted: provider.elapsedFormatted,
-                          objectiveFormatted: provider.objectiveFormatted,
-                        ),
-                        const SizedBox(height: 10),
-                        _PredictButton(
-                          isLoading: provider.isPredicting,
-                          onTap: provider.requestPrediction,
-                        ),
-                        const SizedBox(height: 10),
-                        AiRecommendationCard(
-                          recommendation: provider.recommendation,
-                          palette: palette,
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Tus fermentaciones',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: palette.textPrimary,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () => context.push('/fermentations'),
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                'Ver todo →',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  color: palette.textSecondary,
-                                ),
-                              ),
-                            ),
+                              ],
+                            )
+                          else ...[
+                            _activeColumn(context, provider, palette),
+                            const SizedBox(height: 24),
+                            _fermentationsColumn(context, provider, palette),
                           ],
-                        ),
-                        const SizedBox(height: 10),
-                        ...provider.fermentations.map(
-                          (item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: FermentationListItem(
-                              item: item,
-                              palette: palette,
-                              onTap: item.sessionId != null
-                                  ? () => context.push(
-                                      '/report-detail',
-                                      extra: item.sessionId,
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               bottomNavigationBar: BottomNavBar(
                 selected: AppTab.inicio,
@@ -186,60 +254,6 @@ class HomeView extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class _PredictButton extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback onTap;
-
-  const _PredictButton({required this.isLoading, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: AppPalette.accent.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppPalette.accent.withValues(alpha: 0.35)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppPalette.accent,
-                ),
-              )
-            else
-              const Icon(
-                Icons.auto_awesome,
-                size: 16,
-                color: AppPalette.accent,
-              ),
-            const SizedBox(width: 8),
-            Text(
-              isLoading
-                  ? 'Solicitando predicción…'
-                  : 'Solicitar predicción de eficiencia',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppPalette.accent,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

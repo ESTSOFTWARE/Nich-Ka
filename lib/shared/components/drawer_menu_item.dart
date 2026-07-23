@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/presentation/responsive.dart';
 import '../theme/app_palette.dart';
 import 'app_drawer_item.dart';
 
@@ -21,20 +22,24 @@ class DrawerMenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = isSelected ? AppPalette.accent : palette.textSecondary;
+    final tablet = isTablet(context);
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        padding: EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: tablet ? 16 : 13,
+        ),
         decoration: BoxDecoration(
           color: isSelected ? palette.rowSurface : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            _icon(iconColor),
+            _icon(iconColor, tablet ? 28.0 : 20.0),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
@@ -63,17 +68,17 @@ class DrawerMenuItem extends StatelessWidget {
     );
   }
 
-  Widget _icon(Color color) {
+  Widget _icon(Color color, double size) {
     final svgPath = _svgPath();
     if (svgPath != null) {
       return SvgPicture.asset(
         svgPath,
-        width: 20,
-        height: 20,
+        width: size,
+        height: size,
         colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
       );
     }
-    return Icon(_iconData(), size: 20, color: color);
+    return Icon(_iconData(), size: size, color: color);
   }
 
   String? _svgPath() {

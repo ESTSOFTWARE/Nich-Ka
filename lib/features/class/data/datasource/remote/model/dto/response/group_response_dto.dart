@@ -5,6 +5,7 @@ class GroupResponseDto {
   final String name;
   final String subject;
   final String? coverImage;
+  final int? professorId;
   final String? professorName;
   final String? professorEmail;
   final String? professorAvatar;
@@ -16,6 +17,7 @@ class GroupResponseDto {
     required this.name,
     required this.subject,
     this.coverImage,
+    this.professorId,
     this.professorName,
     this.professorEmail,
     this.professorAvatar,
@@ -29,6 +31,7 @@ class GroupResponseDto {
         name: json['name'] as String,
         subject: json['subject'] as String,
         coverImage: json['cover_image'] as String?,
+        professorId: json['professor_id'] as int?,
         professorName: json['professor_name'] as String?,
         professorEmail: json['professor_email'] as String?,
         professorAvatar: json['professor_avatar'] as String?,

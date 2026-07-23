@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/presentation/responsive.dart';
 import '../theme/app_palette.dart';
 import 'app_tab.dart';
 import 'tab_icon.dart';
@@ -18,12 +19,13 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scale = isTablet(context) ? 1.5 : 1.0;
     return Container(
       decoration: BoxDecoration(
         color: palette.surface,
         border: Border(top: BorderSide(color: palette.border)),
       ),
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8 * scale),
       child: Row(
         children: AppTab.values.map((tab) {
           final isSelected = tab == selected;
@@ -34,13 +36,18 @@ class BottomNavBar extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 10),
-                  TabIcon(tab: tab, isSelected: isSelected, palette: palette),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 10 * scale),
+                  TabIcon(
+                    tab: tab,
+                    isSelected: isSelected,
+                    palette: palette,
+                    size: 22 * scale,
+                  ),
+                  SizedBox(height: 4 * scale),
                   Text(
                     _label(tab),
                     style: GoogleFonts.poppins(
-                      fontSize: 11,
+                      fontSize: 11 * scale,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.w400,
@@ -49,7 +56,7 @@ class BottomNavBar extends StatelessWidget {
                           : palette.navInactive,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4 * scale),
                 ],
               ),
             ),

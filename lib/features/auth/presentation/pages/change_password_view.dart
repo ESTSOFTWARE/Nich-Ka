@@ -10,6 +10,7 @@ import '../components/auth_text_field.dart';
 import '../components/primary_auth_button.dart';
 import '../components/spotlight_background.dart';
 import '../../../../shared/components/circle_icon_button.dart';
+import '../../../../core/presentation/responsive_center.dart';
 
 part 'change_password_view_state.dart';
 

@@ -72,6 +72,7 @@ class ClassMapper {
       badgeLabel: 'FERMENTACIÓN',
       studentCount: dto.members.length,
       createdAt: createdAt,
+      teacherId: dto.professorId,
       teacherName: teacher,
       teacherEmail:
           dto.professorEmail ??

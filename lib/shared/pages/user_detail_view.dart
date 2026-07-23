@@ -14,6 +14,7 @@ import '../../features/home/presentation/components/home_glow.dart';
 import '../../features/profile/data/datasource/remote/model/dto/response/user_profile_dto.dart';
 import '../../shared/theme/app_palette.dart';
 import '../providers/user_detail_provider.dart';
+import '../../core/presentation/responsive_center.dart';
 
 class UserDetailView extends StatelessWidget {
   final ClassMember member;
@@ -173,60 +174,62 @@ class UserDetailView extends StatelessWidget {
     final displayAvatar = dto.profileImage ?? member.avatar;
     final role = dto.role.isNotEmpty ? dto.role : 'Sin rol';
 
-    return SingleChildScrollView(
-      controller: provider.scrollController,
-      padding: EdgeInsets.fromLTRB(
-        16,
-        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-        16,
-        MediaQuery.of(context).padding.bottom + 24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeroCard(context, provider, palette, displayAvatar),
-          const SizedBox(height: 16),
-          Text(
-            role.toUpperCase(),
-            style: GoogleFonts.poppins(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: ClassPalette.accent,
-              letterSpacing: 0.5,
+    return ResponsiveCenter(
+      child: SingleChildScrollView(
+        controller: provider.scrollController,
+        padding: EdgeInsets.fromLTRB(
+          16,
+          MediaQuery.of(context).padding.top + kToolbarHeight + 8,
+          16,
+          MediaQuery.of(context).padding.bottom + 24,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeroCard(context, provider, palette, displayAvatar),
+            const SizedBox(height: 16),
+            Text(
+              role.toUpperCase(),
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: ClassPalette.accent,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Text(
-                  displayName,
-                  style: GoogleFonts.poppins(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: palette.textPrimary,
-                    height: 1.15,
+            const SizedBox(height: 4),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    displayName,
+                    style: GoogleFonts.poppins(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: palette.textPrimary,
+                      height: 1.15,
+                    ),
                   ),
                 ),
-              ),
-              if (dto.role == 'admin') ...[
-                const SizedBox(width: 8),
-                SvgPicture.asset(
-                  'assets/icons/verified.svg',
-                  width: 24,
-                  height: 24,
-                ),
+                if (dto.role == 'admin') ...[
+                  const SizedBox(width: 8),
+                  SvgPicture.asset(
+                    'assets/icons/verified.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ],
               ],
-            ],
-          ),
-          const SizedBox(height: 8),
-          _buildDescriptionCard(palette, dto),
-          const SizedBox(height: 16),
-          _buildStatsRow(palette, dto),
-          const SizedBox(height: 16),
-          _buildInfoCard(palette, dto, displayName),
-        ],
+            ),
+            const SizedBox(height: 8),
+            _buildDescriptionCard(palette, dto),
+            const SizedBox(height: 16),
+            _buildStatsRow(palette, dto),
+            const SizedBox(height: 16),
+            _buildInfoCard(palette, dto, displayName),
+          ],
+        ),
       ),
     );
   }

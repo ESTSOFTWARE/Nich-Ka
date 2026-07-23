@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/presentation/responsive.dart';
 import '../theme/app_palette.dart';
 
 class AppDrawerHeader extends StatelessWidget {
@@ -19,13 +20,14 @@ class AppDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final avatar = isTablet(context) ? 64.0 : 48.0;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: avatar,
+            height: avatar,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -33,7 +35,7 @@ class AppDrawerHeader extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: ClipOval(child: _buildAvatar()),
+            child: ClipOval(child: _buildAvatar(avatar)),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -68,22 +70,22 @@ class AppDrawerHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(double size) {
     if (profileImage != null) {
       return Image.network(
         profileImage!,
-        width: 48,
-        height: 48,
+        width: size,
+        height: size,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _buildLogoFallback(),
+        errorBuilder: (_, _, _) => _buildLogoFallback(size),
       );
     }
-    return _buildLogoFallback();
+    return _buildLogoFallback(size);
   }
 
-  Widget _buildLogoFallback() => Container(
-    width: 48,
-    height: 48,
+  Widget _buildLogoFallback(double size) => Container(
+    width: size,
+    height: size,
     color: AppPalette.accent.withValues(alpha: 0.1),
     child: Padding(
       padding: const EdgeInsets.all(10),

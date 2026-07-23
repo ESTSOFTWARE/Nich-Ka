@@ -177,17 +177,21 @@ class _ClassMembersViewState extends State<ClassMembersView> {
               Expanded(
                 child: filtered.isEmpty
                     ? _buildEmpty(palette)
-                    : ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
-                          16,
-                          0,
-                          16,
-                          MediaQuery.of(context).padding.bottom + 16,
+                    : ResponsiveCenter(
+                        child: ListView.separated(
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            0,
+                            16,
+                            MediaQuery.of(context).padding.bottom + 16,
+                          ),
+                          itemCount: filtered.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          itemBuilder: (_, i) => _MemberTile(
+                            member: filtered[i],
+                            palette: palette,
+                          ),
                         ),
-                        itemCount: filtered.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 8),
-                        itemBuilder: (_, i) =>
-                            _MemberTile(member: filtered[i], palette: palette),
                       ),
               ),
             ],

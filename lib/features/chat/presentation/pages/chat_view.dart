@@ -15,6 +15,8 @@ import '../components/chat_suggestion_chips.dart';
 import '../components/chat_user_bubble.dart';
 import '../providers/chat_provider.dart';
 import '../../../home/presentation/components/home_glow.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 part 'chat_typing_dot.dart';
 part 'chat_typing_dot_state.dart';
@@ -47,101 +49,110 @@ class ChatView extends StatelessWidget {
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
+            preferredSize: Size.fromHeight(
+              (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+            ),
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: provider.isScrolled ? 20 : 0,
                   sigmaY: provider.isScrolled ? 20 : 0,
                 ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? palette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  systemOverlayStyle: isDark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-                  automaticallyImplyLeading: false,
-                  centerTitle: false,
-                  leadingWidth: 56,
-                  leading: Center(
-                    child: GestureDetector(
-                      onTap: () => context.canPop()
-                          ? context.pop()
-                          : context.go('/assistant'),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: palette.textPrimary,
-                          size: 22,
-                        ),
-                      ),
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(
+                      isTablet(context) ? kTabletTextScale : 1,
                     ),
                   ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Asistente Nich-Ka',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        'IA en tiempo real',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: palette.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    if (provider.messages.isNotEmpty)
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: palette.textMuted,
-                          size: 20,
-                        ),
-                        onPressed: provider.clearChat,
-                        tooltip: 'Limpiar chat',
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppPalette.accent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'ACTIVO',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: 0.8,
+                  child: AppBar(
+                    backgroundColor: provider.isScrolled
+                        ? palette.glassBackground
+                        : Colors.transparent,
+                    elevation: 0,
+                    scrolledUnderElevation: 0,
+                    systemOverlayStyle: isDark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark,
+                    automaticallyImplyLeading: false,
+                    centerTitle: false,
+                    leadingWidth: 56,
+                    leading: Center(
+                      child: GestureDetector(
+                        onTap: () => context.canPop()
+                            ? context.pop()
+                            : context.go('/assistant'),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.only(left: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: palette.textPrimary,
+                            size: 22,
                           ),
                         ),
                       ),
                     ),
-                  ],
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Asistente Nich-Ka',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: palette.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          'IA en tiempo real',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: palette.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      if (provider.messages.isNotEmpty)
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: palette.textMuted,
+                            size: 20,
+                          ),
+                          onPressed: provider.clearChat,
+                          tooltip: 'Limpiar chat',
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppPalette.accent,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'ACTIVO',
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -154,46 +165,48 @@ class ChatView extends StatelessWidget {
                   Expanded(
                     child: provider.messages.isEmpty && !provider.isLoading
                         ? _buildEmptyState(palette)
-                        : ListView.builder(
-                            controller: provider.scrollController,
-                            padding: EdgeInsets.fromLTRB(
-                              16,
-                              MediaQuery.of(context).padding.top +
-                                  kToolbarHeight +
-                                  8,
-                              16,
-                              16,
-                            ),
-                            itemCount:
-                                provider.messages.length +
-                                (provider.isLoading ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (provider.isLoading &&
-                                  index == provider.messages.length) {
-                                return _buildTypingIndicator(palette);
-                              }
-                              final msg = provider.messages[index];
-                              final isUser = msg.type == ChatMessageType.user;
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: Column(
-                                  crossAxisAlignment: isUser
-                                      ? CrossAxisAlignment.end
-                                      : CrossAxisAlignment.start,
-                                  children: [
-                                    _buildBubble(msg, palette),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      msg.time,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 11,
-                                        color: palette.textMuted,
+                        : ResponsiveCenter(
+                            child: ListView.builder(
+                              controller: provider.scrollController,
+                              padding: EdgeInsets.fromLTRB(
+                                16,
+                                MediaQuery.of(context).padding.top +
+                                    kToolbarHeight +
+                                    8,
+                                16,
+                                16,
+                              ),
+                              itemCount:
+                                  provider.messages.length +
+                                  (provider.isLoading ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (provider.isLoading &&
+                                    index == provider.messages.length) {
+                                  return _buildTypingIndicator(palette);
+                                }
+                                final msg = provider.messages[index];
+                                final isUser = msg.type == ChatMessageType.user;
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Column(
+                                    crossAxisAlignment: isUser
+                                        ? CrossAxisAlignment.end
+                                        : CrossAxisAlignment.start,
+                                    children: [
+                                      _buildBubble(msg, palette),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        msg.time,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          color: palette.textMuted,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                   ),
                   Container(

@@ -13,6 +13,8 @@ import '../components/fermentation_info_banner.dart';
 import '../providers/fermentation_detail_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/home_glow.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class FermentationDetailView extends StatelessWidget {
   const FermentationDetailView({super.key});
@@ -28,86 +30,95 @@ class FermentationDetailView extends StatelessWidget {
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
+            preferredSize: Size.fromHeight(
+              (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+            ),
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: provider.isScrolled ? 20 : 0,
                   sigmaY: provider.isScrolled ? 20 : 0,
                 ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? palette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  systemOverlayStyle: isDark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-                  automaticallyImplyLeading: false,
-                  centerTitle: false,
-                  leadingWidth: 56,
-                  leading: Center(
-                    child: GestureDetector(
-                      onTap: () => context.canPop()
-                          ? context.pop()
-                          : context.go('/fermentations'),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: palette.textPrimary,
-                          size: 22,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(
+                      isTablet(context) ? kTabletTextScale : 1,
+                    ),
+                  ),
+                  child: AppBar(
+                    backgroundColor: provider.isScrolled
+                        ? palette.glassBackground
+                        : Colors.transparent,
+                    elevation: 0,
+                    scrolledUnderElevation: 0,
+                    systemOverlayStyle: isDark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark,
+                    automaticallyImplyLeading: false,
+                    centerTitle: false,
+                    leadingWidth: 56,
+                    leading: Center(
+                      child: GestureDetector(
+                        onTap: () => context.canPop()
+                            ? context.pop()
+                            : context.go('/fermentations'),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.only(left: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: palette.textPrimary,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        provider.detail.title,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: palette.textPrimary,
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          provider.detail.title,
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: palette.textPrimary,
+                          ),
                         ),
-                      ),
-                      Text(
-                        provider.detail.subtitle,
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: palette.textSecondary,
+                        Text(
+                          provider.detail.subtitle,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: palette.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      Center(
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.only(right: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.more_horiz,
+                            color: palette.textPrimary,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  actions: [
-                    Center(
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(right: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: palette.textPrimary,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -115,39 +126,43 @@ class FermentationDetailView extends StatelessWidget {
           body: Stack(
             children: [
               HomeGlow(palette: palette),
-              SingleChildScrollView(
-                controller: provider.scrollController,
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                  16,
-                  32,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FermentationDetailStatusCard(
-                      detail: provider.detail,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 12),
-                    FermentationDetailChartCard(
-                      points: provider.detail.chartPoints,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 12),
-                    FermentationDetailMetricsGrid(
-                      detail: provider.detail,
-                      palette: palette,
-                    ),
-                    const SizedBox(height: 12),
-                    FermentationInfoBanner(palette: palette),
-                    const SizedBox(height: 24),
-                    FermentationEventsSection(
-                      events: provider.detail.events,
-                      palette: palette,
-                    ),
-                  ],
+              ResponsiveCenter(
+                child: SingleChildScrollView(
+                  controller: provider.scrollController,
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    MediaQuery.of(context).padding.top +
+                        (kToolbarHeight + 8) *
+                            (isTablet(context) ? kTabletHeaderScale : 1.0),
+                    16,
+                    32,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FermentationDetailStatusCard(
+                        detail: provider.detail,
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 12),
+                      FermentationDetailChartCard(
+                        points: provider.detail.chartPoints,
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 12),
+                      FermentationDetailMetricsGrid(
+                        detail: provider.detail,
+                        palette: palette,
+                      ),
+                      const SizedBox(height: 12),
+                      FermentationInfoBanner(palette: palette),
+                      const SizedBox(height: 24),
+                      FermentationEventsSection(
+                        events: provider.detail.events,
+                        palette: palette,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

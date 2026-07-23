@@ -17,6 +17,8 @@ import '../components/home_glow.dart';
 import '../components/quick_actions_row.dart';
 import '../providers/assistant_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class AssistantView extends StatelessWidget {
   const AssistantView({super.key});
@@ -50,6 +52,7 @@ class AssistantView extends StatelessWidget {
               ),
               appBar: MainAppBar(
                 palette: palette,
+                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
                 isScrolled: provider.isScrolled,
                 onMenuTap: () =>
                     provider.scaffoldKey.currentState?.openDrawer(),
@@ -58,53 +61,57 @@ class AssistantView extends StatelessWidget {
               body: Stack(
                 children: [
                   HomeGlow(palette: palette),
-                  SingleChildScrollView(
-                    controller: provider.scrollController,
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                      16,
-                      24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    'Hola ${drawerProvider.user?.firstName ?? ''}, ',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                  ResponsiveCenter(
+                    child: SingleChildScrollView(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        MediaQuery.of(context).padding.top +
+                            appBarHeight(context) +
+                            8,
+                        16,
+                        24,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      'Hola ${drawerProvider.user?.firstName ?? ''}, ',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: provider.greeting,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                                TextSpan(
+                                  text: provider.greeting,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        AiMessageCard(
-                          suggestions: provider.suggestions,
-                          palette: palette,
-                        ),
-                        const SizedBox(height: 14),
-                        QuickActionsRow(palette: palette),
-                        const SizedBox(height: 14),
-                        ActiveFermentationSummary(palette: palette),
-                      ],
+                          const SizedBox(height: 16),
+                          AiMessageCard(
+                            suggestions: provider.suggestions,
+                            palette: palette,
+                          ),
+                          const SizedBox(height: 14),
+                          QuickActionsRow(palette: palette),
+                          const SizedBox(height: 14),
+                          ActiveFermentationSummary(palette: palette),
+                        ],
+                      ),
                     ),
                   ),
                 ],

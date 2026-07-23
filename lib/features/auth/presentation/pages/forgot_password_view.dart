@@ -10,6 +10,7 @@ import '../states/ui_state.dart';
 import '../components/auth_text_field.dart';
 import '../components/primary_auth_button.dart';
 import '../components/spotlight_background.dart';
+import '../../../../core/presentation/responsive_center.dart';
 
 part 'forgot_password_view_state.dart';
 

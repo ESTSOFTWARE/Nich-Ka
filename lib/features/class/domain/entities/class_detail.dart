@@ -10,6 +10,7 @@ class ClassDetail {
   final String badgeLabel;
   final int studentCount;
   final DateTime createdAt;
+  final int? teacherId;
   final String teacherName;
   final String teacherEmail;
   final String teacherInitials;
@@ -27,6 +28,7 @@ class ClassDetail {
     required this.badgeLabel,
     required this.studentCount,
     required this.createdAt,
+    this.teacherId,
     required this.teacherName,
     required this.teacherEmail,
     required this.teacherInitials,
@@ -89,12 +91,14 @@ class ClassDetail {
       fermentations: const [
         ClassFermentation(
           id: 'F-024',
+          sessionId: 24,
           variety: 'Caturra',
           process: 'Lavado',
           isActive: true,
         ),
         ClassFermentation(
           id: 'F-023',
+          sessionId: 23,
           variety: 'Geisha',
           process: 'Honey',
           isActive: false,
@@ -131,12 +135,14 @@ class ClassDetail {
     fermentations: const [
       ClassFermentation(
         id: 'F-024',
+        sessionId: 24,
         variety: 'Caturra',
         process: 'Lavado',
         isActive: true,
       ),
       ClassFermentation(
         id: 'F-023',
+        sessionId: 23,
         variety: 'Geisha',
         process: 'Honey',
         isActive: false,

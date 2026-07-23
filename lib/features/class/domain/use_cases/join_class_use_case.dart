@@ -1,3 +1,4 @@
+import '../entities/class_detail.dart';
 import '../repositories/class_repository.dart';
 
 class JoinClassUseCase {
@@ -5,5 +6,5 @@ class JoinClassUseCase {
 
   const JoinClassUseCase(this._repository);
 
-  Future<void> call(String code) => _repository.joinClass(code);
+  Future<ClassDetail> call(String code) => _repository.joinClass(code);
 }

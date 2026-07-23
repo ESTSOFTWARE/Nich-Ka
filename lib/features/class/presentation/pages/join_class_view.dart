@@ -12,6 +12,8 @@ import '../components/join_class_divider.dart';
 import '../components/qr_scanner_frame.dart';
 import '../providers/join_class_provider.dart';
 import '../states/ui_state.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class JoinClassView extends StatelessWidget {
   const JoinClassView({super.key, this.initialCode});
@@ -30,52 +32,61 @@ class JoinClassView extends StatelessWidget {
           backgroundColor: palette.background,
           extendBodyBehindAppBar: true,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
+            preferredSize: Size.fromHeight(
+              (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+            ),
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: provider.isScrolled ? 20 : 0,
                   sigmaY: provider.isScrolled ? 20 : 0,
                 ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? palette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  systemOverlayStyle: isDark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-                  automaticallyImplyLeading: false,
-                  centerTitle: false,
-                  leadingWidth: 56,
-                  leading: Center(
-                    child: GestureDetector(
-                      onTap: () =>
-                          context.canPop() ? context.pop() : context.go('/'),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: palette.textPrimary,
-                          size: 22,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(
+                      isTablet(context) ? kTabletTextScale : 1,
+                    ),
+                  ),
+                  child: AppBar(
+                    backgroundColor: provider.isScrolled
+                        ? palette.glassBackground
+                        : Colors.transparent,
+                    elevation: 0,
+                    scrolledUnderElevation: 0,
+                    systemOverlayStyle: isDark
+                        ? SystemUiOverlayStyle.light
+                        : SystemUiOverlayStyle.dark,
+                    automaticallyImplyLeading: false,
+                    centerTitle: false,
+                    leadingWidth: 56,
+                    leading: Center(
+                      child: GestureDetector(
+                        onTap: () =>
+                            context.canPop() ? context.pop() : context.go('/'),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          margin: const EdgeInsets.only(left: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: palette.border),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: palette.textPrimary,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  title: Text(
-                    'Unirme a una clase',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: palette.textPrimary,
+                    title: Text(
+                      'Unirme a una clase',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: palette.textPrimary,
+                      ),
                     ),
                   ),
                 ),
@@ -88,80 +99,84 @@ class JoinClassView extends StatelessWidget {
               Column(
                 children: [
                   Expanded(
-                    child: SingleChildScrollView(
-                      controller: provider.scrollController,
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                        16,
-                        16,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          QrScannerFrame(
-                            palette: palette,
-                            controller: provider.scannerController,
-                            onDetected: provider.onQrDetected,
-                          ),
-                          const SizedBox(height: 20),
-                          JoinClassDivider(
-                            label: 'O PEGA EL ENLACE',
-                            palette: palette,
-                          ),
-                          const SizedBox(height: 12),
-                          TextField(
-                            controller: provider.linkController,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: palette.textPrimary,
+                    child: ResponsiveCenter(
+                      child: SingleChildScrollView(
+                        controller: provider.scrollController,
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          MediaQuery.of(context).padding.top +
+                              kToolbarHeight +
+                              8,
+                          16,
+                          16,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            QrScannerFrame(
+                              palette: palette,
+                              controller: provider.scannerController,
+                              onDetected: provider.onQrDetected,
                             ),
-                            decoration: InputDecoration(
-                              hintText: 'nich-ka.space/join?code=...',
-                              hintStyle: GoogleFonts.poppins(
+                            const SizedBox(height: 20),
+                            JoinClassDivider(
+                              label: 'O PEGA EL ENLACE',
+                              palette: palette,
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: provider.linkController,
+                              style: GoogleFonts.poppins(
                                 fontSize: 13,
-                                color: palette.textMuted,
+                                color: palette.textPrimary,
                               ),
-                              prefixIcon: Icon(
-                                Icons.link,
-                                size: 18,
-                                color: palette.textMuted,
-                              ),
-                              filled: true,
-                              fillColor: palette.surface,
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 13,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: palette.border),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: palette.border),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: AppPalette.accent,
-                                  width: 1.5,
+                              decoration: InputDecoration(
+                                hintText: 'nich-ka.space/join?code=...',
+                                hintStyle: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: palette.textMuted,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.link,
+                                  size: 18,
+                                  color: palette.textMuted,
+                                ),
+                                filled: true,
+                                fillColor: palette.surface,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 13,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: palette.border),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: palette.border),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: AppPalette.accent,
+                                    width: 1.5,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          JoinClassDivider(
-                            label: 'O INGRESA EL CÓDIGO',
-                            palette: palette,
-                          ),
-                          const SizedBox(height: 12),
-                          ClassCodeInput(
-                            controller: provider.codeController,
-                            focusNode: provider.codeFocusNode,
-                            code: provider.code,
-                            palette: palette,
-                          ),
-                        ],
+                            const SizedBox(height: 20),
+                            JoinClassDivider(
+                              label: 'O INGRESA EL CÓDIGO',
+                              palette: palette,
+                            ),
+                            const SizedBox(height: 12),
+                            ClassCodeInput(
+                              controller: provider.codeController,
+                              focusNode: provider.codeFocusNode,
+                              code: provider.code,
+                              palette: palette,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -186,7 +201,17 @@ class JoinClassView extends StatelessWidget {
                                       content: Text('Te uniste a la clase.'),
                                     ),
                                   );
-                                  context.pop(true);
+                                  // Cierra esta vista y abre directo la clase
+                                  // a la que se unió.
+                                  final joined = provider.joinedClass;
+                                  if (joined != null) {
+                                    context.pushReplacement(
+                                      '/class-detail',
+                                      extra: joined,
+                                    );
+                                  } else {
+                                    context.pop(true);
+                                  }
                                 } else if (provider.joinState is UiError) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

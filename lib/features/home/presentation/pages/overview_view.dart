@@ -17,6 +17,8 @@ import '../components/home_glow.dart';
 import '../components/stats_overview_grid.dart';
 import '../providers/overview_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/presentation/responsive_center.dart';
+import '../../../../core/presentation/responsive.dart';
 
 class OverviewView extends StatelessWidget {
   const OverviewView({super.key});
@@ -64,6 +66,7 @@ class OverviewView extends StatelessWidget {
               ),
               appBar: MainAppBar(
                 palette: palette,
+                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
                 isScrolled: provider.isScrolled,
                 onMenuTap: () =>
                     provider.scaffoldKey.currentState?.openDrawer(),
@@ -72,63 +75,67 @@ class OverviewView extends StatelessWidget {
               body: Stack(
                 children: [
                   HomeGlow(palette: palette),
-                  SingleChildScrollView(
-                    controller: provider.scrollController,
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + kToolbarHeight + 8,
-                      16,
-                      24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: firstName.isEmpty
-                                    ? 'Hola, '
-                                    : 'Hola $firstName, ',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                  ResponsiveCenter(
+                    child: SingleChildScrollView(
+                      controller: provider.scrollController,
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        MediaQuery.of(context).padding.top +
+                            appBarHeight(context) +
+                            8,
+                        16,
+                        24,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: firstName.isEmpty
+                                      ? 'Hola, '
+                                      : 'Hola $firstName, ',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: provider.greeting,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: palette.textPrimary,
-                                  height: 1.2,
+                                TextSpan(
+                                  text: provider.greeting,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: palette.textPrimary,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        StatsOverviewGrid(
-                          stats: provider.stats,
-                          palette: palette,
-                        ),
-                        const SizedBox(height: 14),
-                        FermentationCurveCard(
-                          points: provider.chartPoints,
-                          selectedRange: provider.selectedRange,
-                          palette: palette,
-                          onRangeSelected: provider.selectRange,
-                        ),
-                        const SizedBox(height: 20),
-                        FermentationProgressList(
-                          cards: provider.fermentationCards,
-                          palette: palette,
-                          total: provider.fermentationCards.length,
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          StatsOverviewGrid(
+                            stats: provider.stats,
+                            palette: palette,
+                          ),
+                          const SizedBox(height: 14),
+                          FermentationCurveCard(
+                            points: provider.chartPoints,
+                            selectedRange: provider.selectedRange,
+                            palette: palette,
+                            onRangeSelected: provider.selectRange,
+                          ),
+                          const SizedBox(height: 20),
+                          FermentationProgressList(
+                            cards: provider.fermentationCards,
+                            palette: palette,
+                            total: provider.fermentationCards.length,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
