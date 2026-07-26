@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
+import 'core/network/http_client.dart';
 import 'core/push/push_service.dart';
 
 @pragma('vm:entry-point')
@@ -13,8 +14,8 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase / notificaciones push son solo para móvil. En web no hay
-  // google-services y Firebase.initializeApp() sin opciones falla.
+  await HttpClient.instance.initialize();
+
   if (!kIsWeb) {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
