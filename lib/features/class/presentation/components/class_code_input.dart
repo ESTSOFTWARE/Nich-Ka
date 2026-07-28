@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 class ClassCodeInput extends StatelessWidget {
   final TextEditingController controller;
@@ -53,6 +54,7 @@ class ClassCodeInput extends StatelessWidget {
             }),
           ),
           TextField(
+            inputFormatters: AppInputFormatters.text,
             controller: controller,
             focusNode: focusNode,
             maxLength: 8,

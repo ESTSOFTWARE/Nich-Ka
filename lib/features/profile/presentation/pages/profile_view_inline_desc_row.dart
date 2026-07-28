@@ -22,6 +22,7 @@ class _InlineDescRow extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           TextField(
+            inputFormatters: AppInputFormatters.text,
             controller: controller,
             maxLines: 3,
             maxLength: 300,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 class FermentationSearchBar extends StatelessWidget {
   final AppPalette palette;
@@ -15,6 +16,7 @@ class FermentationSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      inputFormatters: AppInputFormatters.text,
       controller: controller,
       style: GoogleFonts.poppins(fontSize: 13, color: palette.textPrimary),
       decoration: InputDecoration(

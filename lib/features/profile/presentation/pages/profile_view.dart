@@ -17,6 +17,7 @@ import '../states/ui_state.dart';
 import '../../domain/entities/profile_user.dart';
 import '../../../../core/presentation/responsive_center.dart';
 import '../../../../core/presentation/tablet_text_scale.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 part 'profile_view_chip.dart';
 part 'profile_view_inline_row.dart';

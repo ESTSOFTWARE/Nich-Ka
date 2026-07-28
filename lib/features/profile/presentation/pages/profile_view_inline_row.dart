@@ -29,6 +29,7 @@ class _InlineRow extends StatelessWidget {
           ),
           Expanded(
             child: TextField(
+              inputFormatters: AppInputFormatters.text,
               controller: controller,
               textAlign: TextAlign.end,
               style: GoogleFonts.poppins(

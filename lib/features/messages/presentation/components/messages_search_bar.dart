@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 class MessagesSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -17,6 +18,7 @@ class MessagesSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      inputFormatters: AppInputFormatters.text,
       controller: controller,
       onChanged: onChanged,
       style: GoogleFonts.poppins(fontSize: 14, color: palette.textPrimary),

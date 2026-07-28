@@ -14,6 +14,7 @@ import '../providers/join_class_provider.dart';
 import '../states/ui_state.dart';
 import '../../../../core/presentation/responsive_center.dart';
 import '../../../../core/presentation/responsive.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 class JoinClassView extends StatelessWidget {
   const JoinClassView({super.key, this.initialCode});
@@ -125,6 +126,7 @@ class JoinClassView extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             TextField(
+                              inputFormatters: AppInputFormatters.text,
                               controller: provider.linkController,
                               style: GoogleFonts.poppins(
                                 fontSize: 13,

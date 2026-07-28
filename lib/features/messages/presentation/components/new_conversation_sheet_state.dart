@@ -132,6 +132,7 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 // Group name field
                 if (_type == 'group') ...[
                   TextField(
+                    inputFormatters: AppInputFormatters.text,
                     onChanged: (v) => setState(() => _groupName = v),
                     style: GoogleFonts.poppins(
                       fontSize: 14,
@@ -171,6 +172,7 @@ class _NewConversationSheetState extends State<_NewConversationSheet> {
                 ],
                 // Search
                 TextField(
+                  inputFormatters: AppInputFormatters.text,
                   onChanged: (v) => setState(() => _search = v),
                   style: GoogleFonts.poppins(
                     fontSize: 14,

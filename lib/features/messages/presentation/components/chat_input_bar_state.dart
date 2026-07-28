@@ -407,6 +407,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
+                  inputFormatters: AppInputFormatters.text,
                   controller: _ctrl,
                   focusNode: _focusNode,
                   style: GoogleFonts.poppins(
