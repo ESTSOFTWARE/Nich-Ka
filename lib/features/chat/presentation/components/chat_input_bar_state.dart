@@ -43,6 +43,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
         children: [
           Expanded(
             child: TextField(
+              inputFormatters: AppInputFormatters.text,
               controller: _ctrl,
               enabled: !widget.isLoading,
               onSubmitted: (_) => _submit(),

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../domain/entities/chat_member.dart';
 import 'sticker_picker.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 part 'chat_input_bar_state.dart';
 

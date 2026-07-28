@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 class ChatInputField extends StatelessWidget {
   final AppPalette palette;
@@ -19,6 +20,7 @@ class ChatInputField extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              inputFormatters: AppInputFormatters.text,
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 color: palette.textPrimary,

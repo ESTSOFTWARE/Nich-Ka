@@ -39,6 +39,7 @@ class _GroupMessageInputState extends State<GroupMessageInput> {
         children: [
           Expanded(
             child: TextField(
+              inputFormatters: AppInputFormatters.text,
               controller: _controller,
               style: GoogleFonts.poppins(
                 fontSize: 14,

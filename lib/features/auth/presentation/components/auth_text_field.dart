@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/validation/input_formatters.dart';
 import 'auth_field_label.dart';
 import 'password_visibility_toggle.dart';
 
@@ -43,6 +44,9 @@ class AuthTextField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           maxLength: maxLength,
+          // Contraseñas: permiten símbolos (más fuerza, se hashean). El resto
+          // de campos bloquea caracteres de inyección al teclear.
+          inputFormatters: isPassword ? null : AppInputFormatters.text,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: GoogleFonts.poppins(
             fontSize: 14,

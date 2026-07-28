@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/chat_conversation.dart';
 import '../../domain/entities/chat_member.dart';
 import '../../../../shared/theme/app_palette.dart';
+import '../../../../core/validation/input_formatters.dart';
 
 part 'new_conversation_sheet_state.dart';
 
