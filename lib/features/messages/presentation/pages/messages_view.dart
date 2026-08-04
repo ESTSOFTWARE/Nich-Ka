@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../components/conversations_list.dart';
@@ -11,114 +11,113 @@ import '../components/messages_app_bar.dart';
 import '../components/messages_error_state.dart';
 import '../components/messages_search_bar.dart';
 import '../components/new_conversation_sheet.dart';
-import '../providers/messages_provider.dart';
+import '../notifiers/messages_notifier.dart';
+import '../notifiers/messages_state.dart';
+import '../providers/messages_ui_state.dart';
 import '../../../../core/presentation/responsive_center.dart';
 
-class MessagesView extends StatelessWidget {
+class MessagesView extends ConsumerWidget {
   const MessagesView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MessagesProvider>(
-      create: () => MessagesProvider(),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = AppPalette.of(isDark);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(messagesProvider);
+    final notifier = ref.read(messagesProvider.notifier);
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = AppPalette.of(isDark);
 
-        final subtitle = switch (provider.state) {
-          MessagesUiState.loading => 'Cargando...',
-          MessagesUiState.error => 'Error al cargar',
-          MessagesUiState.empty => 'Sin conversaciones',
-          MessagesUiState.success =>
-            '${provider.totalConversations} chats · ${provider.totalUnread} sin leer',
-        };
+    final subtitle = switch (state.uiState) {
+      MessagesUiState.loading => 'Cargando...',
+      MessagesUiState.error => 'Error al cargar',
+      MessagesUiState.empty => 'Sin conversaciones',
+      MessagesUiState.success =>
+        '${state.totalConversations} chats · ${state.totalUnread} sin leer',
+    };
 
-        return Scaffold(
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          appBar: MessagesAppBar(
-            subtitle: subtitle,
-            isScrolled: provider.isScrolled,
-            isDark: isDark,
-            palette: palette,
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () =>
-                _openNewConversationSheet(context, provider, palette),
-            backgroundColor: AppPalette.accent,
-            elevation: 4,
-            child: const Icon(Icons.edit_outlined, color: Colors.black),
-          ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: palette),
-              RefreshIndicator(
-                color: AppPalette.accent,
-                backgroundColor: palette.surface,
-                onRefresh: provider.refresh,
-                child: ResponsiveCenter(
-                  child: CustomScrollView(
-                    controller: provider.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: [
-                      SliverPadding(
-                        padding: EdgeInsets.fromLTRB(
-                          16,
-                          MediaQuery.of(context).padding.top + 64 + 12,
-                          16,
-                          0,
-                        ),
-                        sliver: SliverToBoxAdapter(
-                          child: MessagesSearchBar(
-                            controller: provider.searchController,
-                            onChanged: provider.setSearch,
-                            palette: palette,
-                          ),
-                        ),
+    return Scaffold(
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      appBar: MessagesAppBar(
+        subtitle: subtitle,
+        isScrolled: state.isScrolled,
+        isDark: isDark,
+        palette: palette,
+        onBack: () => context.canPop() ? context.pop() : context.go('/home'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            _openNewConversationSheet(context, state, notifier, palette),
+        backgroundColor: AppPalette.accent,
+        elevation: 4,
+        child: const Icon(Icons.edit_outlined, color: Colors.black),
+      ),
+      body: Stack(
+        children: [
+          HomeGlow(palette: palette),
+          RefreshIndicator(
+            color: AppPalette.accent,
+            backgroundColor: palette.surface,
+            onRefresh: notifier.refresh,
+            child: ResponsiveCenter(
+              child: CustomScrollView(
+                controller: notifier.scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      MediaQuery.of(context).padding.top + 64 + 12,
+                      16,
+                      0,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: MessagesSearchBar(
+                        controller: notifier.searchController,
+                        onChanged: notifier.setSearch,
+                        palette: palette,
                       ),
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
-                        sliver: SliverToBoxAdapter(
-                          child: _buildContent(context, provider, palette),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+                    sliver: SliverToBoxAdapter(
+                      child: _buildContent(context, state, notifier, palette),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
   Widget _buildContent(
     BuildContext context,
-    MessagesProvider provider,
+    MessagesState state,
+    MessagesNotifier notifier,
     AppPalette palette,
   ) {
-    return switch (provider.state) {
+    return switch (state.uiState) {
       MessagesUiState.loading => ConversationsSkeleton(palette: palette),
       MessagesUiState.error => MessagesErrorState(
-        message: provider.error,
-        onRetry: provider.refresh,
+        message: state.error,
+        onRetry: notifier.refresh,
         palette: palette,
       ),
-      _ when provider.conversations.isEmpty => EmptyConversationsState(
+      _ when state.conversations.isEmpty => EmptyConversationsState(
         palette: palette,
       ),
       _ => ConversationsList(
-        conversations: provider.conversations,
+        conversations: state.conversations,
         palette: palette,
-        onlineUserIds: provider.onlineUserIds,
+        onlineUserIds: state.onlineUserIds,
         onTap: (c) async {
-          provider.markReadLocally(c.id);
+          notifier.markReadLocally(c.id);
           await context.push('/group-chat', extra: c);
           // Al volver, limpia cualquier no leído acumulado dentro del chat.
-          provider.markReadLocally(c.id);
+          notifier.markReadLocally(c.id);
         },
       ),
     };
@@ -126,16 +125,17 @@ class MessagesView extends StatelessWidget {
 
   Future<void> _openNewConversationSheet(
     BuildContext context,
-    MessagesProvider provider,
+    MessagesState state,
+    MessagesNotifier notifier,
     AppPalette palette,
   ) async {
-    await provider.loadContacts();
+    await notifier.loadContacts();
     if (!context.mounted) return;
     final conv = await showNewConversationSheet(
       context: context,
       palette: palette,
-      contacts: provider.contacts,
-      onCreate: ({required type, required memberIds, name}) => provider
+      contacts: state.contacts,
+      onCreate: ({required type, required memberIds, name}) => notifier
           .createConversation(type: type, memberIds: memberIds, name: name),
     );
     if (conv != null && context.mounted) {

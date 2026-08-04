@@ -3,9 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/circle_icon_button.dart';
-import '../providers/profile_provider.dart';
+import '../notifiers/profile_notifier.dart';
+import '../notifiers/profile_state.dart';
 import '../theme/profile_palette.dart';
 import '../components/profile_header_card.dart';
 import '../components/profile_section.dart';
@@ -24,53 +25,51 @@ part 'profile_view_inline_row.dart';
 part 'profile_view_inline_phone_row.dart';
 part 'profile_view_inline_desc_row.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends ConsumerWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProfileProvider>(
-      create: () => ProfileProvider(),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = ProfilePalette.of(isDark);
-        final state = provider.state;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(profileProvider);
+    final notifier = ref.read(profileProvider.notifier);
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = ProfilePalette.of(isDark);
+    final profileUi = state.profileState;
 
-        if (provider.uploadError != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(provider.uploadError!),
-                backgroundColor: Colors.red.shade700,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          });
-        }
-
-        return Scaffold(
-          backgroundColor: palette.background,
-          body: Stack(
-            children: [
-              TopGlow(isDark: isDark),
-              SafeArea(
-                child: switch (state) {
-                  UiLoading() => _buildLoading(palette),
-                  UiError e => _buildError(palette, e, provider),
-                  UiSuccess s => _buildContent(
-                    context,
-                    provider,
-                    s.data,
-                    isDark,
-                    palette,
-                  ),
-                  _ => const SizedBox.shrink(),
-                },
-              ),
-            ],
+    if (state.uploadError != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.uploadError!),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
           ),
         );
-      },
+      });
+    }
+
+    return Scaffold(
+      backgroundColor: palette.background,
+      body: Stack(
+        children: [
+          TopGlow(isDark: isDark),
+          SafeArea(
+            child: switch (profileUi) {
+              UiLoading() => _buildLoading(palette),
+              UiError e => _buildError(palette, e, notifier),
+              UiSuccess s => _buildContent(
+                context,
+                state,
+                notifier,
+                s.data,
+                isDark,
+                palette,
+              ),
+              _ => const SizedBox.shrink(),
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -83,7 +82,7 @@ class ProfileView extends StatelessWidget {
   Widget _buildError(
     ProfilePalette palette,
     UiError<dynamic> error,
-    ProfileProvider provider,
+    ProfileNotifier notifier,
   ) {
     return Center(
       child: Padding(
@@ -103,7 +102,7 @@ class ProfileView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             OutlinedButton(
-              onPressed: provider.loadProfile,
+              onPressed: notifier.loadProfile,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: ProfilePalette.accent),
                 shape: RoundedRectangleBorder(
@@ -131,12 +130,13 @@ class ProfileView extends StatelessWidget {
 
   Widget _buildContent(
     BuildContext context,
-    ProfileProvider provider,
+    ProfileState state,
+    ProfileNotifier notifier,
     ProfileUser user,
     bool isDark,
     ProfilePalette palette,
   ) {
-    final editing = provider.editingInfo;
+    final editing = state.editingInfo;
 
     return TabletTextScale(
       child: Column(
@@ -174,24 +174,24 @@ class ProfileView extends StatelessWidget {
                     icon: Icons.edit_outlined,
                     color: palette.textSecondary,
                     borderColor: palette.border,
-                    onTap: provider.startEditing,
+                    onTap: notifier.startEditing,
                   )
                 else ...[
                   _Chip(
                     label: 'Cancelar',
                     color: palette.textMuted,
                     borderColor: palette.border,
-                    onTap: provider.cancelEditing,
+                    onTap: notifier.cancelEditing,
                   ),
                   const SizedBox(width: 8),
                   _Chip(
-                    label: provider.isSaving ? 'Guardando…' : 'Guardar',
+                    label: state.isSaving ? 'Guardando…' : 'Guardar',
                     color: ProfilePalette.accent,
                     borderColor: ProfilePalette.accent,
-                    onTap: provider.isSaving
+                    onTap: state.isSaving
                         ? null
                         : () async {
-                            final ok = await provider.saveEditing();
+                            final ok = await notifier.saveEditing();
                             if (ok && context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -218,10 +218,10 @@ class ProfileView extends StatelessWidget {
                     ProfileHeaderCard(
                       user: user,
                       palette: palette,
-                      onChangePhoto: provider.isUploading
+                      onChangePhoto: state.isUploading
                           ? null
-                          : provider.pickAndUploadPhoto,
-                      isUploading: provider.isUploading,
+                          : notifier.pickAndUploadPhoto,
+                      isUploading: state.isUploading,
                     ),
                     const SizedBox(height: 28),
 
@@ -235,26 +235,26 @@ class ProfileView extends StatelessWidget {
                             ? [
                                 _InlineRow(
                                   label: 'Nombre',
-                                  controller: provider.nameCtrl,
+                                  controller: notifier.nameCtrl,
                                   palette: palette,
                                 ),
                                 _divider(palette),
                                 _InlineRow(
                                   label: 'Apellido',
-                                  controller: provider.lastNameCtrl,
+                                  controller: notifier.lastNameCtrl,
                                   palette: palette,
                                 ),
                                 _divider(palette),
                                 _InlinePhoneRow(
-                                  controller: provider.phoneCtrl,
-                                  dialCode: provider.dialCode,
+                                  controller: notifier.phoneCtrl,
+                                  dialCode: state.dialCode,
                                   palette: palette,
                                   onDialCodeTap: () =>
-                                      _pickDialCode(context, provider),
+                                      _pickDialCode(context, state, notifier),
                                 ),
                                 _divider(palette),
                                 _InlineDescRow(
-                                  controller: provider.descriptionCtrl,
+                                  controller: notifier.descriptionCtrl,
                                   palette: palette,
                                 ),
                               ]
@@ -322,11 +322,11 @@ class ProfileView extends StatelessWidget {
                           title: 'Google',
                           palette: palette,
                           trailing: Text(
-                            provider.isGoogleLinked ? 'Conectado' : 'Vincular',
+                            state.isGoogleLinked ? 'Conectado' : 'Vincular',
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: provider.isGoogleLinked
+                              color: state.isGoogleLinked
                                   ? ProfilePalette.accent
                                   : palette.textSecondary,
                             ),
@@ -394,7 +394,11 @@ class ProfileView extends StatelessWidget {
   Widget _divider(ProfilePalette palette) =>
       Divider(height: 1, thickness: 1, color: palette.border);
 
-  void _pickDialCode(BuildContext context, ProfileProvider provider) {
+  void _pickDialCode(
+    BuildContext context,
+    ProfileState state,
+    ProfileNotifier notifier,
+  ) {
     const codes = ['+52', '+1', '+34', '+57', '+54', '+56', '+51', '+58'];
     showModalBottomSheet<void>(
       context: context,
@@ -408,11 +412,11 @@ class ProfileView extends StatelessWidget {
           ...codes.map(
             (c) => ListTile(
               title: Text(c, style: GoogleFonts.poppins(fontSize: 14)),
-              trailing: c == provider.dialCode
+              trailing: c == state.dialCode
                   ? Icon(Icons.check, color: ProfilePalette.accent)
                   : null,
               onTap: () {
-                provider.setDialCode(c);
+                notifier.setDialCode(c);
                 Navigator.pop(context);
               },
             ),

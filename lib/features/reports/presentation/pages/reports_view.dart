@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../features/home/presentation/components/home_glow.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../components/report_summary_cards.dart';
@@ -14,123 +14,121 @@ import '../components/reports_list.dart';
 import '../components/reports_skeleton.dart';
 import '../../domain/entities/report_item.dart';
 import '../../domain/entities/reports_summary.dart';
-import '../providers/reports_provider.dart';
+import '../notifiers/reports_notifier.dart';
 import '../states/ui_state.dart';
 import '../theme/reports_palette.dart';
 import '../../../../core/presentation/responsive_center.dart';
 import '../../../../core/presentation/responsive.dart';
 
-class ReportsView extends StatelessWidget {
+class ReportsView extends ConsumerWidget {
   const ReportsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ReportsProvider>(
-      create: () => ReportsProvider(),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = ReportsPalette.of(isDark);
-        final homePalette = AppPalette.of(isDark);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = ReportsPalette.of(isDark);
+    final homePalette = AppPalette.of(isDark);
 
-        _handleDownloadSnackbar(context, provider);
+    _handleDownloadSnackbar(context, ref);
 
-        return Scaffold(
-          key: provider.scaffoldKey,
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-              (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+    return Scaffold(
+      key: ref.read(reportsProvider.notifier).scaffoldKey,
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          (kToolbarHeight) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+        ),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: ref.watch(reportsProvider).isScrolled ? 20 : 0,
+              sigmaY: ref.watch(reportsProvider).isScrolled ? 20 : 0,
             ),
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: provider.isScrolled ? 20 : 0,
-                  sigmaY: provider.isScrolled ? 20 : 0,
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  isTablet(context) ? kTabletTextScale : 1,
                 ),
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(
-                      isTablet(context) ? kTabletTextScale : 1,
-                    ),
-                  ),
-                  child: AppBar(
-                    backgroundColor: provider.isScrolled
-                        ? homePalette.glassBackground
-                        : Colors.transparent,
-                    elevation: 0,
-                    scrolledUnderElevation: 0,
-                    automaticallyImplyLeading: false,
-                    titleSpacing: 16,
-                    title: Row(
-                      children: [
-                        _buildBackButton(context, palette),
-                        const SizedBox(width: 12),
-                        Expanded(child: _buildTitle(provider, palette)),
-                        _buildFilterButton(palette),
-                      ],
-                    ),
-                  ),
+              ),
+              child: AppBar(
+                backgroundColor: ref.watch(reportsProvider).isScrolled
+                    ? homePalette.glassBackground
+                    : Colors.transparent,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                automaticallyImplyLeading: false,
+                titleSpacing: 16,
+                title: Row(
+                  children: [
+                    _buildBackButton(context, palette),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildTitle(ref, palette)),
+                    _buildFilterButton(palette),
+                  ],
                 ),
               ),
             ),
           ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: homePalette),
-              RefreshIndicator(
-                color: ReportsPalette.accent,
-                backgroundColor: palette.surface,
-                onRefresh: provider.refresh,
-                child: ResponsiveCenter(
-                  child: SingleChildScrollView(
-                    controller: provider.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top +
-                          (kToolbarHeight + 16) *
-                              (isTablet(context) ? kTabletHeaderScale : 1.0),
-                      16,
-                      24,
+        ),
+      ),
+      body: Stack(
+        children: [
+          HomeGlow(palette: homePalette),
+          RefreshIndicator(
+            color: ReportsPalette.accent,
+            backgroundColor: palette.surface,
+            onRefresh: ref.read(reportsProvider.notifier).refresh,
+            child: ResponsiveCenter(
+              child: SingleChildScrollView(
+                controller: ref.read(reportsProvider.notifier).scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  MediaQuery.of(context).padding.top +
+                      (kToolbarHeight + 16) *
+                          (isTablet(context) ? kTabletHeaderScale : 1.0),
+                  16,
+                  24,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ReportsFilterBar(
+                      selected: ref.watch(reportsProvider).selectedFilter,
+                      palette: palette,
+                      onSelected: ref
+                          .read(reportsProvider.notifier)
+                          .selectFilter,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ReportsFilterBar(
-                          selected: provider.selectedFilter,
-                          palette: palette,
-                          onSelected: provider.selectFilter,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildSummary(provider, palette),
-                        const SizedBox(height: 16),
-                        _buildList(context, provider, palette),
-                      ],
-                    ),
-                  ),
+                    const SizedBox(height: 16),
+                    _buildSummary(ref, palette),
+                    const SizedBox(height: 16),
+                    _buildList(context, ref, palette),
+                  ],
                 ),
               ),
-              if (provider.isDownloading) _buildDownloadOverlay(palette),
-            ],
+            ),
           ),
-        );
-      },
+          if (ref.watch(reportsProvider).isDownloading)
+            _buildDownloadOverlay(palette),
+        ],
+      ),
     );
   }
 
-  void _handleDownloadSnackbar(BuildContext context, ReportsProvider provider) {
-    if (provider.downloadError != null) {
+  void _handleDownloadSnackbar(BuildContext context, WidgetRef ref) {
+    if (ref.watch(reportsProvider).downloadError != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(provider.downloadError!),
+            content: Text(ref.watch(reportsProvider).downloadError!),
             backgroundColor: Colors.red,
           ),
         );
-        provider.clearDownloadFlags();
+        ref.read(reportsProvider.notifier).clearDownloadFlags();
       });
-    } else if (provider.downloadCompleted) {
+    } else if (ref.watch(reportsProvider).downloadCompleted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -138,7 +136,7 @@ class ReportsView extends StatelessWidget {
             backgroundColor: Colors.green,
           ),
         );
-        provider.clearDownloadFlags();
+        ref.read(reportsProvider.notifier).clearDownloadFlags();
       });
     }
   }
@@ -227,8 +225,8 @@ class ReportsView extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(ReportsProvider provider, ReportsPalette palette) {
-    final subtitle = switch (provider.summaryState) {
+  Widget _buildTitle(WidgetRef ref, ReportsPalette palette) {
+    final subtitle = switch (ref.watch(reportsProvider).summaryState) {
       UiSuccess<ReportsSummary>(:final data) =>
         '${data.total} fermentaciones registradas',
       _ => 'Cargando...',
@@ -259,8 +257,8 @@ class ReportsView extends StatelessWidget {
     );
   }
 
-  Widget _buildSummary(ReportsProvider provider, ReportsPalette palette) {
-    return switch (provider.summaryState) {
+  Widget _buildSummary(WidgetRef ref, ReportsPalette palette) {
+    return switch (ref.watch(reportsProvider).summaryState) {
       UiLoading<ReportsSummary>() => ReportsSummarySkeleton(palette: palette),
       UiSuccess<ReportsSummary>(:final data) => ReportSummaryCards(
         summary: data,
@@ -272,10 +270,10 @@ class ReportsView extends StatelessWidget {
 
   Widget _buildList(
     BuildContext context,
-    ReportsProvider provider,
+    WidgetRef ref,
     ReportsPalette palette,
   ) {
-    return switch (provider.reportsState) {
+    return switch (ref.watch(reportsProvider).reportsState) {
       UiLoading<List<ReportItem>>() => ReportsListSkeleton(palette: palette),
       UiError<List<ReportItem>>(:final message) => SizedBox(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -283,7 +281,7 @@ class ReportsView extends StatelessWidget {
           child: ReportsErrorState(
             message: message,
             palette: palette,
-            onRetry: provider.refresh,
+            onRetry: ref.read(reportsProvider.notifier).refresh,
           ),
         ),
       ),
@@ -302,7 +300,9 @@ class ReportsView extends StatelessWidget {
         },
         onDownloadPdf: (report) {
           final sessionId = _extractSessionId(report.id);
-          if (sessionId != null) provider.downloadReportPdf(sessionId);
+          if (sessionId != null) {
+            ref.read(reportsProvider.notifier).downloadReportPdf(sessionId);
+          }
         },
       ),
       _ => const SizedBox.shrink(),

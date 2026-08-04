@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import '../../../../core/presentation/responsive.dart';
-import '../../../../core/providers/auth_provider.dart';
+import '../../../../core/providers/global_providers.dart';
 import '../../../../core/navigation/entry_route.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -31,7 +30,7 @@ class LoginView extends ConsumerWidget {
     }
     final token = ref.read(loginProvider).token;
     if (token != null) {
-      context.read<AuthProvider>().setUser(token);
+      ref.read(authProvider.notifier).setUser(token);
     }
     final code = pendingJoinCode;
     if (code != null) {

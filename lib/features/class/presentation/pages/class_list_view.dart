@@ -7,153 +7,150 @@ import '../../../../core/presentation/app_theme_scope.dart';
 import '../../domain/entities/class_detail.dart';
 import '../../domain/entities/class_item.dart';
 import '../../domain/entities/class_summary.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../home/presentation/components/home_glow.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../components/class_card.dart';
 import '../components/classes_error_state.dart';
 import '../components/classes_skeleton.dart';
 import '../components/empty_classes_state.dart';
-import '../providers/class_list_provider.dart';
+import '../notifiers/class_list_notifier.dart';
+import '../notifiers/class_list_state.dart';
 import '../states/ui_state.dart';
 import '../theme/class_palette.dart';
 import '../../../../core/presentation/responsive_center.dart';
 import '../../../../core/presentation/responsive.dart';
 
-class ClassListView extends StatelessWidget {
+class ClassListView extends ConsumerWidget {
   const ClassListView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ClassListProvider>(
-      create: () => ClassListProvider(),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = ClassPalette.of(isDark);
-        final homePalette = AppPalette.of(isDark);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(classListProvider);
+    final notifier = ref.read(classListProvider.notifier);
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = ClassPalette.of(isDark);
+    final homePalette = AppPalette.of(isDark);
 
-        final subtitle = switch (provider.summaryState) {
-          UiSuccess<ClassSummary>(:final data) =>
-            '${data.totalGroups} grupos · ${data.unreadItems} elementos sin leer',
-          _ => 'Cargando...',
-        };
+    final subtitle = switch (state.summaryState) {
+      UiSuccess<ClassSummary>(:final data) =>
+        '${data.totalGroups} grupos · ${data.unreadItems} elementos sin leer',
+      _ => 'Cargando...',
+    };
 
-        return Scaffold(
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-              (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+    return Scaffold(
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+        ),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: state.isScrolled ? 20 : 0,
+              sigmaY: state.isScrolled ? 20 : 0,
             ),
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: provider.isScrolled ? 20 : 0,
-                  sigmaY: provider.isScrolled ? 20 : 0,
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  isTablet(context) ? kTabletTextScale : 1,
                 ),
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(
-                      isTablet(context) ? kTabletTextScale : 1,
-                    ),
-                  ),
-                  child: AppBar(
-                    backgroundColor: provider.isScrolled
-                        ? homePalette.glassBackground
-                        : Colors.transparent,
-                    elevation: 0,
-                    scrolledUnderElevation: 0,
-                    systemOverlayStyle: isDark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark,
-                    automaticallyImplyLeading: false,
-                    centerTitle: false,
-                    toolbarHeight:
-                        (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
-                    leadingWidth: 56,
-                    leading: Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: GestureDetector(
-                        onTap: () => context.canPop()
-                            ? context.pop()
-                            : context.go('/home'),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: palette.border),
-                          ),
-                          child: Icon(
-                            Icons.chevron_left,
-                            color: palette.textPrimary,
-                            size: 22,
-                          ),
-                        ),
+              ),
+              child: AppBar(
+                backgroundColor: state.isScrolled
+                    ? homePalette.glassBackground
+                    : Colors.transparent,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                systemOverlayStyle: isDark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark,
+                automaticallyImplyLeading: false,
+                centerTitle: false,
+                toolbarHeight:
+                    (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+                leadingWidth: 56,
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: GestureDetector(
+                    onTap: () =>
+                        context.canPop() ? context.pop() : context.go('/home'),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: palette.border),
+                      ),
+                      child: Icon(
+                        Icons.chevron_left,
+                        color: palette.textPrimary,
+                        size: 22,
                       ),
                     ),
-                    title: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Mis clases',
-                          style: GoogleFonts.poppins(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: palette.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle,
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: palette.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: _buildJoinButton(
-                          () => context.push('/class'),
-                          palette,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
+                title: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mis clases',
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: palette.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: palette.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: _buildJoinButton(
+                      () => context.push('/class'),
+                      palette,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: homePalette),
-              RefreshIndicator(
-                color: ClassPalette.accent,
-                backgroundColor: palette.surface,
-                onRefresh: provider.refresh,
-                child: ResponsiveCenter(
-                  child: SingleChildScrollView(
-                    controller: provider.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      MediaQuery.of(context).padding.top + 64 + 16,
-                      16,
-                      24,
-                    ),
-                    child: _buildContent(context, provider, palette),
-                  ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          HomeGlow(palette: homePalette),
+          RefreshIndicator(
+            color: ClassPalette.accent,
+            backgroundColor: palette.surface,
+            onRefresh: notifier.refresh,
+            child: ResponsiveCenter(
+              child: SingleChildScrollView(
+                controller: notifier.scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  MediaQuery.of(context).padding.top + 64 + 16,
+                  16,
+                  24,
                 ),
+                child: _buildContent(context, state, notifier, palette),
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -188,15 +185,16 @@ class ClassListView extends StatelessWidget {
 
   Widget _buildContent(
     BuildContext context,
-    ClassListProvider provider,
+    ClassListState state,
+    ClassListNotifier notifier,
     ClassPalette palette,
   ) {
-    return switch (provider.classesState) {
+    return switch (state.classesState) {
       UiLoading<List<ClassItem>>() => ClassesSkeleton(palette: palette),
       UiError<List<ClassItem>>(:final message) => ClassesErrorState(
         message: message,
         palette: palette,
-        onRetry: provider.refresh,
+        onRetry: notifier.refresh,
       ),
       UiSuccess<List<ClassDetail>>(:final data) when data.isEmpty =>
         EmptyClassesState(
