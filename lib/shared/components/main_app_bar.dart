@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import '../theme/app_palette.dart';
-import '../../features/notifications/presentation/providers/notifications_provider.dart';
+import '../../core/providers/global_providers.dart';
 
-class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
+class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final AppPalette palette;
   final bool isScrolled;
   final VoidCallback? onMenuTap;
@@ -30,7 +30,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(kToolbarHeight * scale);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(
@@ -109,7 +109,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  if (context.watch<NotificationsProvider>().unreadCount > 0)
+                  if (ref.watch(notificationsProvider).unreadCount > 0)
                     Positioned(
                       top: 10 * scale,
                       right: 10 * scale,

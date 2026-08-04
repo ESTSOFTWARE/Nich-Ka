@@ -15,7 +15,7 @@ class _LoginEmailViewState extends ConsumerState<LoginEmailView> {
   Future<void> _navigateAfterLogin() async {
     final token = ref.read(loginProvider).token;
     if (token != null && mounted) {
-      context.read<AuthProvider>().setUser(token);
+      ref.read(authProvider.notifier).setUser(token);
     }
     final code = pendingJoinCode;
     if (code != null) {

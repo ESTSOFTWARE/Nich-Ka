@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../core/presentation/responsive.dart';
 import '../../../../shared/components/app_drawer.dart';
 import '../../../../shared/components/app_drawer_item.dart';
@@ -11,18 +10,19 @@ import '../../../../shared/components/bottom_nav_bar.dart';
 import '../../../../shared/components/main_app_bar.dart';
 import '../../../../shared/utils/drawer_navigation.dart';
 import '../../../../shared/utils/bottom_nav_navigation.dart';
-import '../../../../features/profile/presentation/providers/drawer_provider.dart';
+import '../../../../features/profile/presentation/notifiers/drawer_notifier.dart';
 import '../components/active_fermentation_card.dart';
 import '../components/ai_recommendation_card.dart';
 import '../components/fermentation_list_item.dart';
 import '../components/home_glow.dart';
-import '../providers/home_provider.dart';
+import '../notifiers/home_notifier.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../../../core/presentation/tablet_text_scale.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 part 'home_view_predict_button.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   Widget _greeting(
@@ -140,120 +140,102 @@ class HomeView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<HomeProvider>(
-      create: () => HomeProvider(),
-      builder: (context, provider) {
-        // Sin fermentación activa esta vista no aplica → al home normal.
-        if (!provider.isLoading && !provider.hasActive) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) context.go('/');
-          });
-          return const Scaffold(
-            backgroundColor: Color(0xFF0A0A0B),
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = AppPalette.of(isDark);
-        return ChangeNotifierProvider<DrawerProvider>(
-          create: () => DrawerProvider(),
-          builder: (context, drawerProvider) {
-            final firstName = (drawerProvider.user?.fullName ?? '')
-                .trim()
-                .split(' ')
-                .first;
-            return Scaffold(
-              key: provider.scaffoldKey,
-              backgroundColor: palette.background,
-              extendBodyBehindAppBar: true,
-              drawer: AppDrawer(
-                palette: palette,
-                selected: AppDrawerItem.inicio,
-                onSelected: (item) => onDrawerNav(context, item),
-                onSettings: () => context.push('/profile'),
-                userName: drawerProvider.user?.fullName,
-                userRole: drawerProvider.user?.role.toUpperCase(),
-                profileImage: drawerProvider.user?.profileImage,
-                onLogout: () async {
-                  await drawerProvider.logout();
-                  if (context.mounted) context.go('/login');
-                },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(homeProvider);
+    // Sin fermentación activa esta vista no aplica → al home normal.
+    if (!provider.isLoading && !provider.hasActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.go('/');
+      });
+      return const Scaffold(
+        backgroundColor: Color(0xFF0A0A0B),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final drawer = ref.watch(drawerProvider);
+    final firstName = (drawer.user?.fullName ?? '').trim().split(' ').first;
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = AppPalette.of(isDark);
+    return Scaffold(
+      key: provider.scaffoldKey,
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      drawer: AppDrawer(
+        palette: palette,
+        selected: AppDrawerItem.inicio,
+        onSelected: (item) => onDrawerNav(context, item),
+        onSettings: () => context.push('/profile'),
+        userName: drawer.user?.fullName,
+        userRole: drawer.user?.role.toUpperCase(),
+        profileImage: drawer.user?.profileImage,
+        onLogout: () async {
+          await ref.read(drawerProvider.notifier).logout();
+          if (context.mounted) context.go('/login');
+        },
+      ),
+      appBar: MainAppBar(
+        palette: palette,
+        scale: isTablet(context) ? kTabletHeaderScale : 1.0,
+        isScrolled: provider.isScrolled,
+        onMenuTap: () => provider.scaffoldKey.currentState?.openDrawer(),
+        onNotificationTap: () => context.push('/notifications'),
+      ),
+      body: TabletTextScale(
+        child: Stack(
+          children: [
+            HomeGlow(palette: palette),
+            SingleChildScrollView(
+              controller: provider.scrollController,
+              padding: EdgeInsets.fromLTRB(
+                isTablet(context) ? 24 : 16,
+                MediaQuery.of(context).padding.top + appBarHeight(context) + 8,
+                isTablet(context) ? 24 : 16,
+                24,
               ),
-              appBar: MainAppBar(
-                palette: palette,
-                scale: isTablet(context) ? kTabletHeaderScale : 1.0,
-                isScrolled: provider.isScrolled,
-                onMenuTap: () =>
-                    provider.scaffoldKey.currentState?.openDrawer(),
-                onNotificationTap: () => context.push('/notifications'),
-              ),
-              body: TabletTextScale(
-                child: Stack(
-                  children: [
-                    HomeGlow(palette: palette),
-                    SingleChildScrollView(
-                      controller: provider.scrollController,
-                      padding: EdgeInsets.fromLTRB(
-                        isTablet(context) ? 24 : 16,
-                        MediaQuery.of(context).padding.top +
-                            appBarHeight(context) +
-                            8,
-                        isTablet(context) ? 24 : 16,
-                        24,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          _greeting(provider, palette, firstName),
-                          const SizedBox(height: 20),
-                          if (isTablet(context) && isLandscape(context))
-                            // Tablet horizontal: fermentación activa a la
-                            // izquierda, lista a la derecha. En vertical se
-                            // apila igual que en el teléfono.
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: _activeColumn(
-                                    context,
-                                    provider,
-                                    palette,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                Expanded(
-                                  flex: 4,
-                                  child: _fermentationsColumn(
-                                    context,
-                                    provider,
-                                    palette,
-                                  ),
-                                ),
-                              ],
-                            )
-                          else ...[
-                            _activeColumn(context, provider, palette),
-                            const SizedBox(height: 24),
-                            _fermentationsColumn(context, provider, palette),
-                          ],
-                        ],
-                      ),
-                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  _greeting(provider, palette, firstName),
+                  const SizedBox(height: 20),
+                  if (isTablet(context) && isLandscape(context))
+                    // Tablet horizontal: fermentación activa a la
+                    // izquierda, lista a la derecha. En vertical se
+                    // apila igual que en el teléfono.
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: _activeColumn(context, provider, palette),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          flex: 4,
+                          child: _fermentationsColumn(
+                            context,
+                            provider,
+                            palette,
+                          ),
+                        ),
+                      ],
+                    )
+                  else ...[
+                    _activeColumn(context, provider, palette),
+                    const SizedBox(height: 24),
+                    _fermentationsColumn(context, provider, palette),
                   ],
-                ),
+                ],
               ),
-              bottomNavigationBar: BottomNavBar(
-                selected: AppTab.inicio,
-                palette: palette,
-                onTabSelected: (tab) => onBottomNavSelected(context, tab),
-              ),
-            );
-          },
-        );
-      },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        selected: AppTab.inicio,
+        palette: palette,
+        onTabSelected: (tab) => onBottomNavSelected(context, tab),
+      ),
     );
   }
 }

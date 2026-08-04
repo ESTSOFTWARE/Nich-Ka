@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/presentation/app_theme_scope.dart';
-import '../../../../core/presentation/change_notifier_provider.dart';
 import '../../../../shared/theme/app_palette.dart';
 import '../../../class/domain/entities/class_member.dart';
 import '../components/group_members_sheet.dart';
@@ -17,11 +17,11 @@ import '../components/message_actions_sheet.dart';
 import '../components/edit_bar.dart';
 import '../components/reply_bar.dart';
 import '../components/typing_indicator.dart';
-import '../providers/group_chat_provider.dart';
+import '../notifiers/group_chat_notifier.dart';
 import '../../../../core/presentation/responsive_center.dart';
 import '../../../../core/presentation/responsive.dart';
 
-class GroupChatView extends StatelessWidget {
+class GroupChatView extends ConsumerWidget {
   final ChatConversation conversation;
   final int? highlightMessageId;
 
@@ -32,200 +32,193 @@ class GroupChatView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<GroupChatProvider>(
-      create: () => GroupChatProvider(
-        conversation,
-        highlightMessageId: highlightMessageId,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(
+      groupChatProvider(
+        GroupChatArgs(conversation, highlightMessageId: highlightMessageId),
       ),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = AppPalette.of(isDark);
+    );
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = AppPalette.of(isDark);
 
-        // If user left, pop back
-        if (provider.hasLeft) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              context.canPop() ? context.pop() : context.go('/messages');
-            }
-          });
+    // If user left, pop back
+    if (provider.hasLeft) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          context.canPop() ? context.pop() : context.go('/messages');
         }
+      });
+    }
 
-        return Scaffold(
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(
-              (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
-            ),
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(
-                      isTablet(context) ? kTabletTextScale : 1,
+    return Scaffold(
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+        ),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  isTablet(context) ? kTabletTextScale : 1,
+                ),
+              ),
+              child: AppBar(
+                backgroundColor: palette.glassBackground,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                systemOverlayStyle: isDark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark,
+                automaticallyImplyLeading: false,
+                toolbarHeight:
+                    (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
+                leadingWidth: 52,
+                leading: GestureDetector(
+                  onTap: () => context.canPop()
+                      ? context.pop()
+                      : context.go('/messages'),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 12),
+                    width: 36,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: palette.border),
+                    ),
+                    child: Icon(
+                      Icons.chevron_left,
+                      color: palette.textPrimary,
+                      size: 22,
                     ),
                   ),
-                  child: AppBar(
-                    backgroundColor: palette.glassBackground,
-                    elevation: 0,
-                    scrolledUnderElevation: 0,
-                    systemOverlayStyle: isDark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark,
-                    automaticallyImplyLeading: false,
-                    toolbarHeight:
-                        (64) * (isTablet(context) ? kTabletHeaderScale : 1.0),
-                    leadingWidth: 52,
-                    leading: GestureDetector(
-                      onTap: () => context.canPop()
-                          ? context.pop()
-                          : context.go('/messages'),
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 12),
-                        width: 36,
-                        height: 36,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: palette.border),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: palette.textPrimary,
-                          size: 22,
-                        ),
+                ),
+                title: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: provider.conversation.isGroup
+                      ? () => _showMembers(context, provider, palette)
+                      : () => _openOtherUserDetail(context, provider),
+                  child: Row(
+                    children: [
+                      _buildAvatar(
+                        palette,
+                        provider.conversation,
+                        provider.myUserId,
+                        isOnline: provider.isOtherUserOnline,
                       ),
-                    ),
-                    title: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: provider.conversation.isGroup
-                          ? () => _showMembers(context, provider, palette)
-                          : () => _openOtherUserDetail(context, provider),
-                      child: Row(
-                        children: [
-                          _buildAvatar(
-                            palette,
-                            provider.conversation,
-                            provider.myUserId,
-                            isOnline: provider.isOtherUserOnline,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  provider.conversation.displayName(
-                                    provider.myUserId,
-                                  ),
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: palette.textPrimary,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  provider.conversation.isGroup
-                                      ? '${provider.conversation.members.length} miembros'
-                                      : provider.isOtherUserOnline
-                                      ? 'En línea'
-                                      : 'Desconectado',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: palette.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Only show menu for groups (personal chats: just press back)
-                    actions: [
-                      if (provider.conversation.isGroup) ...[
-                        PopupMenuButton<String>(
-                          icon: Icon(
-                            Icons.more_vert,
-                            color: palette.textPrimary,
-                            size: 20,
-                          ),
-                          color: palette.surface,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: palette.border),
-                          ),
-                          onSelected: (value) => _handleMenuAction(
-                            context,
-                            provider,
-                            palette,
-                            value,
-                          ),
-                          itemBuilder: (_) => [
-                            if (provider.isCreator)
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: _menuItem(
-                                  Icons.edit_outlined,
-                                  'Editar grupo',
-                                  palette,
-                                ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              provider.conversation.displayName(
+                                provider.myUserId,
                               ),
-                            PopupMenuItem(
-                              value: 'leave',
-                              child: _menuItem(
-                                Icons.logout,
-                                'Salir del grupo',
-                                palette,
-                                color: const Color(0xFFEF4444),
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: palette.textPrimary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              provider.conversation.isGroup
+                                  ? '${provider.conversation.members.length} miembros'
+                                  : provider.isOtherUserOnline
+                                  ? 'En línea'
+                                  : 'Desconectado',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: palette.textSecondary,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(width: 4),
-                      ],
+                      ),
                     ],
                   ),
                 ),
+                // Only show menu for groups (personal chats: just press back)
+                actions: [
+                  if (provider.conversation.isGroup) ...[
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: palette.textPrimary,
+                        size: 20,
+                      ),
+                      color: palette.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: palette.border),
+                      ),
+                      onSelected: (value) =>
+                          _handleMenuAction(context, provider, palette, value),
+                      itemBuilder: (_) => [
+                        if (provider.isCreator)
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: _menuItem(
+                              Icons.edit_outlined,
+                              'Editar grupo',
+                              palette,
+                            ),
+                          ),
+                        PopupMenuItem(
+                          value: 'leave',
+                          child: _menuItem(
+                            Icons.logout,
+                            'Salir del grupo',
+                            palette,
+                            color: const Color(0xFFEF4444),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                ],
               ),
             ),
           ),
-          body: Column(
-            children: [
-              // Importantes/urgentes fijados arriba (estilo WhatsApp)
-              if (provider.importantMessages.isNotEmpty)
-                _buildImportantBanner(context, provider, palette),
-              Expanded(child: _buildMessageList(context, provider, palette)),
-              // Pinned message banner
-              if (provider.pinnedMessage != null)
-                _buildPinnedBanner(provider, palette),
-              // Typing
-              if (provider.typingUsers.isNotEmpty)
-                TypingIndicator(users: provider.typingUsers, palette: palette),
-              // Reply bar
-              if (provider.replyTarget != null)
-                ReplyBar(
-                  message: provider.replyTarget!,
-                  palette: palette,
-                  onCancel: provider.clearActionTargets,
-                ),
-              // Edit bar
-              if (provider.editTarget != null)
-                EditBar(
-                  message: provider.editTarget!,
-                  palette: palette,
-                  onCancel: provider.clearActionTargets,
-                ),
-              // Input
-              _buildBottomBar(context, provider, palette),
-            ],
-          ),
-        );
-      },
+        ),
+      ),
+      body: Column(
+        children: [
+          // Importantes/urgentes fijados arriba (estilo WhatsApp)
+          if (provider.importantMessages.isNotEmpty)
+            _buildImportantBanner(context, provider, palette),
+          Expanded(child: _buildMessageList(context, provider, palette)),
+          // Pinned message banner
+          if (provider.pinnedMessage != null)
+            _buildPinnedBanner(provider, palette),
+          // Typing
+          if (provider.typingUsers.isNotEmpty)
+            TypingIndicator(users: provider.typingUsers, palette: palette),
+          // Reply bar
+          if (provider.replyTarget != null)
+            ReplyBar(
+              message: provider.replyTarget!,
+              palette: palette,
+              onCancel: provider.clearActionTargets,
+            ),
+          // Edit bar
+          if (provider.editTarget != null)
+            EditBar(
+              message: provider.editTarget!,
+              palette: palette,
+              onCancel: provider.clearActionTargets,
+            ),
+          // Input
+          _buildBottomBar(context, provider, palette),
+        ],
+      ),
     );
   }
 

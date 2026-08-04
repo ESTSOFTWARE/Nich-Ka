@@ -4,128 +4,124 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/presentation/app_theme_scope.dart';
-import '../../core/presentation/change_notifier_provider.dart';
 import '../../core/presentation/ui_state.dart';
+import '../notifiers/user_detail_notifier.dart';
 import '../../features/class/domain/entities/class_member.dart';
 import '../../features/class/presentation/components/class_stat_tile.dart';
 import '../../features/class/presentation/theme/class_palette.dart';
 import '../../features/home/presentation/components/home_glow.dart';
 import '../../features/profile/data/datasource/remote/model/dto/response/user_profile_dto.dart';
 import '../../shared/theme/app_palette.dart';
-import '../providers/user_detail_provider.dart';
 import '../../core/presentation/responsive_center.dart';
 
-class UserDetailView extends StatelessWidget {
+class UserDetailView extends ConsumerWidget {
   final ClassMember member;
 
   const UserDetailView({super.key, required this.member});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserDetailProvider>(
-      create: () => UserDetailProvider(member),
-      builder: (context, provider) {
-        final isDark = AppThemeScope.of(context).isDark;
-        final palette = ClassPalette.of(isDark);
-        final homePalette = AppPalette.of(isDark);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(userDetailProvider(member));
+    final isDark = AppThemeScope.of(context).isDark;
+    final palette = ClassPalette.of(isDark);
+    final homePalette = AppPalette.of(isDark);
 
-        return Scaffold(
-          backgroundColor: palette.background,
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: provider.isScrolled ? 20 : 0,
-                  sigmaY: provider.isScrolled ? 20 : 0,
-                ),
-                child: AppBar(
-                  backgroundColor: provider.isScrolled
-                      ? homePalette.glassBackground
-                      : Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  systemOverlayStyle: isDark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-                  automaticallyImplyLeading: false,
-                  centerTitle: false,
-                  leadingWidth: 56,
-                  leading: Center(
-                    child: GestureDetector(
-                      onTap: () => context.canPop() ? context.pop() : null,
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: provider.isScrolled
-                                ? palette.border
-                                : Colors.white.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: provider.isScrolled
-                              ? palette.textPrimary
-                              : Colors.white,
-                          size: 22,
-                        ),
+    return Scaffold(
+      backgroundColor: palette.background,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: provider.isScrolled ? 20 : 0,
+              sigmaY: provider.isScrolled ? 20 : 0,
+            ),
+            child: AppBar(
+              backgroundColor: provider.isScrolled
+                  ? homePalette.glassBackground
+                  : Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              systemOverlayStyle: isDark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
+              automaticallyImplyLeading: false,
+              centerTitle: false,
+              leadingWidth: 56,
+              leading: Center(
+                child: GestureDetector(
+                  onTap: () => context.canPop() ? context.pop() : null,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    margin: const EdgeInsets.only(left: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: provider.isScrolled
+                            ? palette.border
+                            : Colors.white.withValues(alpha: 0.3),
                       ),
                     ),
-                  ),
-                  title: Text(
-                    'Detalle de usuario',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    child: Icon(
+                      Icons.chevron_left,
                       color: provider.isScrolled
                           ? palette.textPrimary
                           : Colors.white,
+                      size: 22,
                     ),
                   ),
-                  actions: [
-                    Center(
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(right: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: provider.isScrolled
-                                ? palette.border
-                                : Colors.white.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: provider.isScrolled
-                              ? palette.textPrimary
-                              : Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
+              title: Text(
+                'Detalle de usuario',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: provider.isScrolled
+                      ? palette.textPrimary
+                      : Colors.white,
+                ),
+              ),
+              actions: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    margin: const EdgeInsets.only(right: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: provider.isScrolled
+                            ? palette.border
+                            : Colors.white.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.more_horiz,
+                      color: provider.isScrolled
+                          ? palette.textPrimary
+                          : Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          body: Stack(
-            children: [
-              HomeGlow(palette: homePalette),
-              _buildBody(context, provider, palette),
-            ],
-          ),
-        );
-      },
+        ),
+      ),
+      body: Stack(
+        children: [
+          HomeGlow(palette: homePalette),
+          _buildBody(context, provider, palette),
+        ],
+      ),
     );
   }
 

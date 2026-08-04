@@ -1,6 +1,6 @@
 part of 'splash_gate_view.dart';
 
-class _SplashGateViewState extends State<SplashGateView> {
+class _SplashGateViewState extends ConsumerState<SplashGateView> {
   @override
   void initState() {
     super.initState();
@@ -36,7 +36,7 @@ class _SplashGateViewState extends State<SplashGateView> {
       return;
     }
 
-    context.read<AuthProvider>().setUser(token);
+    ref.read(authProvider.notifier).setUser(token);
     final route = await resolveEntryRoute();
     if (mounted) context.go(route);
   }
