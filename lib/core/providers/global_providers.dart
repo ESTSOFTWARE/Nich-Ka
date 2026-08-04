@@ -19,13 +19,18 @@ final appThemeProvider = ChangeNotifierProvider<AppThemeProvider>(
 /// Conecta/desconecta el WebSocket de notificaciones según el login,
 /// replicando el antiguo ChangeNotifierProxyProvider. Se reejecuta cuando
 /// cambia el estado de sesión (login/logout).
+///
+/// La conexión/desconexión se difiere a un microtask porque Riverpod no
+/// permite modificar otro provider (notifications) durante el build de este.
 final authNotificationsBinderProvider = Provider<void>((ref) {
-  final auth = ref.watch(authProvider);
-  final notifier = ref.read(notificationsProvider.notifier);
-  if (auth.isLoggedIn) {
-    notifier.connect();
-    PushService.instance.registerForUser(); // token FCM al backend
-  } else {
-    notifier.reset();
-  }
+  final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+  Future.microtask(() {
+    final notifier = ref.read(notificationsProvider.notifier);
+    if (isLoggedIn) {
+      notifier.connect();
+      PushService.instance.registerForUser(); // token FCM al backend
+    } else {
+      notifier.reset();
+    }
+  });
 });
