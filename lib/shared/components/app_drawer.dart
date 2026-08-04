@@ -53,52 +53,65 @@ class AppDrawer extends StatelessWidget {
           textScaler: TextScaler.linear(tablet ? kTabletTextScale : 1),
         ),
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ValueListenableBuilder<String?>(
-                valueListenable: CurrentUserAvatar.instance,
-                builder: (context, liveAvatar, child) => AppDrawerHeader(
-                  palette: palette,
-                  userName: userName ?? 'Usuario',
-                  userRole: userRole ?? 'ESTUDIANTE',
-                  profileImage: liveAvatar ?? profileImage,
+          // En horizontal (poca altura) el contenido se desplaza en vez de
+          // desbordarse: antes salía la franja amarilla de overflow y los
+          // items de abajo quedaban inaccesibles.
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ValueListenableBuilder<String?>(
+                        valueListenable: CurrentUserAvatar.instance,
+                        builder: (context, liveAvatar, child) =>
+                            AppDrawerHeader(
+                              palette: palette,
+                              userName: userName ?? 'Usuario',
+                              userRole: userRole ?? 'ESTUDIANTE',
+                              profileImage: liveAvatar ?? profileImage,
+                            ),
+                      ),
+                      ...AppDrawerItem.values.map(
+                        (item) => DrawerMenuItem(
+                          item: item,
+                          isSelected: item == selected,
+                          palette: palette,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            onSelected(item);
+                          },
+                        ),
+                      ),
+                      const Spacer(),
+                      Divider(color: palette.border, height: 1),
+                      const SizedBox(height: 4),
+                      DrawerBottomAction(
+                        icon: Icons.settings_outlined,
+                        label: 'Configuración',
+                        palette: palette,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          onSettings?.call();
+                        },
+                      ),
+                      DrawerBottomAction(
+                        icon: Icons.logout,
+                        label: 'Cerrar sesión',
+                        palette: palette,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          onLogout?.call();
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
               ),
-              ...AppDrawerItem.values.map(
-                (item) => DrawerMenuItem(
-                  item: item,
-                  isSelected: item == selected,
-                  palette: palette,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    onSelected(item);
-                  },
-                ),
-              ),
-              const Spacer(),
-              Divider(color: palette.border, height: 1),
-              const SizedBox(height: 4),
-              DrawerBottomAction(
-                icon: Icons.settings_outlined,
-                label: 'Configuración',
-                palette: palette,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  onSettings?.call();
-                },
-              ),
-              DrawerBottomAction(
-                icon: Icons.logout,
-                label: 'Cerrar sesión',
-                palette: palette,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  onLogout?.call();
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
+            ),
           ),
         ),
       ),
